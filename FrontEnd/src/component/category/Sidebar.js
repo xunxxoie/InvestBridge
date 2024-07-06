@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, FormGroup, FormControlLabel, Checkbox, Typography } from '@mui/material';
+import { Box, FormGroup, FormControlLabel, Checkbox, Typography, Divider } from '@mui/material';
 
 const categories = [
   { label: '전체보기', value: 'all' },
@@ -36,9 +36,11 @@ const Sidebar = () => {
           border: '1px solid #ddd',
           borderRadius: '10px',
           p: 3,
-          mt: '50px',
+          mt: '30px',
           ml: '50px',
+          height: '400px', // 고정된 폭 설정
           width: '250px',
+          flexShrink: 0, // 사이즈가 줄어들지 않도록 설정
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           backgroundColor: '#f9f9f9',
         }}
@@ -46,6 +48,7 @@ const Sidebar = () => {
         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
           카테고리
         </Typography>
+        <Divider sx={{ my: 2 }} />
         <FormGroup sx={{ alignItems: 'flex-start' }}>
           {categories.map((category) => (
             <FormControlLabel

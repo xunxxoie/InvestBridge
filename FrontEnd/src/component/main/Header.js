@@ -40,7 +40,7 @@ function Header() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, marginLeft: -20 }} />
+          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, marginLeft: 0 }} />
           <Typography
             variant="h6"
             noWrap
@@ -125,7 +125,7 @@ function Header() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
                 component={Link}
-                to={`/${page.toLowerCase()}`}
+                to={`/profile`}
               >
                 {page}
               </Button>
@@ -156,7 +156,11 @@ function Header() {
             >
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                  <Typography textAlign="center">
+                    <Link to={`/profile`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {setting}
+                    </Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>

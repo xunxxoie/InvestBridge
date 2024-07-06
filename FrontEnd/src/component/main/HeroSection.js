@@ -1,6 +1,6 @@
 import { Box, Typography, TextField, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import mainImage from '../image/main.webp';
+import mainImage from '../../image/main.webp';
 
 export default function HeroSection() {
   return (
