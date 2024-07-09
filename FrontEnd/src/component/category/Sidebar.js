@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// Sidebar.js
+import React, { useState, useEffect } from 'react';
 import { Box, FormGroup, FormControlLabel, Checkbox, Typography, Divider } from '@mui/material';
 
 const categories = [
@@ -11,22 +12,31 @@ const categories = [
   { label: '금융', value: 'finance' },
 ];
 
-const Sidebar = () => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
+const Sidebar = ({ onCategoryChange, initialCategory }) => {
+  const [selectedCategories, setSelectedCategories] = useState(initialCategory ? [initialCategory] : ['all']);
+
+  useEffect(() => {
+    onCategoryChange(selectedCategories);
+  }, [selectedCategories, onCategoryChange]);
 
   const handleCategoryChange = (event) => {
     const { value, checked } = event.target;
+    let newSelectedCategories;
+
     if (value === 'all') {
-      if (checked) {
-        setSelectedCategories(categories.slice(1).map(cat => cat.value));
-      } else {
-        setSelectedCategories([]);
-      }
+      newSelectedCategories = checked ? ['all'] : [];
     } else {
-      setSelectedCategories((prev) =>
-        checked ? [...prev, value] : prev.filter((category) => category !== value)
-      );
+      if (checked) {
+        newSelectedCategories = [...selectedCategories.filter(cat => cat !== 'all'), value];
+      } else {
+        newSelectedCategories = selectedCategories.filter(cat => cat !== value);
+        if (newSelectedCategories.length === 0) {
+          newSelectedCategories = ['all'];
+        }
+      }
     }
+
+    setSelectedCategories(newSelectedCategories);
   };
 
   return (
@@ -38,9 +48,9 @@ const Sidebar = () => {
           p: 3,
           mt: '30px',
           ml: '50px',
-          height: '400px', // 고정된 폭 설정
+          height: '400px',
           width: '250px',
-          flexShrink: 0, // 사이즈가 줄어들지 않도록 설정
+          flexShrink: 0,
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
           backgroundColor: '#f9f9f9',
         }}
@@ -55,9 +65,11 @@ const Sidebar = () => {
               key={category.value}
               control={
                 <Checkbox
-                  checked={category.value === 'all' 
-                    ? selectedCategories.length === categories.length - 1
-                    : selectedCategories.includes(category.value)}
+                  checked={
+                    category.value === 'all'
+                      ? selectedCategories.includes('all')
+                      : selectedCategories.includes(category.value)
+                  }
                   onChange={handleCategoryChange}
                   value={category.value}
                   sx={{

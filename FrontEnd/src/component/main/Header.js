@@ -91,7 +91,7 @@ function Header() {
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
-                    <Link to={`./${page.toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={`/${page.toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                       {page}
                     </Link>
                   </Typography>
@@ -125,7 +125,7 @@ function Header() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
                 component={Link}
-                to={`/profile`}
+                to={`/${page.toLowerCase()}`}
               >
                 {page}
               </Button>
@@ -157,7 +157,7 @@ function Header() {
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">
-                    <Link to={`/profile`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={`/${setting.toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                       {setting}
                     </Link>
                   </Typography>
