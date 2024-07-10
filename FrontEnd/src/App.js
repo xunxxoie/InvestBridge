@@ -50,6 +50,7 @@ function App() {
             <Route path="/supporter" element={<Supporter />} />
 
             <Route path="/idea" element={<Idea />} />
+            <Route path="/idea/*" element={<Idea />} />
           </Routes>
         </div>
       </Router>

@@ -53,7 +53,7 @@ const JoinDreamer = () => {
         InvestBridge
       </Typography>
       
-      <Paper elevation={3} sx={{ p: 3, clear: 'both' }}>
+      <Paper elevation={3} sx={{ p: 3, clear: 'both', mt:4 }}>
         <List disablePadding>
           <ListItem disablePadding>
             <ListItemIcon><Person /></ListItemIcon>
