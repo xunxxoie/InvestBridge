@@ -16,9 +16,8 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 const Supporter = () => {
-  const navigate = useNavigate(); // useNavigate 훅을 사용합니다
+  const navigate = useNavigate(); 
 
-  // 버튼 클릭 핸들러 함수를 추가합니다
   const handleButtonClick = () => {
     navigate('/idea');
   };

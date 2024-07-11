@@ -1,4 +1,3 @@
-// Sidebar.js
 import React, { useState, useEffect } from 'react';
 import { Box, FormGroup, FormControlLabel, Checkbox, Typography, Divider } from '@mui/material';
 
