@@ -4,6 +4,7 @@ import CategorySection from "../component/main/CategorySection";
 
 export default function MainPage() {
     return (
+      // Header, HeroSection, CategorySection
       <>
         <Header />
         <HeroSection />

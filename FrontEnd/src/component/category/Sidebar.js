@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Box, FormGroup, FormControlLabel, Checkbox, Typography, Divider } from '@mui/material';
 
 const categories = [
@@ -11,80 +11,64 @@ const categories = [
   { label: '금융', value: 'finance' },
 ];
 
-const Sidebar = ({ onCategoryChange, initialCategory }) => {
-  const [selectedCategories, setSelectedCategories] = useState(initialCategory ? [initialCategory] : ['all']);
-
-  useEffect(() => {
-    onCategoryChange(selectedCategories);
-  }, [selectedCategories, onCategoryChange]);
-
+const Sidebar = ({ selectedCategories, setSelectedCategories }) => {
   const handleCategoryChange = (event) => {
     const { value, checked } = event.target;
-    let newSelectedCategories;
-
     if (value === 'all') {
-      newSelectedCategories = checked ? ['all'] : [];
+      setSelectedCategories(checked ? ['all'] : []);
     } else {
-      if (checked) {
-        newSelectedCategories = [...selectedCategories.filter(cat => cat !== 'all'), value];
-      } else {
-        newSelectedCategories = selectedCategories.filter(cat => cat !== value);
-        if (newSelectedCategories.length === 0) {
-          newSelectedCategories = ['all'];
+      setSelectedCategories(prev => {
+        if (checked) {
+          return [...prev.filter(cat => cat !== 'all'), value];
+        } else {
+          const newCategories = prev.filter(cat => cat !== value);
+          return newCategories.length === 0 ? ['all'] : newCategories;
         }
-      }
+      });
     }
-
-    setSelectedCategories(newSelectedCategories);
   };
 
   return (
-    <>
-      <Box
-        sx={{
-          border: '1px solid #ddd',
-          borderRadius: '10px',
-          p: 3,
-          mt: '30px',
-          ml: '50px',
-          height: '400px',
-          width: '250px',
-          flexShrink: 0,
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          backgroundColor: '#f9f9f9',
-        }}
-      >
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
-          카테고리
-        </Typography>
-        <Divider sx={{ my: 2 }} />
-        <FormGroup sx={{ alignItems: 'flex-start' }}>
-          {categories.map((category) => (
-            <FormControlLabel
-              key={category.value}
-              control={
-                <Checkbox
-                  checked={
-                    category.value === 'all'
-                      ? selectedCategories.includes('all')
-                      : selectedCategories.includes(category.value)
-                  }
-                  onChange={handleCategoryChange}
-                  value={category.value}
-                  sx={{
-                    color: '#333',
-                    '&.Mui-checked': {
-                      color: '#1976d2',
-                    },
-                  }}
-                />
-              }
-              label={<Typography sx={{ fontSize: '0.95rem', color: '#555' }}>{category.label}</Typography>}
-            />
-          ))}
-        </FormGroup>
-      </Box>
-    </>
+    <Box
+      sx={{
+        border: '1px solid #ddd',
+        borderRadius: '10px',
+        p: 3,
+        mt: '30px',
+        ml: '50px',
+        height: '400px',
+        width: '250px',
+        flexShrink: 0,
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        backgroundColor: '#f9f9f9',
+      }}
+    >
+      <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
+        카테고리
+      </Typography>
+      <Divider sx={{ my: 2 }} />
+      <FormGroup sx={{ alignItems: 'flex-start' }}>
+        {categories.map((category) => (
+          <FormControlLabel
+            key={category.value}
+            control={
+              <Checkbox
+                checked={selectedCategories.includes(category.value)}
+                onChange={handleCategoryChange}
+                value={category.value}
+                sx={{
+                  color: '#333',
+                  '&.Mui-checked': {
+                    color: '#1976d2',
+                  },
+                }}
+              />
+            }
+            label={<Typography sx={{ fontSize: '0.95rem', color: '#555' }}>{category.label}</Typography>}
+          />
+        ))}
+      </FormGroup>
+    </Box>
   );
 };
 

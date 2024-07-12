@@ -4,7 +4,6 @@ import { Box, Typography, Button, Grid, Paper, Container, ThemeProvider, createT
 import { styled } from '@mui/material/styles';
 import { Person, Groups } from '@mui/icons-material';
 
-// 커스텀 테마 생성
 const theme = createTheme({
   typography: {
     fontFamily: '"Poppins", "Noto Sans KR", sans-serif',

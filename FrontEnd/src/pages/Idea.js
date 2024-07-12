@@ -59,6 +59,14 @@ export const exampleProjects = [
   }
 ];
 
+const categoryMap = {
+  ai: '인공지능',
+  bigdata: '빅데이터',
+  game: '게임',
+  health: '의료 · 보건',
+  finance: '금융',
+};
+
 export default function Idea() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -66,29 +74,20 @@ export default function Idea() {
   const isDetailPage = location.pathname.includes('/detail');
 
   const [selectedCategories, setSelectedCategories] = useState(initialCategory ? [initialCategory] : ['all']);
-  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState(exampleProjects);
 
   useEffect(() => {
     if (selectedCategories.includes('all')) {
       setFilteredProjects(exampleProjects);
     } else {
       const filtered = exampleProjects.filter(project =>
-        project.hashtags.some(tag => 
-          selectedCategories.includes(tag) ||
-          (selectedCategories.includes('ai') && tag === '인공지능') ||
-          (selectedCategories.includes('bigdata') && tag === '빅데이터') ||
-          (selectedCategories.includes('game') && tag === '게임') ||
-          (selectedCategories.includes('health') && tag === '의료 · 보건') ||
-          (selectedCategories.includes('finance') && tag === '금융')
+        project.hashtags.some(tag =>
+          selectedCategories.some(cat => categoryMap[cat] === tag || cat === tag)
         )
       );
       setFilteredProjects(filtered);
     }
   }, [selectedCategories]);
-
-  const handleCategoryChange = (categories) => {
-    setSelectedCategories(categories);
-  };
 
   return (
     <>
@@ -109,7 +108,10 @@ export default function Idea() {
       <Routes>
         <Route path="/" element={
           <Box sx={{ display: 'flex' }}>
-            <Sidebar onCategoryChange={handleCategoryChange} initialCategory={initialCategory} />
+            <Sidebar 
+              selectedCategories={selectedCategories} 
+              setSelectedCategories={setSelectedCategories} 
+            />
             <Box sx={{ mt: 4, ml: '50px', flexGrow: 1, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {filteredProjects.map(project => (
                 <IdeaCard key={project.id} project={project} />
@@ -121,5 +123,4 @@ export default function Idea() {
       </Routes>
     </>
   );
-
 }

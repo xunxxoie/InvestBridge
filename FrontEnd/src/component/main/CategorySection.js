@@ -1,4 +1,3 @@
-// CategorySection.js
 import React from 'react';
 import { Grid, Paper, Typography, Link } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@ import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 export default function CategorySection() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // useNavigate is a hook that handle change page
 
   const categories = [
     { icon: <AiIcon sx={{ fontSize: 50 }} />, label: '#인공지능', value: 'ai' },
@@ -28,12 +27,11 @@ export default function CategorySection() {
       container
       spacing={4}
       justifyContent="center"
-      sx={{ mt: 0.5 }}
+      sx={{ mt: 0, mb:4 }}
     >
       {categories.map((category, index) => (
         <Grid
           item
-          key={index}
           display="flex"
           justifyContent="center"
         >

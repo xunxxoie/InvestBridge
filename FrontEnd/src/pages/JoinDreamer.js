@@ -39,11 +39,11 @@ const JoinDreamer = () => {
   const [job, setJob] = useState('');
   const [interest, setInterest] = useState('');
 
-  const handleJobChange = (event) => {
+  const handleJobChange = (event) => { // Change Job that user click
     setJob(event.target.value);
   };
 
-  const handleInterestChange = (event) => {
+  const handleInterestChange = (event) => { // Change Interest that user click
     setInterest(event.target.value);
   };
 
