@@ -14,6 +14,8 @@ import Join from './pages/Join';
 import JoinDreamer from './pages/JoinDreamer';
 import JoinSupporter from './pages/JoinSupporter';
 
+import Profile from './pages/Profile'; 
+
 
 const theme = createTheme({
   typography: {
@@ -50,6 +52,9 @@ function App() {
 
             <Route path="/idea" element={<Idea />} />
             <Route path="/idea/*" element={<Idea />} />
+
+            <Route path="/profile" element={<Profile />}/>
+            
           </Routes>
         </div>
       </Router>

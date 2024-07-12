@@ -14,7 +14,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from 'react-router-dom';
 
 const pages = ['Dreamer', 'Supporter', 'Idea'];
-const settings = ['Profile', 'Idea', 'Support', 'Logout'];
+const settings = ['Profile', 'Logout'];
 
 function Header() {
   const [anchorElUser, setAnchorElUser] = React.useState(null); // Set anchorElUser's initial value as 'null', anchorElUser's Setter = setAnchorElNav()
