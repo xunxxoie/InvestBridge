@@ -1,24 +1,9 @@
-// import Header from "../component/main/Header";
-// import ProfileArea from "../component/profiles/ProfileArea";
-// import ProfileSide from "../component/profiles/ProfileSide";
-
-
-
-// export default function Profile() {
-//     return (
-//       <>
-//         <Header />
-//         <ProfileArea />
-//         <ProfileSide />
-//       </>
-//     );
-// }
-import React, { useState } from "react";
 import { Box, Grid } from "@mui/material";
+import React, { useState } from "react";
 import Header from "../component/main/Header";
+import ContentArea from "../component/profiles/ContentArea";
 import ProfileArea from "../component/profiles/ProfileArea";
 import ProfileSide from "../component/profiles/ProfileSide";
-import ContentArea from "../component/profiles/ContentArea";
 
 function App() {
   const [selectedMenu, setSelectedMenu] = useState('Home');

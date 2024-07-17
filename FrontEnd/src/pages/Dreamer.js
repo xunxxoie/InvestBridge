@@ -1,9 +1,11 @@
 import React from 'react';
-import Header from '../component/main/Header';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Grid, Container } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import Header from '../component/main/Header';
 import balloonImage from '../image/dream.jpg';
+
+import { Box, Button, Container, Grid, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
 
 const StyledTypography = styled(Typography)(({ theme }) => ({
   fontFamily: "'Noto Sans KR', sans-serif",

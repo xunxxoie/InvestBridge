@@ -1,8 +1,12 @@
-import Avatar from '@mui/icons-material/AccountCircle';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -11,8 +15,6 @@ import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
-import { useState } from 'react';
 
 function Copyright(props) {
   return (
@@ -20,7 +22,12 @@ function Copyright(props) {
       {'Copyright © '}
       <Link color="inherit" href="https://github.com/xunxxoie" target="blank" rel="noopener noreferrer">
         xunxxoie
-      </Link>{' '}
+      </Link>
+      {' '}
+      <Link color="inherit" href="https://github.com/ijnim1121" target="blank" rel="noopener noreferrer">
+        ijinim1121 
+      </Link>
+      {' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -32,9 +39,15 @@ const defaultTheme = createTheme();
 export default function Login() {
   const [userEmail, setUserEmail] = useState('');
   const [userPw, setUserPw] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setError('');
+    setIsLoading(true);
+
     try {
       console.log('Sending login request to:', `${process.env.REACT_APP_API_URL}/api/login`);
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
@@ -47,14 +60,19 @@ export default function Login() {
       });
 
       if (!response.ok) {
-        throw new Error('Login failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
       }
 
       const data = await response.json();
       console.log('Login successful', data);
-      // TODO: 토큰을 localStorage나 상태 관리 라이브러리에 저장
+      localStorage.setItem('token', data.token);
+      navigate('/main');
     } catch (error) {
       console.error('Login failed', error.message);
+      setError('잘못된 이메일 또는 비밀번호를 입력하셨습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,22 +102,25 @@ export default function Login() {
               id="userEmail"
               label="Email Address"
               name="userEmail"
-              autoComplete="userEmail"
+              autoComplete="email"
               autoFocus
               value={userEmail}
               onChange={(e) => setUserEmail(e.target.value)}
+              error={!!error}
             />
             <TextField
               margin="normal"
               required
               fullWidth
               name="userPw"
-              label="userPw"
-              type="userPw"
+              label="Password"
+              type="password"
               id="userPw"
-              autoComplete="userPw"
+              autoComplete="current-password"
               value={userPw}
               onChange={(e) => setUserPw(e.target.value)}
+              error={!!error}
+              helperText={error}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -110,8 +131,13 @@ export default function Login() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
             >
-              Sign In
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                '로그인'
+              )}
             </Button>
             <Grid container justifyContent="center" spacing={2}>
               <Grid item>

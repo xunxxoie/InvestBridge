@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, Route, Routes } from 'react-router-dom';
-import Header from "../component/main/Header";
-import Sidebar from "../component/category/Sidebar";
+
 import { Box } from '@mui/material';
-import topImage from '../image/no6.jpg';
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import IdeaCard from '../component/category/IdeaCard';
 import IdeaDetail from '../component/category/ideaDetail';
+import Sidebar from "../component/category/Sidebar";
+import Header from "../component/main/Header";
+import topImage from '../image/no6.jpg';
 
-import p1 from '../image/p1.jpg'
-import p2 from '../image/p2.jpg'
-import p3 from '../image/p3.jpg'
-import p4 from '../image/p4.jpg'
+import p1 from '../image/p1.jpg';
+import p2 from '../image/p2.jpg';
+import p3 from '../image/p3.jpg';
+import p4 from '../image/p4.jpg';
 
 export const exampleProjects = [
   {

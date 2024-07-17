@@ -1,26 +1,26 @@
-import React, { useState, useRef } from 'react';
+import { Close, CloudUpload, Delete } from '@mui/icons-material';
 import {
   Box,
-  TextField,
-  TextareaAutosize,
-  Checkbox,
-  FormControlLabel,
   Button,
-  Grid,
-  Typography,
-  IconButton,
-  Paper,
+  Checkbox,
   Chip,
+  FormControlLabel,
+  Grid,
+  IconButton,
   List,
   ListItem,
-  ListItemText,
   ListItemSecondaryAction,
+  ListItemText,
+  Paper,
+  TextField,
+  TextareaAutosize,
+  Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import React, { useRef, useState } from 'react';
 import Header from '../component/main/Header';
 import githubIcon from '../image/githubc.png';
 import notionIcon from '../image/Notion.webp';
-import { CloudUpload, Delete, Close } from '@mui/icons-material';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),

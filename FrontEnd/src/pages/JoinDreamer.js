@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  Button, 
-  Paper, 
-  List, 
-  ListItem, 
-  ListItemIcon, 
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel
-} from '@mui/material';
-import { 
-  Person, 
-  Lock, 
-  Email, 
-  Badge, 
-  Phone, 
-  CalendarToday, 
-  Work, 
-  PieChart
+import {
+  Badge,
+  CalendarToday,
+  Email,
+  Lock,
+  Person,
+  Phone,
+  PieChart,
+  Work
 } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemIcon,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography
+} from '@mui/material';
 import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
 
 const StyledTextField = styled(TextField)({
   marginBottom: '16px',
@@ -39,21 +39,21 @@ const JoinDreamer = () => {
   const [job, setJob] = useState('');
   const [interest, setInterest] = useState('');
 
-  const handleJobChange = (event) => { // Change Job that user click
+  const handleJobChange = (event) => {
     setJob(event.target.value);
   };
 
-  const handleInterestChange = (event) => { // Change Interest that user click
+  const handleInterestChange = (event) => {
     setInterest(event.target.value);
   };
 
   return (
     <Box sx={{ maxWidth: 400, margin: 'auto', mt: 4 }}>
-      <Typography variant="h4" component="h1" sx={{ color: '#1976d2', mb: 2, fontWeight:"bold" }}>
+      <Typography variant="h4" component="h1" sx={{ color: '#1976d2', mb: 2, fontWeight: "bold" }}>
         InvestBridge
       </Typography>
       
-      <Paper elevation={3} sx={{ p: 3, clear: 'both', mt:4 }}>
+      <Paper elevation={3} sx={{ p: 3, clear: 'both', mt: 4 }}>
         <List disablePadding>
           <ListItem disablePadding>
             <ListItemIcon><Person /></ListItemIcon>
