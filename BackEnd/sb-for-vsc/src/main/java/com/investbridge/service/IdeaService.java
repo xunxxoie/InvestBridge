@@ -16,6 +16,4 @@ public class IdeaService {
         this.ideaRepository = ideaRepository;
         this.userRepository = userRepository;
     }
-
-
 }

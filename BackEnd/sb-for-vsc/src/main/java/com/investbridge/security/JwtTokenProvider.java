@@ -23,7 +23,8 @@ public class JwtTokenProvider {
     private final long validityInMilliseconds;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secret,
-                            @Value("${jwt.expiration}") long validityInMilliseconds) {
+                            @Value("${jwt.expiration}") long validityInMilliseconds
+                           ) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.validityInMilliseconds = validityInMilliseconds;
     }
@@ -82,10 +83,7 @@ public class JwtTokenProvider {
     }
 
     private UserDetails loadUserByUsername(String username) {
-        // 여기에 사용자 정보를 로드하는 로직을 구현해야 합니다.
-        // 예를 들어, UserRepository를 사용하여 데이터베이스에서 사용자 정보를 가져올 수 있습니다.
-        // 이 부분은 실제 애플리케이션의 구현에 따라 달라집니다.
-        throw new UnsupportedOperationException("loadUserByUsername 메서드를 구현해야 합니다.");
+        throw new UnsupportedOperationException("");
     }
 
     public boolean validateToken(String token) {

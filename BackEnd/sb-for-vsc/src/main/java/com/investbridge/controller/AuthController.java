@@ -26,21 +26,23 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
-        logger.info("Received login request for email: {}", loginRequest.getUserEmail());
-        try {
-            LoginResponseDTO response = authService.login(loginRequest);
-            logger.info("Login successful for email: {}", loginRequest.getUserEmail());
+    
+    @PostMapping("/login") //"POST /api/login" request controller
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request){
+        try{
+            LoginResponseDTO response = authService.login(request); // Object that contains ResponseDTO after login
+            logger.info("Login Successful for {}", request.getUserEmail());
             return ResponseEntity.ok(response);
-        } catch (BadCredentialsException e) {
-            logger.error("Login failed for email: {}", loginRequest.getUserEmail());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponse("AUTH-001", e.getMessage()));
-        } catch (Exception e) {
-            logger.error("Unexpected error during login for email: {}", loginRequest.getUserEmail(), e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponse("SYS-001", e.getMessage()));
+        }catch(BadCredentialsException e){
+            logger.info("Login Failed with Auth problem for {}", request.getUserEmail());
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("Login Failed", e.getMessage()));
+        }catch(Exception e){
+            logger.info("Login Failed with Server Error for {}", request.getUserEmail());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unknown Error occured", e.getMessage()));
         }
     }
 }
