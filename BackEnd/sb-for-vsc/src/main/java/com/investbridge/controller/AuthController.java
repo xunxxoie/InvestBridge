@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.investbridge.dto.JoinRequestDTO;
+import com.investbridge.dto.JoinResponseDTO;
 import com.investbridge.dto.LoginRequestDTO;
 import com.investbridge.dto.LoginResponseDTO;
 import com.investbridge.exception.ErrorResponse;
@@ -42,7 +44,23 @@ public class AuthController {
             logger.info("Login Failed with Server Error for {}", request.getUserEmail());
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("Unknown Error occured", e.getMessage()));
+                .body(new ErrorResponse("Unknown Error is occured", e.getMessage()));
         }
+    }
+
+    @PostMapping("/join") //"POST /api/join" request controller
+    public ResponseEntity<?> join(@RequestBody JoinRequestDTO request){
+        try{
+            JoinResponseDTO response = authService.join(request); //
+            logger.info("Join Successful for {}", request.getUserEmail());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }catch(RuntimeException e){
+            logger.info("Join Failed with duplicated Email Problem {]", request.getUserEmail());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already exits");
+        }catch(Exception e){
+            logger.info("Join Failed with server Error for {}", request.getUserEmail());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Unknown Error is occured", e.getMessage()));
+        }
+
     }
 }

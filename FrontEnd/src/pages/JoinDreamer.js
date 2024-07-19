@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const StyledTextField = styled(TextField)({
   marginBottom: '16px',
@@ -36,96 +37,185 @@ const StyledFormControl = styled(FormControl)({
 });
 
 const JoinDreamer = () => {
-  const [job, setJob] = useState('');
-  const [interest, setInterest] = useState('');
+  const [formData, setFormData] = useState({
+    userId: '',
+    userPw: '',
+    userEmail: '',
+    userName: '',
+    birth: '',
+    phoneNumber: '',
+    job: '',
+    interest: '',
+    userRole: 'DREAMER',
+  });
+  const navigate = useNavigate();
 
-  const handleJobChange = (event) => {
-    setJob(event.target.value);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
   };
 
-  const handleInterestChange = (event) => {
-    setInterest(event.target.value);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log('Sending Join request to :', `${process.env.REACT_APP_API_URL}/api/join`);
+    try{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          birth: formData.birth ? new Date(formData.birth).toISOString() : null
+        }),
+        credentials: 'include'
+      });
+
+      if(!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Join failed');
+      }
+      
+      const data = await response.json();
+      console.log('Join successful', data);
+      navigate('/join/succeeded');
+    }catch(error){
+      console.log('Join failed', error.message);
+    }
   };
 
   return (
-    <Box sx={{ maxWidth: 400, margin: 'auto', mt: 4 }}>
+    <Box 
+      sx={{ maxWidth: 400, margin: 'auto', mt: 4 }}
+      component="form" onSubmit={handleSubmit}>
       <Typography variant="h4" component="h1" sx={{ color: '#1976d2', mb: 2, fontWeight: "bold" }}>
         InvestBridge
       </Typography>
       
       <Paper elevation={3} sx={{ p: 3, clear: 'both', mt: 4 }}>
-        <List disablePadding>
-          <ListItem disablePadding>
-            <ListItemIcon><Person /></ListItemIcon>
-            <StyledTextField fullWidth label="아이디" variant="standard" />
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemIcon><Lock /></ListItemIcon>
-            <StyledTextField fullWidth label="비밀번호" type="password" variant="standard" />
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemIcon><Email /></ListItemIcon>
-            <StyledTextField fullWidth label="이메일" variant="standard" />
-          </ListItem>
-        </List>
-      </Paper>
-      
-      <Paper elevation={3} sx={{ p: 3, mt: 2 }}>
-        <List disablePadding>
-          <ListItem disablePadding>
-            <ListItemIcon><Badge /></ListItemIcon>
-            <StyledTextField fullWidth label="성명" variant="standard" />
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemIcon><Phone /></ListItemIcon>
-            <StyledTextField fullWidth label="전화번호" variant="standard" />
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemIcon><CalendarToday /></ListItemIcon>
-            <StyledTextField fullWidth label="생년월일" variant="standard" />
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemIcon><Work /></ListItemIcon>
-            <StyledFormControl variant="standard">
-              <InputLabel>직업</InputLabel>
-              <Select
-                value={job}
-                onChange={handleJobChange}
-                label="직업"
-              >
-                <MenuItem value="employee">직장인</MenuItem>
-                <MenuItem value="student">학생</MenuItem>
-                <MenuItem value="unemployed">무직</MenuItem>
-                <MenuItem value="entrepreneur">사업가</MenuItem>
-              </Select>
-            </StyledFormControl>
-          </ListItem>
-          <ListItem disablePadding>
-            <ListItemIcon><PieChart /></ListItemIcon>
-            <StyledFormControl variant="standard">
-              <InputLabel>관심분야</InputLabel>
-              <Select
-                value={interest}
-                onChange={handleInterestChange}
-                label="관심분야"
-              >
-                <MenuItem value="bigData">빅데이터</MenuItem>
-                <MenuItem value="ai">인공지능</MenuItem>
-                <MenuItem value="game">게임</MenuItem>
-                <MenuItem value="healthcare">의료-보건</MenuItem>
-                <MenuItem value="energyChemistry">에너지-화학</MenuItem>
-                <MenuItem value="finance">금융</MenuItem>
-              </Select>
-            </StyledFormControl>
-          </ListItem>
-        </List>
-      </Paper>
+          <List disablePadding>
+            <ListItem disablePadding>
+              <ListItemIcon><Person /></ListItemIcon>
+              <StyledTextField 
+                fullWidth 
+                label="아이디" 
+                variant="standard" 
+                name="userId"
+                value={formData.userId}
+                onChange={handleChange}
+              />
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemIcon><Lock /></ListItemIcon>
+              <StyledTextField 
+                fullWidth 
+                label="비밀번호" 
+                type="password" 
+                variant="standard"
+                name="userPw"
+                value={formData.userPw}
+                onChange={handleChange}
+              />
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemIcon><Email /></ListItemIcon>
+              <StyledTextField 
+                fullWidth 
+                label="이메일" 
+                variant="standard"
+                name="userEmail"
+                value={formData.userEmail}
+                onChange={handleChange}
+              />
+            </ListItem>
+          </List>
+        </Paper>
+        
+        <Paper elevation={3} sx={{ p: 3, mt: 2 }}>
+          <List disablePadding>
+            <ListItem disablePadding>
+              <ListItemIcon><Badge /></ListItemIcon>
+              <StyledTextField 
+                fullWidth 
+                label="성명" 
+                variant="standard"
+                name="userName"
+                value={formData.userName}
+                onChange={handleChange}
+              />
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemIcon><Phone /></ListItemIcon>
+              <StyledTextField 
+                fullWidth 
+                label="전화번호" 
+                variant="standard"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+              />
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemIcon><CalendarToday /></ListItemIcon>
+              <StyledTextField 
+                fullWidth 
+                label="생년월일" 
+                variant="standard"
+                name="birth"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                value={formData.birth}
+                onChange={handleChange}
+              />
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemIcon><Work /></ListItemIcon>
+              <StyledFormControl variant="standard">
+                <InputLabel>직업</InputLabel>
+                <Select
+                  value={formData.job}
+                  onChange={handleChange}
+                  label="직업"
+                  name="job"
+                >
+                  <MenuItem value="EMPLOYEE">직장인</MenuItem>
+                  <MenuItem value="STUDENT">학생</MenuItem>
+                  <MenuItem value="UNEMPLOYED">무직</MenuItem>
+                  <MenuItem value="ENTREPRENEUR">사업가</MenuItem>
+                </Select>
+              </StyledFormControl>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemIcon><PieChart /></ListItemIcon>
+              <StyledFormControl variant="standard">
+                <InputLabel>관심분야</InputLabel>
+                <Select
+                  value={formData.interest}
+                  onChange={handleChange}
+                  label="관심분야"
+                  name="interest"
+                >
+                  <MenuItem value="BIG_DATA">빅데이터</MenuItem>
+                  <MenuItem value="AI">인공지능</MenuItem>
+                  <MenuItem value="GAME">게임</MenuItem>
+                  <MenuItem value="HEALTHCARE">의료-보건</MenuItem>
+                  <MenuItem value="ENERGY_CHEMISTRY">에너지-화학</MenuItem>
+                  <MenuItem value="FINANCE">금융</MenuItem>
+                </Select>
+              </StyledFormControl>
+            </ListItem>
+          </List>
+        </Paper>
       
       <Button 
         variant="contained" 
         color="primary" 
         fullWidth 
         sx={{ mt: 2 }}
+        type="submit"
       >
         회원가입
       </Button>

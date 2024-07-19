@@ -52,6 +52,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Inactivate csrf secure
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Inavtivate Session and keep STATELESS
             .authorizeHttpRequests(authz -> authz.requestMatchers("/api/login/**").permitAll()
+                                                 .requestMatchers("/api/join/**").permitAll()
                                                  .anyRequest().authenticated() // All requests that come to "/api/login/**" are granted; all other requests are authorized
             ).addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 

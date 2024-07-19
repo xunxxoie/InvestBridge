@@ -1,20 +1,21 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import  Login  from './pages/Login'
-import MainPage from './pages/MainPage';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Dreamer from './pages/Dreamer';
 import DreamerIdea from './pages/DreamerIdea';
-import Supporter from './pages/Supporter';
 import Idea from './pages/Idea';
+import Login from './pages/Login';
+import MainPage from './pages/MainPage';
+import Supporter from './pages/Supporter';
 
 import './App.css';
 import Join from './pages/Join';
 import JoinDreamer from './pages/JoinDreamer';
 import JoinSupporter from './pages/JoinSupporter';
 
-import Profile from './pages/Profile'; 
+import JoinSucceed from './pages/JoinSucceed';
+import Profile from './pages/Profile';
 
 
 const theme = createTheme({
@@ -43,7 +44,8 @@ function App() {
             <Route path="/join" element={<Join />} />
             <Route path="/join/dreamer" element={<JoinDreamer />} />
             <Route path="/join/supporter" element={<JoinSupporter />} />
-            
+            <Route path="/join/succeeded" element={<JoinSucceed />} />
+
             <Route path="/main" element={<MainPage />} />
 
             <Route path="/dreamer" element={<Dreamer />} />
