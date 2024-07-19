@@ -102,7 +102,7 @@ export default function Login() {
               id="userEmail"
               label="Email Address"
               name="userEmail"
-              autoComplete="email"
+              autoComplete="username"
               autoFocus
               value={userEmail}
               onChange={(e) => setUserEmail(e.target.value)}
