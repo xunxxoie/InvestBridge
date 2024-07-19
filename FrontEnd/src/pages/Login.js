@@ -49,8 +49,8 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      console.log('Sending login request to:', `${process.env.REACT_APP_API_URL}/api/login`);
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/login`, {
+      console.log('Sending login request to:', `${process.env.REACT_APP_API_URL}/api/auth/login`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

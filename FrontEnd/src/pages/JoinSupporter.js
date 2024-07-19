@@ -60,9 +60,9 @@ const JoinSupporter = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Sending Join request to :', `${process.env.REACT_APP_API_URL}/api/join`);
+    console.log('Sending Join request to :', `${process.env.REACT_APP_API_URL}/api/auth/joins`);
     try{
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/join`,{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/join`,{
         method: 'POST',
         headers : {
           'Content-Type': 'application/json',

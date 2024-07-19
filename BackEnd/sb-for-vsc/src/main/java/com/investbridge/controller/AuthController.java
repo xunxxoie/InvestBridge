@@ -18,8 +18,12 @@ import com.investbridge.dto.LoginResponseDTO;
 import com.investbridge.exception.ErrorResponse;
 import com.investbridge.service.AuthService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
+@Tag(name = "Auth", description = "로그인/회원가입 API")
 public class AuthController {
     private final AuthService authService;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -30,6 +34,7 @@ public class AuthController {
     }
     
     @PostMapping("/login") //"POST /api/login" request controller
+    @Operation(summary = "로그인", description = "사용자 이메일과 비밀번호로 로그인합니다.")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request){
         try{
             LoginResponseDTO response = authService.login(request); // Object that contains ResponseDTO after login
@@ -49,6 +54,7 @@ public class AuthController {
     }
 
     @PostMapping("/join") //"POST /api/join" request controller
+    @Operation(summary = "회원가입", description = "회원가입")
     public ResponseEntity<?> join(@RequestBody JoinRequestDTO request){
         try{
             JoinResponseDTO response = authService.join(request); //
