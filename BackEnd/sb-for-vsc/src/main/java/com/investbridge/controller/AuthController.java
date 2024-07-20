@@ -57,7 +57,7 @@ public class AuthController {
     @Operation(summary = "회원가입", description = "회원가입")
     public ResponseEntity<?> join(@RequestBody JoinRequestDTO request){
         try{
-            JoinResponseDTO response = authService.join(request); //
+            JoinResponseDTO response = authService.join(request); 
             logger.info("Join Successful for {}", request.getUserEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }catch(RuntimeException e){

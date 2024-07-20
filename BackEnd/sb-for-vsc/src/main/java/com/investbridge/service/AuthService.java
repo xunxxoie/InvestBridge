@@ -41,6 +41,7 @@ public class AuthService {
 
     // Join Service Logic
     public JoinResponseDTO join(JoinRequestDTO request){
+        
         if(userRepository.findByUserEmail(request.getUserEmail()).isPresent())
             throw new RuntimeException("Already Used Email!!");
 

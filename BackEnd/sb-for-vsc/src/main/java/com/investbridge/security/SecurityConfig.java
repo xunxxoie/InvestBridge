@@ -33,7 +33,6 @@ public class SecurityConfig {
 
     @Value("${cors.exposed-headers}")
     private List<String> exposedHeaders;
-    
 
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -44,22 +43,23 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Define Security Settings 
+    // Define Security Settings
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Activate CORS Setting == Allow specific domain(ex : localhost:3000 -> Client!!)
             .csrf(csrf -> csrf.disable()) // Inactivate csrf secure
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Inavtivate Session and keep STATELESS
-            .authorizeHttpRequests(authz -> authz.requestMatchers("/api/auth/login/**").permitAll()
-                                                 .requestMatchers("/api/auth/join/**").permitAll()
-                                                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
-                                                 .anyRequest().authenticated() // All requests that come to "/api/login/**" are granted; all other requests are authorized
-            ).addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/api/auth/login/**").permitAll()
+                .requestMatchers("/api/auth/join/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
+                .anyRequest().authenticated() // All requests that come to "/api/login/**" are granted; all other requests are authorized
+            )
+            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 
     // Setting CORS Configurations
     @Bean
@@ -74,13 +74,8 @@ public class SecurityConfig {
 
         //Applying Configurations
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
-        source.registerCorsConfiguration("/swagger-ui/**", configuration);
-        source.registerCorsConfiguration("/v3/api-docs/**", configuration);
-        source.registerCorsConfiguration("/v3/api-docs/**", configuration);
-        source.registerCorsConfiguration("/swagger-resources/**", configuration);
-        source.registerCorsConfiguration("/webjars/**", configuration);
-        
+        source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }
