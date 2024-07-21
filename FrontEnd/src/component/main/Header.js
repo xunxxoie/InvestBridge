@@ -1,109 +1,138 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
+import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Stack,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
-const pages = ['Dreamer', 'Supporter', 'Idea'];
-const settings = ['Profile', 'Logout'];
+const NavItem = ({ children, to = '/', color }) => (
+  <Link to={to}>
+    <Button
+      fontWeight={500}
+      color={color}
+      bg={'transparent'}
+      _hover={{
+        bg: 'whiteAlpha.200',
+      }}
+    >
+      {children}
+    </Button>
+  </Link>
+);
 
-function Header() {
-  const [anchorElUser, setAnchorElUser] = React.useState(null); // Set anchorElUser's initial value as 'null', anchorElUser's Setter = setAnchorElNav()
-
-
-  // when anchorElUser's value is not null -> menu is open / null -> close
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+export default function Header({ bgColor = 'transparent', textColor = 'white' }) {
+  const { isOpen, onToggle } = useDisclosure();
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: 'flex', mr: 1, marginLeft: 0 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component={Link}
-            to="/main"
-            sx={{
-              mr: 2,
-              display: 'flex',
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            InvestBridge
-          </Typography>
-
-          <Box sx={{ flexGrow: 1, display: 'flex' }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-                component={Link}
-                to={`/${page.toLowerCase()}`}
+    <Box position="fixed" w="100%" zIndex={1000}>
+      <Flex
+        bg={bgColor}
+        color={textColor}
+        minH={'60px'}
+        py={{ base: 4 }}
+        px={{ base: 4 }}
+        borderBottom={1}
+        borderStyle={'solid'}
+        borderColor={'whiteAlpha.300'}
+        align={'center'}
+        backdropFilter="blur(10px)"
+      >
+        <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align="center">
+          <Link to="/main">
+            <Flex align="center">
+              <Text
+                fontSize={'2xl'}
+                fontWeight={'bold'}
+                textTransform={'uppercase'}
+                letterSpacing={'wider'}
               >
-                {page}
-              </Button>
-            ))}
-          </Box>
-          
-          
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+                InvestBridge
+              </Text>
+            </Flex>
+          </Link>
+
+          <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+            <Stack direction={'row'} spacing={4}>
+              <NavItem to="/dreamer" color={textColor}>Dreamer</NavItem>
+              <NavItem to="/supporter" color={textColor}>Supporter</NavItem>
+              <NavItem to="/idea" color={textColor}>Idea</NavItem>
+            </Stack>
+          </Flex>
+        </Flex>
+
+            <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={'flex-end'}
+            direction={'row'}
+            spacing={6}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">
-                    <Link to={`/${setting.toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                      {setting}
-                    </Link>
-                  </Typography>
+            <Menu>
+                <MenuButton
+                as={Button}
+                rounded={'full'}
+                variant={'link'}
+                cursor={'pointer'}
+                minW={0}
+                >
+                <Box
+                    width="40px"
+                    height="40px"
+                    borderRadius="full"
+                    bg="gray.600"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                >
+                    <Text fontSize="sm" fontWeight="bold">
+                    U
+                    </Text>
+                </Box>
+                </MenuButton>
+                <MenuList bg="gray.800">
+                <MenuItem as={Link} to="/profile" bg="gray.800" _hover={{ bg: 'gray.700' }}>
+                    Profile
                 </MenuItem>
-              ))}
+                <MenuItem as={Link} to="/logout" bg="gray.800" _hover={{ bg: 'gray.700' }}>
+                    Logout
+                </MenuItem>
+                </MenuList>
             </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+            </Stack>
+
+            <Flex
+            flex={{ base: 1, md: 'auto' }}
+            ml={{ base: -2 }}
+            display={{ base: 'flex', md: 'none' }}
+            justify="flex-end"
+            >
+            <IconButton
+                onClick={onToggle}
+                icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
+                variant={'ghost'}
+                aria-label={'Toggle Navigation'}
+            />
+        </Flex>
+      </Flex>
+
+      {isOpen && (
+        <Box pb={4} display={{ md: 'none' }} bg={bgColor}>
+          <Stack as={'nav'} spacing={4}>
+            <NavItem to="/dreamer" color={textColor}>Dreamer</NavItem>
+            <NavItem to="/supporter" color={textColor}>Supporter</NavItem>
+            <NavItem to="/idea" color={textColor}>Idea</NavItem>
+          </Stack>
+        </Box>
+      )}
+    </Box>
   );
 }
-
-export default Header;
-

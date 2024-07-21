@@ -1,4 +1,5 @@
 
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { Box } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
@@ -12,6 +13,21 @@ import p1 from '../image/p1.jpg';
 import p2 from '../image/p2.jpg';
 import p3 from '../image/p3.jpg';
 import p4 from '../image/p4.jpg';
+
+const theme = extendTheme({
+  styles: {
+    global: {
+      body: {
+        bg: '#0A1929',
+        color: 'white',
+      },
+    },
+  },
+  fonts: {
+    heading: 'Poppins, sans-serif',
+    body: 'Inter, sans-serif',
+  },
+});
 
 export const exampleProjects = [
   {
@@ -91,37 +107,37 @@ export default function Idea() {
   }, [selectedCategories]);
 
   return (
-    <>
-      <Header />
-      {!isDetailPage && (
-        <Box sx={{ backgroundColor: 'none', py: 4, textAlign: 'center', pt: 0 }}>
-          <img
-            src={topImage}
-            alt="Hero"
-            style={{
-              width: '100%',
-              height: '250px',
-              objectFit: 'cover'
-            }}
-          />
-        </Box>
-      )}
-      <Routes>
-        <Route path="/" element={
-          <Box sx={{ display: 'flex' }}>
-            <Sidebar 
-              selectedCategories={selectedCategories} 
-              setSelectedCategories={setSelectedCategories} 
+      <ChakraProvider theme={theme}>
+        <Header />
+        {!isDetailPage && (
+          <Box sx={{ backgroundColor: 'none', py: 4, textAlign: 'center', pt: 0 }}>
+            <img
+              src={topImage}
+              alt="Hero"
+              style={{
+                width: '100%',
+                height: '250px',
+                objectFit: 'cover'
+              }}
             />
-            <Box sx={{ mt: 4, ml: '50px', flexGrow: 1, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {filteredProjects.map(project => (
-                <IdeaCard key={project.id} project={project} />
-              ))}
-            </Box>
           </Box>
-        } />
-        <Route path="/detail" element={<IdeaDetail projects={exampleProjects} />} />
-      </Routes>
-    </>
+        )}
+        <Routes>
+          <Route path="/" element={
+            <Box sx={{ display: 'flex' }}>
+              <Sidebar 
+                selectedCategories={selectedCategories} 
+                setSelectedCategories={setSelectedCategories} 
+              />
+              <Box sx={{ mt: 4, ml: '50px', flexGrow: 1, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                {filteredProjects.map(project => (
+                  <IdeaCard key={project.id} project={project} />
+                ))}
+              </Box>
+            </Box>
+          } />
+          <Route path="/detail" element={<IdeaDetail projects={exampleProjects} />} />
+        </Routes>
+      </ChakraProvider>
   );
 }
