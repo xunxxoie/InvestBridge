@@ -137,9 +137,9 @@ export default function DreamerIdea() {
 
   return (
     <>
-      <Header />
+      <Header bgColor="black" textColor="white" />
       <Box component="form" onSubmit={handleSubmit} sx={{ padding: '20px', maxWidth: 1200, margin: '0 auto', pt:'50px' }}>
-        <Grid container spacing={8}>
+        <Grid container spacing={8} mt={1}>
           <Grid item xs={12} md={6}>
             <StyledPaper>
               <StepTitle variant="h6" gutterBottom>
