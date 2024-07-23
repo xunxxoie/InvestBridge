@@ -66,7 +66,6 @@ export default function Login() {
 
       const data = await response.json();
       console.log('Login successful', data);
-      localStorage.setItem('token', data.token); // Save token(jwt - access token) in localstorage
       navigate('/main');
     } catch (error) {
       console.error('Login failed', error.message);

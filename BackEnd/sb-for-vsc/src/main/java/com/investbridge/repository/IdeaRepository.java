@@ -1,6 +1,6 @@
 package com.investbridge.repository;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -9,9 +9,9 @@ import com.investbridge.model.enums.IdeaCategory;
 
 public interface IdeaRepository extends MongoRepository<Idea, String>{
 
-    List<Idea> findByTitleContaining(String keyword);
-    List<Idea> findByContentContaining(String keyword);
+    Optional<Idea> findByTitleContaining(String keyword);
+    Optional<Idea> findByContentContaining(String keyword);
 
-    List<Idea> findByIsContracted(boolean isContracted);
-    List<Idea> findByCategories(IdeaCategory category);
+    Optional<Idea> findByIsContracted(boolean isContracted);
+    Optional<Idea> findByCategories(IdeaCategory category);
 }

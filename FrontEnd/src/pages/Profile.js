@@ -53,23 +53,28 @@ const Profile = () => {
 
   return (
     <ChakraProvider theme={theme}>
-      <Box minHeight="100vh" bg={bgColor}>
-        <Header bgColor="black" textColor="white" />
-        <Container maxW="container.xl" pt="120px" mr="150px" >
-          <Grid templateColumns={{ base: "1fr", lg: "350px 1fr" }} gap={10}>
-            <Box ml={{ base: "0", lg: "10px" }}>
-              <ProfileInfo />
-              <DetailedProfileInfo />
-            </Box>
-            <Box>
-              <ProjectSection title="My Dream" projects={myProjects} />
-              <ProjectSection title="My Support" projects={supportedProjects} />
-            </Box>
-          </Grid>
-        </Container>
-      </Box>
-    </ChakraProvider>
-  );
+    <Box minHeight="100vh" bg={bgColor}>
+      <Header bgColor="black" textColor="white" />
+      <Container maxW="container.xl" pt="120px" centerContent>
+        <Grid
+          templateColumns={{ base: "1fr", lg: "350px 1fr" }}
+          gap={10}
+          width="100%"
+          justifyContent="center"
+        >
+          <Box>
+            <ProfileInfo />
+            <DetailedProfileInfo />
+          </Box>
+          <Box>
+            <ProjectSection title="My Dream" projects={myProjects} />
+            <ProjectSection title="My Support" projects={supportedProjects} />
+          </Box>
+        </Grid>
+      </Container>
+    </Box>
+  </ChakraProvider>
+  )
 };
 
 export default Profile;

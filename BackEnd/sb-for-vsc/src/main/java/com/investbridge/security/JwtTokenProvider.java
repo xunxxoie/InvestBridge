@@ -6,6 +6,8 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.investbridge.dto.Object.UserDTO;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,16 +26,21 @@ public class JwtTokenProvider {
     }
 
     //Jwt Token create method
-    public String createToken(String userName, String userRole){
+    public String createToken(String userId, String userEmail, String userName, String phoneNumber, String userRole){
         // Set payLoad (payLode includes several claims)
         Date now = new Date();
         Claims claims = Jwts.claims()
+                                .setAudience("Invest Bridge")
                                 .setIssuer("Invest Bridge") // Token Provider
-                                .setAudience(userName) // Token Receiver
-                                .setSubject(userName) 
+                                .setSubject(userEmail)
                                 .setIssuedAt(now) // Token Generated Time
                                 .setExpiration(new Date(now.getTime() + validateTime)); // Expiration based on validateTime
-        claims.put("userRole", userRole); // Add Customized Claims
+
+        // Add Customized Claims
+        claims.put("userId", userId);
+        claims.put("userName", userName);
+        claims.put("phoneNumber", phoneNumber);
+        claims.put("userRole", userRole);
         
         return Jwts.builder() // Set Header
                     .setClaims(claims) // Set PayLoad
@@ -54,7 +61,23 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getUserNameFromToken(String token){
+    //Get User by token
+    public UserDTO getUserbyToken(String token){
+        Claims claims = Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+
+        return new UserDTO(
+            claims.get("userId", String.class),
+            claims.getSubject(),
+            claims.get("userName", String.class),
+            claims.get("phoneNumber", String.class)
+        );
+    }
+
+    public String getUserEmailFromToken(String token){
         return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()

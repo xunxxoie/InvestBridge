@@ -51,8 +51,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Inactivate csrf secure
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Inavtivate Session and keep STATELESS
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/login/**").permitAll()
+                .requestMatchers("/api/auth/login/**").permitAll() 
                 .requestMatchers("/api/auth/join/**").permitAll()
+                .requestMatchers("/api/user/**").permitAll()
+                .requestMatchers("/api/ideas/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated() // All requests that come to "/api/login/**" are granted; all other requests are authorized
             )
@@ -71,6 +73,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(allowedHeaders); // RequestHeaders that  client -> server
         configuration.setExposedHeaders(exposedHeaders); // ResponseHeaders that server -> client
         configuration.setAllowCredentials(true);
+        configuration.addAllowedOriginPattern("*"); 
 
         //Applying Configurations
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

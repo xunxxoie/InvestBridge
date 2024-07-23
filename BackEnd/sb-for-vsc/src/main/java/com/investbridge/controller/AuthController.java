@@ -3,7 +3,9 @@ package com.investbridge.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.investbridge.dto.JoinRequestDTO;
-import com.investbridge.dto.JoinResponseDTO;
-import com.investbridge.dto.LoginRequestDTO;
-import com.investbridge.dto.LoginResponseDTO;
+import com.investbridge.dto.Http.LoginRequestDTO;
+import com.investbridge.dto.Http.LoginResponseDTO;
+import com.investbridge.dto.Http.RegisterRequestDTO;
+import com.investbridge.dto.Http.RegisterResponseDTO;
 import com.investbridge.exception.ErrorResponse;
 import com.investbridge.service.AuthService;
 
@@ -38,8 +40,21 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request){
         try{
             LoginResponseDTO response = authService.login(request); // Object that contains ResponseDTO after login
+
+            ResponseCookie jwtCookie = ResponseCookie.from("jwt", response.getToken())
+                .httpOnly(true)
+                 //.secure(true) -> // When use https
+                .sameSite("Strict")
+                .maxAge(24*60*60)
+                .path("/")
+                .build();
+
             logger.info("Login Successful for {}", request.getUserEmail());
-            return ResponseEntity.ok(response);
+
+            return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(response);
+
         }catch(BadCredentialsException e){
             logger.info("Login Failed with Auth problem for {}", request.getUserEmail());
             return ResponseEntity
@@ -55,9 +70,9 @@ public class AuthController {
 
     @PostMapping("/join") //"POST /api/join" request controller
     @Operation(summary = "회원가입", description = "회원가입")
-    public ResponseEntity<?> join(@RequestBody JoinRequestDTO request){
+    public ResponseEntity<?> join(@RequestBody RegisterRequestDTO request){
         try{
-            JoinResponseDTO response = authService.join(request); 
+            RegisterResponseDTO response = authService.join(request); 
             logger.info("Join Successful for {}", request.getUserEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }catch(RuntimeException e){

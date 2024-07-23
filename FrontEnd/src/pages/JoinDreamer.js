@@ -60,7 +60,7 @@ const JoinDreamer = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Sending Join request to :', `${process.env.REACT_APP_API_URL}/api/auth/joins`);
+    console.log('Sending Join request to :', `${process.env.REACT_APP_API_URL}/api/auth/join`);
     try{
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/join`,{
         method: 'POST',

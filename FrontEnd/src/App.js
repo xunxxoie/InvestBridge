@@ -5,8 +5,8 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Dreamer from './pages/Dreamer';
-import DreamerIdea from './pages/DreamerIdea';
 import Idea from './pages/Idea';
+import IdeaSubmitForm from './pages/IdeaSubmitForm';
 import Join from './pages/Join';
 import JoinDreamer from './pages/JoinDreamer';
 import JoinSucceed from './pages/JoinSucceed';
@@ -45,7 +45,7 @@ function App() {
               <Route path="/join/succeeded" element={<JoinSucceed />} />
               <Route path="/main" element={<MainPage />} />
               <Route path="/dreamer" element={<Dreamer />} />
-              <Route path="/dreamer/write" element={<DreamerIdea />} />
+              <Route path="/dreamer/write" element={<IdeaSubmitForm />} />
               <Route path="/supporter" element={<Supporter />} />
               <Route path="/idea" element={<Idea />} />
               <Route path="/idea/*" element={<Idea />} />

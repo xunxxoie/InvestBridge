@@ -4,10 +4,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.investbridge.dto.JoinRequestDTO;
-import com.investbridge.dto.JoinResponseDTO;
-import com.investbridge.dto.LoginRequestDTO;
-import com.investbridge.dto.LoginResponseDTO;
+import com.investbridge.dto.Http.LoginRequestDTO;
+import com.investbridge.dto.Http.LoginResponseDTO;
+import com.investbridge.dto.Http.RegisterRequestDTO;
+import com.investbridge.dto.Http.RegisterResponseDTO;
 import com.investbridge.model.User;
 import com.investbridge.repository.UserRepository;
 import com.investbridge.security.JwtTokenProvider;
@@ -35,12 +35,12 @@ public class AuthService {
             throw new BadCredentialsException("Invalid Password");
         }
 
-        String token = jwtTokenProvider.createToken(user.getUserEmail(), user.getUserRole().name()); // Create token based on userEmail, userRole
+        String token = jwtTokenProvider.createToken(user.getId(), user.getUserEmail(), user.getUserName(), user.getPhoneNumber(), user.getUserRole().toString()); // Create token based on user info
         return new LoginResponseDTO(token, user.getUserRole().name()); // Return responsedto(token, userRole)
     }
 
     // Join Service Logic
-    public JoinResponseDTO join(JoinRequestDTO request){
+    public RegisterResponseDTO join(RegisterRequestDTO request){
         
         if(userRepository.findByUserEmail(request.getUserEmail()).isPresent())
             throw new RuntimeException("Already Used Email!!");
@@ -60,6 +60,6 @@ public class AuthService {
         
         User savedUser = userRepository.save(newUser);
 
-        return new JoinResponseDTO(savedUser.getId());
+        return new RegisterResponseDTO(savedUser.getId());
     }
 }
