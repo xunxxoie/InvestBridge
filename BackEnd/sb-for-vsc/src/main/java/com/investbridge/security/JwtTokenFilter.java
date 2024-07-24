@@ -36,27 +36,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         
         try {
-
-                
-                if (!jwtTokenProvider.validateToken(token)) {
-                    throw new BadCredentialsException("Not available Jwt token!");
-                }
-                
-                String userEmail = jwtTokenProvider.getUserEmailFromToken(token);
-                Authentication auth = new UsernamePasswordAuthenticationToken(userEmail, null, Collections.emptyList());
-                SecurityContextHolder.getContext().setAuthentication(auth);
-                
-            } catch (BadCredentialsException e) {
-                SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("인증 실패: " + e.getMessage());
-                return;
-            } catch (Exception e) {
-                SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("서버 오류");
-                return;
+            if (!jwtTokenProvider.validateToken(token)) {
+                throw new BadCredentialsException("Not available Jwt token!");
             }
+            
+            String userEmail = jwtTokenProvider.getUserEmailFromToken(token);
+            Authentication auth = new UsernamePasswordAuthenticationToken(userEmail, null, Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            
+        } catch (BadCredentialsException e) {
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("인증 실패: " + e.getMessage());
+            return;
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("서버 오류");
+            return;
+        }
 
         filterChain.doFilter(request, response);
     }

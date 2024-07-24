@@ -31,6 +31,9 @@ public class Idea {
     private List<String> categories;
     private List<FileMetaData> files;
 
+    private Integer likes;
+    private Integer favorites;
+
     @CreatedDate
     private Date createdAt;
 

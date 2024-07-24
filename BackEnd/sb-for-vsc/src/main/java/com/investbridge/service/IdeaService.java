@@ -59,6 +59,8 @@ public class IdeaService {
             .notionLink(request.getNotionLink())
             .categories(request.getCategories())
             .files(fileMetadata)
+            .favorites(0)
+            .likes(0)
             .createdAt(new Date())
             .updatedAt(new Date())
             .isContracted(false)
@@ -70,5 +72,14 @@ public class IdeaService {
             .ideaId(savedIdea.getId())
             .userName(savedIdea.getUserName())
             .build();
+    }
+
+    public List<Idea> getAllIdeas(){
+        List<Idea> idea = ideaRepository.findAll();
+        return idea;
+    }
+
+    public Idea getIdea(String id){
+        return ideaRepository.findById(id).orElse(null);
     }
 }

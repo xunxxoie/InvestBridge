@@ -1,11 +1,12 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import StarIcon from '@mui/icons-material/Star';
+import { Box, Typography } from '@mui/material';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import image from '../../image/p1.jpg';
 
 const IdeaCard = ({ project }) => {
-  const { id, team, name, hashtags, likes, favorites, image } = project;
+  const{id, userName, title, categories, likes, favorites} = project;
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -33,7 +34,7 @@ const IdeaCard = ({ project }) => {
     >
       <img 
         src={image} 
-        alt={name} 
+        alt={userName} 
         style={{ 
           width: '100%', 
           height: '150px', 
@@ -41,10 +42,10 @@ const IdeaCard = ({ project }) => {
         }} 
       />
       <Box sx={{ p: 2 }}>
-        <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', color: '#1976d2' }}>Team #{team}</Typography>
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>{name}</Typography>
+        <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold', color: '#1976d2' }}>{userName}</Typography>
+        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>{title}</Typography>
         <Box sx={{ mb: 2 }}>
-          {hashtags.map((tag, index) => (
+          {categories.map((tag, index) => (
             <Typography variant="body2" key={index} sx={{ display: 'inline', mx: 0.5, color: '#555' }}>
               #{tag}
             </Typography>

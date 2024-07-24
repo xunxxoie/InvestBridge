@@ -5,6 +5,7 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 
+import IdeaDetailPage from './pages/idea/IdeaDetailPage';
 import IdeaPage from './pages/idea/IdeaPage';
 import IdeaSubmitPage from './pages/idea/IdeaSubmitPage';
 import DreamerPage from './pages/main/DreamerPage';
@@ -49,7 +50,7 @@ function App() {
               <Route path="/dreamer/write" element={<IdeaSubmitPage />} />
               <Route path="/supporter" element={<SupporterPage />} />
               <Route path="/idea" element={<IdeaPage />} />
-              <Route path="/idea/*" element={<IdeaPage />} />
+              <Route path="/idea/detail" element={<IdeaDetailPage />} />
               <Route path="/profile" element={<ProfilePage />}/>
             </Routes>
           </div>

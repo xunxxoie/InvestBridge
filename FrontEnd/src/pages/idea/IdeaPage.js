@@ -1,25 +1,17 @@
-
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { Box } from '@mui/material';
+import { Box, ChakraProvider, extendTheme, Flex, Image, VStack } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import IdeaCard from '../../component/category/IdeaCard';
-import IdeaDetail from '../../component/category/ideaDetail';
 import Sidebar from "../../component/category/Sidebar";
 import Header from "../../component/main/Header";
 import topImage from '../../image/no6.jpg';
-
-import p1 from '../../image/p1.jpg';
-import p2 from '../../image/p2.jpg';
-import p3 from '../../image/p3.jpg';
-import p4 from '../../image/p4.jpg';
 
 const theme = extendTheme({
   styles: {
     global: {
       body: {
-        bg: '#0A1929',
-        color: 'white',
+        bg: '#F0F4F8',
+        color: '#2D3748',
       },
     },
   },
@@ -27,117 +19,81 @@ const theme = extendTheme({
     heading: 'Poppins, sans-serif',
     body: 'Inter, sans-serif',
   },
+  colors: {
+    brand: {
+      50: '#E6FFFA',
+      100: '#B2F5EA',
+      500: '#319795',
+      700: '#2C7A7B',
+    },
+  },
 });
 
-export const exampleProjects = [
-  {
-    id: 1,
-    team: 1,
-    name: "AI Project",
-    subTitle: "Revolutionizing AI",
-    hashtags: ["인공지능", "빅데이터"],
-    likes: 35,
-    favorites: 7320,
-    image: p1,
-    detail: "This is a detailed description of the AI project..."
-  },
-  {
-    id: 2,
-    team: 2,
-    name: "Big Data Analysis",
-    subTitle: "Unlocking insights from data",
-    hashtags: ["빅데이터"],
-    likes: 20,
-    favorites: 5120,
-    image: p2,
-    detail: "This project focuses on analyzing large datasets..."
-  },
-  {
-    id: 3,
-    team: 3,
-    name: "Game Development",
-    subTitle: "Creating immersive experiences",
-    hashtags: ["게임"],
-    likes: 45,
-    favorites: 8420,
-    image: p3,
-    detail: "We are developing a new game that pushes the boundaries..."
-  },
-  {
-    id: 4,
-    team: 4,
-    name: "Open AI with Google!",
-    subTitle: "Collaborating on AI advancements",
-    hashtags: ["인공지능", "빅데이터"],
-    likes: 10,
-    favorites: 420,
-    image: p4,
-    detail: "A collaborative project between OpenAI and Google..."
-  }
-];
-
-const categoryMap = {
-  ai: '인공지능',
-  bigdata: '빅데이터',
-  game: '게임',
-  health: '의료 · 보건',
-  finance: '금융',
-};
-
-export default function Idea() {
+export default function IdeaPage() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const initialCategory = queryParams.get('category');
-  const isDetailPage = location.pathname.includes('/detail');
 
+  const [projects, setProjects] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(initialCategory ? [initialCategory] : ['all']);
-  const [filteredProjects, setFilteredProjects] = useState(exampleProjects);
+  const [filteredProjects, setFilteredProjects] = useState([]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/ideas`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Internal Server Error')
+      }
+
+      const data = await response.json();
+      setProjects(data);
+    } catch (error) {
+      console.error('Project load is failed');
+    }
+  }
 
   useEffect(() => {
     if (selectedCategories.includes('all')) {
-      setFilteredProjects(exampleProjects);
+      setFilteredProjects(projects);
     } else {
-      const filtered = exampleProjects.filter(project =>
-        project.hashtags.some(tag =>
-          selectedCategories.some(cat => categoryMap[cat] === tag || cat === tag)
-        )
+      const filtered = projects.filter(project =>
+        selectedCategories.some(cat => project.categories.includes(cat))
       );
       setFilteredProjects(filtered);
     }
-  }, [selectedCategories]);
+  }, [selectedCategories, projects]);
 
   return (
-      <ChakraProvider theme={theme}>
-        <Header />
-        {!isDetailPage && (
-          <Box sx={{ backgroundColor: 'none', py: 4, textAlign: 'center', pt: 0 }}>
-            <img
-              src={topImage}
-              alt="Hero"
-              style={{
-                width: '100%',
-                height: '250px',
-                objectFit: 'cover'
-              }}
-            />
-          </Box>
-        )}
-        <Routes>
-          <Route path="/" element={
-            <Box sx={{ display: 'flex' }}>
-              <Sidebar 
-                selectedCategories={selectedCategories} 
-                setSelectedCategories={setSelectedCategories} 
-              />
-              <Box sx={{ mt: 4, ml: '50px', flexGrow: 1, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                {filteredProjects.map(project => (
-                  <IdeaCard key={project.id} project={project} />
-                ))}
-              </Box>
-            </Box>
-          } />
-          <Route path="/detail" element={<IdeaDetail projects={exampleProjects} />} />
-        </Routes>
-      </ChakraProvider>
+    <ChakraProvider theme={theme}>
+      <Header />
+      <Box bg="brand.50" py={0} textAlign="center">
+        <Image
+          src={topImage}
+          alt="Hero"
+          objectFit="cover"
+          w="100%"
+          h="250px"
+        />
+      </Box>
+      <Flex>
+        <Sidebar
+          selectedCategories={selectedCategories}
+          setSelectedCategories={setSelectedCategories}
+        />
+        <VStack spacing={8} align="stretch" flex={1} p={8}>
+          {filteredProjects.map(project => (
+            <IdeaCard key={project.id} project={project} />
+          ))}
+        </VStack>
+      </Flex>
+    </ChakraProvider>
   );
 }
