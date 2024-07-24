@@ -4,17 +4,18 @@ import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/st
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-import Dreamer from './pages/Dreamer';
-import Idea from './pages/Idea';
-import IdeaSubmitForm from './pages/IdeaSubmitForm';
-import Join from './pages/Join';
-import JoinDreamer from './pages/JoinDreamer';
-import JoinSucceed from './pages/JoinSucceed';
-import JoinSupporter from './pages/JoinSupporter';
-import Login from './pages/Login';
-import MainPage from './pages/MainPage';
-import Profile from './pages/Profile';
-import Supporter from './pages/Supporter';
+
+import IdeaPage from './pages/idea/IdeaPage';
+import IdeaSubmitPage from './pages/idea/IdeaSubmitPage';
+import DreamerPage from './pages/main/DreamerPage';
+import LoginPage from './pages/main/LoginPage';
+import MainPage from './pages/main/MainPage';
+import SupporterPage from './pages/main/SupporterPage';
+import ProfilePage from './pages/profile/ProfilePage';
+import SignUpDreamerPage from './pages/signup/SignUpDreamerPage';
+import SignUpSelectPage from './pages/signup/SignUpSelectPage';
+import SignUpSupporterPage from './pages/signup/SignUpSupporterPage';
+import SignUpWelcomePage from './pages/signup/SignUpWelcomePage';
 
 const muiTheme = createTheme({
   typography: {
@@ -38,18 +39,18 @@ function App() {
         <Router>
           <div className="App">
             <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/join" element={<Join />} />
-              <Route path="/join/dreamer" element={<JoinDreamer />} />
-              <Route path="/join/supporter" element={<JoinSupporter />} />
-              <Route path="/join/succeeded" element={<JoinSucceed />} />
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/join" element={<SignUpSelectPage />} />
+              <Route path="/join/dreamer" element={<SignUpDreamerPage />} />
+              <Route path="/join/supporter" element={<SignUpSupporterPage />} />
+              <Route path="/join/succeeded" element={<SignUpWelcomePage />} />
               <Route path="/main" element={<MainPage />} />
-              <Route path="/dreamer" element={<Dreamer />} />
-              <Route path="/dreamer/write" element={<IdeaSubmitForm />} />
-              <Route path="/supporter" element={<Supporter />} />
-              <Route path="/idea" element={<Idea />} />
-              <Route path="/idea/*" element={<Idea />} />
-              <Route path="/profile" element={<Profile />}/>
+              <Route path="/dreamer" element={<DreamerPage />} />
+              <Route path="/dreamer/write" element={<IdeaSubmitPage />} />
+              <Route path="/supporter" element={<SupporterPage />} />
+              <Route path="/idea" element={<IdeaPage />} />
+              <Route path="/idea/*" element={<IdeaPage />} />
+              <Route path="/profile" element={<ProfilePage />}/>
             </Routes>
           </div>
         </Router>
