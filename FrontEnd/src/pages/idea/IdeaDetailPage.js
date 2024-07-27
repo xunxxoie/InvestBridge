@@ -48,18 +48,18 @@ const IdeaDetailPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error('서버 에러 발생');
+        throw new Error('Internal Server Error');
       }
 
       const data = await response.json();
       if (data || data.length > 0) {
         setIdea(data);
       } else {
-        throw new Error('아이디어 데이터가 없습니다.');
+        throw new Error('There is no Data in DB');
       }
     } catch (error) {
-      console.error('아이디어 로딩 실패:', error);
-      setError('아이디어를 불러오는 데 실패했습니다.');
+      console.error('Loading Idea failed:', error);
+      setError('Loading Idea failed');
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +86,7 @@ const IdeaDetailPage = () => {
   }
 
   if (!idea) {
-    return <Text>아이디어를 찾을 수 없습니다.</Text>;
+    return <Text>Idea Load failed</Text>;
   }
 
   return (
@@ -110,28 +110,28 @@ const IdeaDetailPage = () => {
                   color="white"
                   textShadow="1px 1px 3px rgba(0,0,0,0.5)"
                 >
-                  <Text fontSize="4xl" fontWeight="bold" mb={3}>{idea.title || '제목 없음'}</Text>
-                  <Text fontSize="xl">{idea.userName || '작성자 미상'}</Text>
+                  <Text fontSize="4xl" fontWeight="bold" mb={3}>{idea}</Text>
+                  <Text fontSize="xl">{idea.userName}</Text>
                 </Box>
 
                 <Box p={4}>
                   <Flex justifyContent="space-between" alignItems="center" mb={3}>
                     <Box>
                       <Button leftIcon={<FaUsers />} variant="outline" colorScheme="blue">
-                        Team {idea.userId || '미상'}
+                        Team {idea.userId}
                       </Button>
                     </Box>
                     <Flex alignItems="center">
                       <IconButton icon={<FaHeart />} onClick={handleLike} colorScheme="pink" variant="ghost" />
-                      <Text mr={2}>{idea.likes || 0}</Text>
+                      <Text mr={2}>{idea.likes}</Text>
                       <IconButton icon={<FaStar />} onClick={handleFavorite} colorScheme="yellow" variant="ghost" />
-                      <Text>{idea.favorites || 0}</Text>
+                      <Text>{idea.favorites}</Text>
                     </Flex>
                   </Flex>
 
                   <Divider my={3} />
 
-                  <Text mb={3} lineHeight={1.8}>{idea.content || '내용 없음'}</Text>
+                  <Text mb={3} lineHeight={1.8}>{idea.content}</Text>
 
                   <Divider my={3} />
 
@@ -162,7 +162,7 @@ const IdeaDetailPage = () => {
                   }}
                   transition="all 0.3s"
                 >
-                  아이디어 실현하기!
+                  아이디어 실현하기 🚀
                 </Button>
               </Flex>
             </Box>

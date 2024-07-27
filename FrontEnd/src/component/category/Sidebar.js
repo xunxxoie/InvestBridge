@@ -17,11 +17,13 @@ const Sidebar = ({ selectedCategories, setSelectedCategories }) => {
       setSelectedCategories(['all']);
     } else {
       setSelectedCategories(prev => {
-        if (prev.includes(value)) {
+        if (prev.includes('all')) {
+          return [value];
+        } else if (prev.includes(value)) {
           const newCategories = prev.filter(cat => cat !== value);
           return newCategories.length === 0 ? ['all'] : newCategories;
         } else {
-          return [...prev.filter(cat => cat !== 'all'), value];
+          return [...prev, value];
         }
       });
     }

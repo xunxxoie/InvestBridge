@@ -31,10 +31,8 @@ const theme = extendTheme({
 
 export default function IdeaPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialCategory = searchParams.get('category');
-
   const [projects, setProjects] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState(initialCategory ? [initialCategory] : ['all']);
+  const [selectedCategories, setSelectedCategories] = useState(['all']);
   const [filteredProjects, setFilteredProjects] = useState([]);
 
   useEffect(() => {
@@ -43,10 +41,12 @@ export default function IdeaPage() {
 
   useEffect(() => {
     const category = searchParams.get('category');
-    if (category && !selectedCategories.includes(category)) {
+    if (category && category !== 'undefined' && category !== 'all') {
       setSelectedCategories([category]);
+    } else {
+      setSelectedCategories(['all']);
     }
-  }, [searchParams, selectedCategories]);
+  }, [searchParams]);
 
   const fetchProjects = async () => {
     try {
@@ -62,29 +62,20 @@ export default function IdeaPage() {
       const data = await response.json();
       setProjects(data);
     } catch (error) {
-      console.error('Project load is failed');
+      console.error('There is no Data in DB');
     }
   }
-
+ 
   useEffect(() => {
     if (selectedCategories.includes('all')) {
       setFilteredProjects(projects);
     } else {
       const filtered = projects.filter(project =>
-        selectedCategories.some(cat => project.categories.includes(cat))
+        project.categories.some(cat => selectedCategories.includes(cat))
       );
       setFilteredProjects(filtered);
     }
   }, [selectedCategories, projects]);
-
-  const handleCategoryChange = (newCategories) => {
-    if (newCategories.length === 1 && newCategories[0] !== 'all') {
-      setSearchParams({ category: newCategories[0] });
-    } else {
-      setSearchParams({});
-    }
-    setSelectedCategories(newCategories);
-  };
 
   return (
     <ChakraProvider theme={theme}>
@@ -136,7 +127,7 @@ export default function IdeaPage() {
       <Flex p={8} bg="gray.50">
         <Sidebar
           selectedCategories={selectedCategories}
-          setSelectedCategories={handleCategoryChange}
+          setSelectedCategories={setSelectedCategories}
         />
         <Wrap spacing={8} justify="flex-start" flex={1} p={8}>
           {filteredProjects.map(project => (

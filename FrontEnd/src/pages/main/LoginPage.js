@@ -114,7 +114,7 @@ export default function Login() {
       navigate('/main');
     } catch (error) {
       console.error('Login failed', error.message);
-      setError('잘못된 이메일 또는 비밀번호를 입력하셨습니다.');
+      setError('Wrong PassWord!');
     } finally {
       setIsLoading(false);
     }
