@@ -4,7 +4,6 @@ import { FaHeart, FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import image from '../../image/p1.jpg';
 
-// 카테고리별 색상 매핑
 const categoryColors = {
   '인공지능': 'blue',
   '빅데이터': 'green',
@@ -12,7 +11,6 @@ const categoryColors = {
   '의료 · 보건': 'red',
   '에너지 · 화학': 'orange',
   '금융': 'cyan',
-  // 기본 색상
   'default': 'gray'
 };
 
