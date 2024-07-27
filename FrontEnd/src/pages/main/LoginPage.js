@@ -1,30 +1,77 @@
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  createTheme,
+  CssBaseline,
+  FormControlLabel,
+  Link,
+  Paper,
+  TextField,
+  ThemeProvider,
+  Typography,
+} from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import CircularProgress from '@mui/material/CircularProgress';
-import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
+const theme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#000000',
+    },
+    secondary: {
+      main: '#ffffff',
+    },
+    background: {
+      default: '#f0f0f0',
+      paper: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+  },
+  shape: {
+    borderRadius: 8,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          '&:hover': {
+            boxShadow: '0 6px 8px rgba(0, 0, 0, 0.15)',
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+            '&:hover': {
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            },
+          },
+        },
+      },
+    },
+  },
+});
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://github.com/xunxxoie" target="blank" rel="noopener noreferrer">
+      <Link color="inherit" href="https://github.com/xunxxoie" target="_blank" rel="noopener noreferrer">
         xunxxoie
       </Link>
       {' '}
-      <Link color="inherit" href="https://github.com/ijnim1121" target="blank" rel="noopener noreferrer">
+      <Link color="inherit" href="https://github.com/ijnim1121" target="_blank" rel="noopener noreferrer">
         ijinim1121 
       </Link>
       {' '}
@@ -33,8 +80,6 @@ function Copyright(props) {
     </Typography>
   );
 }
-
-const defaultTheme = createTheme();
 
 export default function Login() {
   const [userEmail, setUserEmail] = useState('');
@@ -76,84 +121,127 @@ export default function Login() {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 12,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{fontSize:80}}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5" fontWeight="bold">
-            Welcome to InvestBridge!
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="userEmail"
-              label="Email Address"
-              name="userEmail"
-              autoComplete="username"
-              autoFocus
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
-              error={!!error}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="userPw"
-              label="Password"
-              type="password"
-              id="userPw"
-              autoComplete="current-password"
-              value={userPw}
-              onChange={(e) => setUserPw(e.target.value)}
-              error={!!error}
-              helperText={error}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={isLoading}
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(45deg, #1a1a1a 0%, #4a4a4a 100%)',
+        }}
+      >
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Paper
+            elevation={24}
+            sx={{
+              p: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: `
+                0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+                0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+                0 12.5px 10px rgba(0, 0, 0, 0.06),
+                0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+                0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+                0 100px 80px rgba(0, 0, 0, 0.12)
+              `,
+              transition: 'transform 0.3s ease-in-out',
+              '&:hover': {
+                transform: 'translateY(-5px)',
+              },
+            }}
+          >
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: '50%',
+                bgcolor: 'primary.main',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mb: 2,
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+              }}
             >
-              {isLoading ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                '로그인'
-              )}
-            </Button>
-            <Grid container justifyContent="center" spacing={2}>
-              <Grid item>
-                <Link href="#" variant="body2">
+              <LockOutlinedIcon sx={{ color: 'secondary.main', fontSize: 32 }} />
+            </Box>
+            <Typography component="h1" variant="h4" fontWeight="bold" color="primary.main" gutterBottom>
+              InvestBridge
+            </Typography>
+            <Typography component="h2" variant="body1" sx={{ mb: 3, color: 'text.secondary' }}>
+              Sign in to your account
+            </Typography>
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="userEmail"
+                label="Email Address"
+                name="userEmail"
+                autoComplete="email"
+                autoFocus
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                error={!!error}
+                variant="outlined"
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="userPw"
+                label="Password"
+                type="password"
+                id="userPw"
+                autoComplete="current-password"
+                value={userPw}
+                onChange={(e) => setUserPw(e.target.value)}
+                error={!!error}
+                helperText={error}
+                variant="outlined"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ 
+                  mt: 3, 
+                  mb: 2, 
+                  bgcolor: 'primary.main',
+                  color: 'secondary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  },
+                }}
+                disabled={isLoading}
+              >
+                Sign In
+              </Button>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                <Link href="#" variant="body2" color="primary.main">
                   Forgot password?
                 </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/join" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="/join" variant="body2" color="primary.main">
+                  Don't have an account? Sign Up
                 </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
+              </Box>
+            </Box>
+          </Paper>
+          <Copyright sx={{ mt: 5, color: 'text.secondary' }} />
+        </Container>
+      </Box>
     </ThemeProvider>
   );
 }

@@ -69,6 +69,7 @@ export default function DreamerIdea() {
   const [notionLink, setNotionLink] = useState('');
   const [files, setFiles] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -106,6 +107,11 @@ export default function DreamerIdea() {
   };
 
   const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!isChecked) {
+      alert("제3자 정보 활용 동의에 체크하세요.");
+      return;
+    }
     event.preventDefault();
     const formData = new FormData();
     formData.append('title', title);
@@ -266,15 +272,28 @@ export default function DreamerIdea() {
         
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3 }}>
           <FormControlLabel
-            control={<Checkbox color="primary" />}
+            control={
+              <Checkbox 
+                color="primary" 
+                checked={isChecked}
+                onChange={(e) => setIsChecked(e.target.checked)}
+              />
+            }
             label={
               <Typography>
                 위 아이디어를 제 3자 <strong>'InvestBridge : 아이디어 공유 플랫폼'</strong> 에 제공함을 동의합니다.
               </Typography>
-              }
+            }
           />
-          <Button type="submit" variant="contained" color="primary" size="large" sx={{ mt: 2 }}>
-           ⭐️ 아이디어 등록하기 ⭐️
+          <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            size="large" 
+            sx={{ mt: 2 }}
+            disabled={!isChecked}
+          >
+            ⭐️ 아이디어 등록하기 ⭐️
           </Button>
         </Box>
       </Box>

@@ -10,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.dto.Http.IdeaRequestDTO;
@@ -84,9 +84,9 @@ public class IdeaController {
     }
 
     //Get idea
-    @GetMapping("/{id}")
+    @GetMapping("/detail/{id}")
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
-    public ResponseEntity<?> getIdea(@CookieValue(name="jwt", required = false)String token, @RequestParam("id") String id) {
+    public ResponseEntity<?> getIdea(@CookieValue(name="jwt", required = false)String token, @PathVariable String id) {
         if(token == null){
             logger.error("There is no token for authentication");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is needed");
@@ -94,7 +94,7 @@ public class IdeaController {
 
         try{
             Idea response = ideaService.getIdea(id);
-            logger.info("Get idea from db is complete");
+            logger.info("Get idea from db is complete {}", response.getId());
             return ResponseEntity.ok(response);
         }catch (Exception e){
             logger.error("Unexpected Error Occur {}", e.getMessage());

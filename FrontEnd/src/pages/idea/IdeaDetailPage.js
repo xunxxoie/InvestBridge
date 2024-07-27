@@ -1,7 +1,7 @@
 import { Box, Button, ChakraProvider, CircularProgress, Container, Divider, extendTheme, Flex, IconButton, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FaHeart, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Header from '../../component/main/Header';
 import image from '../../image/p1.jpg';
 
@@ -32,19 +32,17 @@ const IdeaDetailPage = () => {
   const [idea, setIdea] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const ideaId = queryParams.get('id');
+  const {id} = useParams();
 
   useEffect(() => {
     fetchProject();
-  }, [ideaId])
+  }, [id]);
   
   const fetchProject = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/ideas?id=${ideaId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/ideas/detail/${id}`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -54,8 +52,8 @@ const IdeaDetailPage = () => {
       }
 
       const data = await response.json();
-      if (data && data.length > 0) {
-        setIdea(data[0]);
+      if (data || data.length > 0) {
+        setIdea(data);
       } else {
         throw new Error('아이디어 데이터가 없습니다.');
       }
@@ -103,15 +101,16 @@ const IdeaDetailPage = () => {
                   bgImage={`linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${image})`}
                   bgSize="cover"
                   bgPosition="center"
-                  height={200}
+                  height={230}
                   display="flex"
                   flexDirection="column"
-                  justifyContent="flex-end"
+                  justifyContent="center"
+                  alignItems="center"
                   p={4}
                   color="white"
                   textShadow="1px 1px 3px rgba(0,0,0,0.5)"
                 >
-                  <Text fontSize="4xl" fontWeight="bold" mb={1}>{idea.title || '제목 없음'}</Text>
+                  <Text fontSize="4xl" fontWeight="bold" mb={3}>{idea.title || '제목 없음'}</Text>
                   <Text fontSize="xl">{idea.userName || '작성자 미상'}</Text>
                 </Box>
 
@@ -146,7 +145,7 @@ const IdeaDetailPage = () => {
                 </Box>
               </Box>
               
-              <Flex mt={4} alignItems="center" justifyContent="flex-end">
+              <Flex mt={4} alignItems="center" justifyContent="flex-end" marginTop={10}>
                 <Text fontSize="xl" fontWeight="bold" color="gray.600" mr={2}>
                   이 아이디어가 맘에 든다면?
                 </Text>

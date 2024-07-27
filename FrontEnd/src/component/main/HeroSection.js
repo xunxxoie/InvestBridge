@@ -11,7 +11,7 @@ export default function HeroSection() {
 
   return (
     <Box
-      bgGradient="linear(to-r, #0A1929, #1A365D)"
+      bgGradient="linear(to-r, #000000, #1A202C)"
       minHeight="100vh"
       display="flex"
       alignItems="center"
@@ -93,10 +93,10 @@ export default function HeroSection() {
       />
       <Container maxW="container.xl" zIndex={1}>
         <VStack spacing={8} textAlign="center">
-          <Heading as="h1" size="2xl" fontWeight="bold">
+          <Heading as="h1" size="2xl" fontWeight="bold" letterSpacing="wide">
             아이디어를 공유하고 투자하세요 🚀
           </Heading>
-          <Text fontSize="xl" maxW="2xl">
+          <Text fontSize="xl" maxW="2xl" color="gray.300">
             혁신적인 아이디어와 투자자를 연결하는 플랫폼
           </Text>
           <Box display="flex" width="100%" maxW="600px">
@@ -107,11 +107,11 @@ export default function HeroSection() {
               _placeholder={{ color: 'whiteAlpha.600' }}
               borderColor="whiteAlpha.300"
               _hover={{ borderColor: 'whiteAlpha.400' }}
-              _focus={{ borderColor: 'blue.300', boxShadow: '0 0 0 1px #63B3ED' }}
+              _focus={{ borderColor: 'brand.300', boxShadow: '0 0 0 1px #4FD1C5' }}
             />
             <Button
               leftIcon={<SearchIcon />}
-              colorScheme="blue"
+              colorScheme="brand"
               size="lg"
               ml={2}
             >

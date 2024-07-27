@@ -1,28 +1,27 @@
+import { Box, Checkbox, Divider, Text, VStack } from '@chakra-ui/react';
 import React from 'react';
-import { Box, FormGroup, FormControlLabel, Checkbox, Typography, Divider } from '@mui/material';
 
 const categories = [
   { label: '전체보기', value: 'all' },
-  { label: '인공지능', value: 'ai' },
-  { label: '빅데이터', value: 'bigdata' },
-  { label: '게임', value: 'game' },
-  { label: '의료 · 보건', value: 'health' },
-  { label: '에너지 · 화학', value: 'energy' },
-  { label: '금융', value: 'finance' },
+  { label: '인공지능', value: '인공지능' },
+  { label: '빅데이터', value: '빅데이터' },
+  { label: '게임', value: '게임' },
+  { label: '의료 · 보건', value: '의료 · 보건' },
+  { label: '에너지 · 화학', value: '에너지 · 화학' },
+  { label: '금융', value: '금융' },
 ];
 
 const Sidebar = ({ selectedCategories, setSelectedCategories }) => {
-  const handleCategoryChange = (event) => {
-    const { value, checked } = event.target;
+  const handleCategoryChange = (value) => {
     if (value === 'all') {
-      setSelectedCategories(checked ? ['all'] : []);
+      setSelectedCategories(['all']);
     } else {
       setSelectedCategories(prev => {
-        if (checked) {
-          return [...prev.filter(cat => cat !== 'all'), value];
-        } else {
+        if (prev.includes(value)) {
           const newCategories = prev.filter(cat => cat !== value);
           return newCategories.length === 0 ? ['all'] : newCategories;
+        } else {
+          return [...prev.filter(cat => cat !== 'all'), value];
         }
       });
     }
@@ -30,44 +29,33 @@ const Sidebar = ({ selectedCategories, setSelectedCategories }) => {
 
   return (
     <Box
-      sx={{
-        border: '1px solid #ddd',
-        borderRadius: '10px',
-        p: 3,
-        mt: '30px',
-        ml: '50px',
-        height: '400px',
-        width: '250px',
-        flexShrink: 0,
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        backgroundColor: '#f9f9f9',
-      }}
+      borderWidth="1px"
+      borderRadius="lg"
+      p={6}
+      mt={8}
+      ml={8}
+      h="fit-content"
+      w="250px"
+      flexShrink={0}
+      boxShadow="md"
+      bg="white"
     >
-      <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
+      <Text fontSize="xl" fontWeight="bold" mb={4}>
         카테고리
-      </Typography>
-      <Divider sx={{ my: 2 }} />
-      <FormGroup sx={{ alignItems: 'flex-start' }}>
+      </Text>
+      <Divider mb={4} />
+      <VStack align="stretch" spacing={3}>
         {categories.map((category) => (
-          <FormControlLabel
+          <Checkbox
             key={category.value}
-            control={
-              <Checkbox
-                checked={selectedCategories.includes(category.value)}
-                onChange={handleCategoryChange}
-                value={category.value}
-                sx={{
-                  color: '#333',
-                  '&.Mui-checked': {
-                    color: '#1976d2',
-                  },
-                }}
-              />
-            }
-            label={<Typography sx={{ fontSize: '0.95rem', color: '#555' }}>{category.label}</Typography>}
-          />
+            isChecked={selectedCategories.includes(category.value)}
+            onChange={() => handleCategoryChange(category.value)}
+            colorScheme="teal"
+          >
+            <Text fontSize="md">{category.label}</Text>
+          </Checkbox>
         ))}
-      </FormGroup>
+      </VStack>
     </Box>
   );
 };

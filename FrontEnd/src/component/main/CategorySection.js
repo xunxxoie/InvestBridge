@@ -18,29 +18,29 @@ const CategoryCard = ({ icon, label, value }) => {
         boxShadow: 'xl',
         bg: 'whiteAlpha.200',
       }}
-      onClick={() => navigate(`/idea?category=${value}`)}
+      onClick={() => navigate(`/ideas?category=${value}`)}
     >
-      <Icon as={icon} w={10} h={10} mb={3} />
-      <Text fontWeight="semibold">{label}</Text>
+      <Icon as={icon} w={10} h={10} mb={3} color="brand.300" />
+      <Text fontWeight="semibold" fontSize="lg">{label}</Text>
     </VStack>
   );
 };
 
 export default function CategorySection() {
   const categories = [
-    { icon: FaBrain, label: '#인공지능', value: 'ai' },
-    { icon: FaChartBar, label: '#빅데이터', value: 'bigdata' },
-    { icon: FaGamepad, label: '#게임', value: 'game' },
-    { icon: FaHeartbeat, label: '#의료 #보건', value: 'health' },
-    { icon: FaMoneyBillWave, label: '#금융 #경제', value: 'finance' },
+    { icon: FaBrain, label: '#인공지능', value: '인공지능' },
+    { icon: FaChartBar, label: '#빅데이터', value: '빅데이터' },
+    { icon: FaGamepad, label: '#게임', value: '게임' },
+    { icon: FaHeartbeat, label: '#의료 #보건', value: '의료 · 보건' },
+    { icon: FaMoneyBillWave, label: '#금융 #경제', value: '금융' },
   ];
 
   return (
-    <Box py={16}>
-      <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={10}>
+    <Box py={16} bg="black">
+      <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={10} color="white">
         카테고리
       </Text>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={10} px={5}>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 5 }} spacing={10} px={5} maxW="container.xl" mx="auto">
         {categories.map((category, index) => (
           <CategoryCard key={index} {...category} />
         ))}

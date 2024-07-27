@@ -8,6 +8,7 @@ import './App.css';
 import IdeaDetailPage from './pages/idea/IdeaDetailPage';
 import IdeaPage from './pages/idea/IdeaPage';
 import IdeaSubmitPage from './pages/idea/IdeaSubmitPage';
+import AboutPage from './pages/main/AboutPage';
 import DreamerPage from './pages/main/DreamerPage';
 import LoginPage from './pages/main/LoginPage';
 import MainPage from './pages/main/MainPage';
@@ -49,8 +50,10 @@ function App() {
               <Route path="/dreamer" element={<DreamerPage />} />
               <Route path="/dreamer/write" element={<IdeaSubmitPage />} />
               <Route path="/supporter" element={<SupporterPage />} />
-              <Route path="/idea" element={<IdeaPage />} />
-              <Route path="/idea/detail" element={<IdeaDetailPage />} />
+              <Route path="/ideas" element={<IdeaPage />} />
+              <Route path="/ideas/*" element={<IdeaPage />} />
+              <Route path="/ideas/detail/:id" element={<IdeaDetailPage />} />
+              <Route path="/about" element={<AboutPage/>} />
               <Route path="/profile" element={<ProfilePage />}/>
             </Routes>
           </div>

@@ -1,6 +1,6 @@
-import { Box, ChakraProvider, extendTheme, Flex, Image, VStack } from '@chakra-ui/react';
+import { Box, ChakraProvider, extendTheme, Flex, Heading, Image, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import IdeaCard from '../../component/category/IdeaCard';
 import Sidebar from "../../component/category/Sidebar";
 import Header from "../../component/main/Header";
@@ -30,9 +30,8 @@ const theme = extendTheme({
 });
 
 export default function IdeaPage() {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const initialCategory = queryParams.get('category');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category');
 
   const [projects, setProjects] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(initialCategory ? [initialCategory] : ['all']);
@@ -41,6 +40,13 @@ export default function IdeaPage() {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    const category = searchParams.get('category');
+    if (category && !selectedCategories.includes(category)) {
+      setSelectedCategories([category]);
+    }
+  }, [searchParams, selectedCategories]);
 
   const fetchProjects = async () => {
     try {
@@ -71,28 +77,74 @@ export default function IdeaPage() {
     }
   }, [selectedCategories, projects]);
 
+  const handleCategoryChange = (newCategories) => {
+    if (newCategories.length === 1 && newCategories[0] !== 'all') {
+      setSearchParams({ category: newCategories[0] });
+    } else {
+      setSearchParams({});
+    }
+    setSelectedCategories(newCategories);
+  };
+
   return (
     <ChakraProvider theme={theme}>
       <Header />
-      <Box bg="brand.50" py={0} textAlign="center">
+      <Box position="relative">
         <Image
           src={topImage}
           alt="Hero"
           objectFit="cover"
           w="100%"
-          h="250px"
+          h="300px"
+          filter="brightness(0.5)"
         />
+        <Box
+          position="absolute"
+          top="50%"
+          left="50%"
+          transform="translate(-50%, -50%)"
+          textAlign="center"
+          color="white"
+          zIndex={2}
+          width="100%"
+          px={4}
+        >
+          <Box
+            p={6}
+            borderRadius="md"
+            maxWidth="800px"
+            margin="0 auto"
+          >
+            <Heading 
+              as="h1" 
+              size="2xl" 
+              mb={4} 
+              mt={10}
+              textShadow="2px 2px 4px rgba(0,0,0,0.8)"
+            >
+              혁신적인 아이디어를 찾아보세요
+            </Heading>
+            <Text 
+              fontSize="xl"
+              textShadow="1px 1px 2px rgba(0,0,0,0.6)"
+            >
+              당신의 지원으로 꿈이 현실이 됩니다
+            </Text>
+          </Box>
+        </Box>
       </Box>
-      <Flex>
+      <Flex p={8} bg="gray.50">
         <Sidebar
           selectedCategories={selectedCategories}
-          setSelectedCategories={setSelectedCategories}
+          setSelectedCategories={handleCategoryChange}
         />
-        <VStack spacing={8} align="stretch" flex={1} p={8}>
+        <Wrap spacing={8} justify="flex-start" flex={1} p={8}>
           {filteredProjects.map(project => (
-            <IdeaCard key={project.id} project={project} />
+            <WrapItem key={project.id}>
+              <IdeaCard project={project} />
+            </WrapItem>
           ))}
-        </VStack>
+        </Wrap>
       </Flex>
     </ChakraProvider>
   );

@@ -30,7 +30,7 @@ const NavItem = ({ children, to = '/', color }) => (
   </Link>
 );
 
-export default function Header({ bgColor = 'transparent', textColor = 'white' }) {
+export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'white' }) {
   const { isOpen, onToggle } = useDisclosure();
 
   return (
@@ -65,7 +65,8 @@ export default function Header({ bgColor = 'transparent', textColor = 'white' })
             <Stack direction={'row'} spacing={4}>
               <NavItem to="/dreamer" color={textColor}>Dreamer</NavItem>
               <NavItem to="/supporter" color={textColor}>Supporter</NavItem>
-              <NavItem to="/idea" color={textColor}>Idea</NavItem>
+              <NavItem to="/ideas" color={textColor}>Idea</NavItem>
+              <NavItem to="/about" color={textColor}>About</NavItem>
             </Stack>
           </Flex>
         </Flex>
@@ -130,6 +131,7 @@ export default function Header({ bgColor = 'transparent', textColor = 'white' })
             <NavItem to="/dreamer" color={textColor}>Dreamer</NavItem>
             <NavItem to="/supporter" color={textColor}>Supporter</NavItem>
             <NavItem to="/idea" color={textColor}>Idea</NavItem>
+            <NavItem to="/about" color={textColor}>About</NavItem>
           </Stack>
         </Box>
       )}
