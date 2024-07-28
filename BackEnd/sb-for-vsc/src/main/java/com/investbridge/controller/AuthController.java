@@ -49,22 +49,22 @@ public class AuthController {
                 .path("/")
                 .build();
 
-            logger.info("Login Successful for {}", request.getUserEmail());
+            logger.info("Login Succeed {} ", request.getUserEmail());
 
             return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(response);
 
         }catch(BadCredentialsException e){
-            logger.info("Login Failed with Auth problem for {}", request.getUserEmail());
+            logger.info("Login Failed : PASSWORD DISMATCHED {} ", request.getUserEmail());
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponse("Login Failed", e.getMessage()));
+                .body(new ErrorResponse("Login Failed : {} ", e.getMessage()));
         }catch(Exception e){
-            logger.info("Login Failed with Server Error for {}", request.getUserEmail());
+            logger.info("Login Failed : INTERNAL SERVER ERROR : {}", request.getUserEmail());
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("Unknown Error is occured", e.getMessage()));
+                .body(new ErrorResponse("Login Failed : {}", e.getMessage()));
         }
     }
 
@@ -73,14 +73,14 @@ public class AuthController {
     public ResponseEntity<?> join(@RequestBody RegisterRequestDTO request){
         try{
             RegisterResponseDTO response = authService.join(request); 
-            logger.info("Join Successful for {}", request.getUserEmail());
+            logger.info("Join Succeed {}", request.getUserEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }catch(RuntimeException e){
-            logger.info("Join Failed with duplicated Email Problem {]", request.getUserEmail());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already exits");
+            logger.info("Join Failed : EMAIL ALREADY EXITS", request.getUserEmail());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Join Failed : {} ", e.getMessage()));
         }catch(Exception e){
-            logger.info("Join Failed with server Error for {}", request.getUserEmail());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Unknown Error is occured", e.getMessage()));
+            logger.info("Join Failed : INTERNAL SERVER ERROR : {}", request.getUserEmail());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Join Failed : {} ", e.getMessage()));
         }
 
     }

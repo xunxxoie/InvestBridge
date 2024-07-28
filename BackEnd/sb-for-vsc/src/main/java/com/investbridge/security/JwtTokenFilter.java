@@ -37,7 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         
         try {
             if (!jwtTokenProvider.validateToken(token)) {
-                throw new BadCredentialsException("Not available Jwt token!");
+                throw new BadCredentialsException("Not Available Authority");
             }
             
             String userEmail = jwtTokenProvider.getUserEmailFromToken(token);
@@ -47,12 +47,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         } catch (BadCredentialsException e) {
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("인증 실패: " + e.getMessage());
+            response.getWriter().write("Authentication failed: " + e.getMessage());
             return;
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("서버 오류");
+            response.getWriter().write("Internal Server Error");
             return;
         }
 

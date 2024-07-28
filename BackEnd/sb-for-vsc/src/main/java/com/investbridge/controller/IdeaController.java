@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.dto.Http.IdeaRequestDTO;
 import com.investbridge.dto.Http.IdeaResponseDTO;
+import com.investbridge.exception.ErrorResponse;
 import com.investbridge.model.Idea;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.IdeaService;
@@ -28,6 +29,7 @@ import io.swagger.v3.oas.annotations.Operation;
 @RestController
 @RequestMapping("/api/ideas")
 public class IdeaController {
+
     private final IdeaService ideaService;
     private final JwtTokenProvider jwtTokenProvider;
     private static final Logger logger = LoggerFactory.getLogger(IdeaController.class);
@@ -43,8 +45,8 @@ public class IdeaController {
     public ResponseEntity<?> createIdea(@ModelAttribute IdeaRequestDTO request, @CookieValue(name="jwt", required = false) String token){
         
         if(token == null){
-            logger.error("There is no token for authentication");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is needed");
+            logger.error("There is no Authority to Create Ideas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is Needed");
         }
 
         String userName = jwtTokenProvider.getUserbyToken(token).getUserName();
@@ -52,14 +54,14 @@ public class IdeaController {
 
         try{
             IdeaResponseDTO response = ideaService.createIdea(request);
-            logger.info("createIdea Successful for {}", request.getTitle());
+            logger.info("Create Idea Succeed {}", request.getTitle());
             return ResponseEntity.ok(response);
         }catch(RuntimeException e){
-            logger.error("File upload Failed {} ", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("File Upload Failed");
+            logger.error("Create Idea Failed : FILE ERROR : {} ", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(new ErrorResponse("File Upload Failed : {} ", e.getMessage()));
         }catch(Exception e){
-            logger.error("Unexpected Error Occur {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error");
+            logger.error("Create Idea Failed : INTERNAL SERVER ERROR : {} ", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Create Idea Failed : {} " , e.getMessage()));
         }
     }
 
@@ -69,17 +71,17 @@ public class IdeaController {
     @Operation(summary = "아이디어 전체 불러오기", description = "전체 아이디어를 불러옵니다.")
     public ResponseEntity<?> getAllIdea(@CookieValue(name="jwt", required = false)String token){
         if(token == null){
-            logger.error("There is no token for authentication");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is needed");
+            logger.error("There is no Authority to Load Ideas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is Needed");
         }
 
         try{
             List<Idea> response = ideaService.getAllIdeas();
-            logger.info("Get All idea from db is complete");
+            logger.info("Load All Idea Succeed");
             return ResponseEntity.ok(response);
         }catch(Exception e){
-            logger.error("Unexpected Error Occur {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
+            logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Load All Idea Failed : {} ", e.getMessage() ));
         }
     }
 
@@ -88,19 +90,17 @@ public class IdeaController {
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
     public ResponseEntity<?> getIdea(@CookieValue(name="jwt", required = false)String token, @PathVariable String id) {
         if(token == null){
-            logger.error("There is no token for authentication");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is needed");
+            logger.error("There is no Authority to Load Ideas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is Needed");
         }
 
         try{
             Idea response = ideaService.getIdea(id);
-            logger.info("Get idea from db is complete {}", response.getId());
+            logger.info("Load Idea Succeed : {} ", response.getId());
             return ResponseEntity.ok(response);
         }catch (Exception e){
-            logger.error("Unexpected Error Occur {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected Error Occur");
+            logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Load Idea Failed : {} ", e.getMessage() ));
         }
     }
-    
-
 }

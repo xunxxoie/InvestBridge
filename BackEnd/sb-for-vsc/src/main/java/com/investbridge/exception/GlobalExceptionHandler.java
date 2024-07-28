@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllUncaughtException(Exception ex) {
         logger.error("Unexpected error occurred", ex);
-        ErrorResponse error = new ErrorResponse("SYS-001", "An unexpected error occurred");
+        ErrorResponse error = new ErrorResponse("SYS-001", "Internal Server Error");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

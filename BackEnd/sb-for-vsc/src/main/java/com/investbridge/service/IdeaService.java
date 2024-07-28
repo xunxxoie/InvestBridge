@@ -46,7 +46,7 @@ public class IdeaService {
                     
                     fileMetadata.add(metadata);
                 }catch(IOException e){
-                    throw new RuntimeException("Problem with this File: " + file.getOriginalFilename());
+                    throw new RuntimeException("Error is occurred with File : " + file.getOriginalFilename());
                 }
             }
         }

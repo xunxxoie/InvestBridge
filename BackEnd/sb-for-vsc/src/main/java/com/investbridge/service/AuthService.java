@@ -43,7 +43,7 @@ public class AuthService {
     public RegisterResponseDTO join(RegisterRequestDTO request){
         
         if(userRepository.findByUserEmail(request.getUserEmail()).isPresent())
-            throw new RuntimeException("Already Used Email!!");
+            throw new RuntimeException("Already Exits Email");
 
         String encodedUserPw = securityConfig.passwordEncoder().encode(request.getUserPw());
 
