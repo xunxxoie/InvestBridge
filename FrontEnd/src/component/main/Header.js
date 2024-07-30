@@ -13,7 +13,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const NavItem = ({ children, to = '/', color }) => (
   <Link to={to}>
@@ -31,7 +31,24 @@ const NavItem = ({ children, to = '/', color }) => (
 );
 
 export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'white' }) {
+  const navigate = useNavigate();
   const { isOpen, onToggle } = useDisclosure();
+
+  const handleLogout = async () =>{
+    try{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/logout`, {
+        method : 'POST',
+        credentials : 'include'
+      });
+
+      if(response.ok){
+        console.log('Logout Succeed');
+        navigate('/');
+      }
+    }catch(error){
+      console.log('Logout Failed : Unexpected Error');
+    }
+  }
 
   return (
     <Box position="fixed" w="100%" zIndex={1000}>
@@ -103,7 +120,7 @@ export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'wh
                 <MenuItem as={Link} to="/profile" bg="gray.800" _hover={{ bg: 'gray.700' }}>
                     Profile
                 </MenuItem>
-                <MenuItem as={Link} to="/logout" bg="gray.800" _hover={{ bg: 'gray.700' }}>
+                <MenuItem onClick={handleLogout} bg="gray.800" _hover={{ bg: 'gray.700' }}>
                     Logout
                 </MenuItem>
                 </MenuList>

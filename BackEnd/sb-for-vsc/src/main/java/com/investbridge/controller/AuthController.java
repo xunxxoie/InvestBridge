@@ -56,7 +56,7 @@ public class AuthController {
                 .body(response);
 
         }catch(BadCredentialsException e){
-            logger.info("Login Failed : PASSWORD DISMATCHED {} ", request.getUserEmail());
+            logger.info("Login Failed : PASSWORD DISMATCHED");
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse("Login Failed : {} ", e.getMessage()));

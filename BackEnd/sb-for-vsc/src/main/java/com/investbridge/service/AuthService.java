@@ -1,6 +1,7 @@
 package com.investbridge.service;
 
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,19 +12,21 @@ import com.investbridge.dto.Http.RegisterResponseDTO;
 import com.investbridge.model.User;
 import com.investbridge.repository.UserRepository;
 import com.investbridge.security.JwtTokenProvider;
-import com.investbridge.security.SecurityConfig;
+import com.investbridge.security.TokenBlacklist;
 
 @Service
 @Transactional
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final SecurityConfig securityConfig;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenBlacklist tokenBlacklist;
 
-    public AuthService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, SecurityConfig securityConfig) {
+    public AuthService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder, TokenBlacklist tokenBlacklist) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.securityConfig = securityConfig;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
     // Login Service Logic
@@ -31,7 +34,7 @@ public class AuthService {
         User user = userRepository.findByUserEmail(request.getUserEmail()) // Find the user whose email address matches.
                 .orElseThrow(() -> new BadCredentialsException("Invalid Email")); // Throws error when find user fail.
 
-        if (!securityConfig.passwordEncoder().matches(request.getUserPw(), user.getUserPw())) {
+        if (!passwordEncoder.matches(request.getUserPw(), user.getUserPw())) {
             throw new BadCredentialsException("Invalid Password");
         }
 
@@ -45,7 +48,7 @@ public class AuthService {
         if(userRepository.findByUserEmail(request.getUserEmail()).isPresent())
             throw new RuntimeException("Already Exits Email");
 
-        String encodedUserPw = securityConfig.passwordEncoder().encode(request.getUserPw());
+        String encodedUserPw = passwordEncoder.encode(request.getUserPw());
 
         User newUser = User.builder()
             .userId(request.getUserId())

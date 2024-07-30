@@ -20,7 +20,7 @@ public class SwaggerConfig {
                                 new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
                 .info(new Info()
                         .title("InvestBridge API")
-                        .version("1.0")
+                        .version("1.0") 
                         .description("InvestBridge 프로젝트의 API 문서"));
                     
     }
