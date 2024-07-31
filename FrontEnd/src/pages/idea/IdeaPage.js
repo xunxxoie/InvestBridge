@@ -54,12 +54,13 @@ export default function IdeaPage() {
         method: 'GET',
         credentials: 'include'
       });
-
+      console.log(1)
       if (!response.ok) {
         throw new Error('Internal Server Error')
       }
 
       const data = await response.json();
+      console.log(data)
       setProjects(data);
     } catch (error) {
       console.error('There is no Data in DB');

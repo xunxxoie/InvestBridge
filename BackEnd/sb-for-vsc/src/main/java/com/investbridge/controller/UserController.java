@@ -35,5 +35,53 @@ public class UserController {
 
         return ResponseEntity.ok(newUser);
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> readprofile(@CookieValue(name = "jwt", required = false)String token){
+        if(token == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("There is no token");
+        try {
+            UserDTO newUser = jwtTokenProvider.getUserbyToken(token);
+            if (newUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+            return ResponseEntity.ok(newUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving user information");
+        }
+            
+    }
+
+    // @GetMapping("/profile")
+    // public ResponseEntity<?> readUser(@CookieValue(name = "jwt", required = false)String token){
+    //     if(token == null)
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("There is no token");
+        
+    //     UserDTO profileDTO = jwtTokenProvider.getUserbyToken(token);
+
+    //     return ResponseEntity.ok(profileDTO);
+    // }
+
+
+    // @GetMapping("/profile")
+    // public ResponseEntity<UserDTO> getUserProfile(@CookieValue(name = "jwt", required = false) String token) {
+    //     if (token == null) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    //     }
+
+    //     if (!jwtTokenProvider.validateToken(token)) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    //     }
+
+    //     String userId = jwtTokenProvider.getUserbyToken(token);
+    //     if (userId == null) {
+    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    //     }
+
+    //     UserDTO profileDTO = userService.getUserProfile(userId);
+    //     return ResponseEntity.ok(UserDTO);
+    // }
+
+
 }
 

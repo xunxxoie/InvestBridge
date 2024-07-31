@@ -9,17 +9,17 @@ import {
 import React from 'react';
 import { FaBirthdayCake, FaEnvelope, FaLightbulb, FaPhone } from 'react-icons/fa';
 
-const DetailedProfileInfo = () => {
+const DetailedProfileInfo = ({ userEmail, birth, phoneNumber, userInterest }) => {
     return (
         <Box bg="white" p={6} borderRadius="xl" boxShadow="lg" transition="all 0.3s" _hover={{ boxShadow: "xl" }}>
             <VStack align="stretch" spacing={4}>
                 <Text fontSize="xl" fontWeight="bold" color="brand.900">상세 프로필</Text>
                 <Divider />
                 <VStack align="stretch" spacing={3}>
-                    <InfoItem icon={FaEnvelope} value="johndoe@example.com" />
-                    <InfoItem icon={FaBirthdayCake}  value="1990-01-01" />
-                    <InfoItem icon={FaPhone}  value="010-1234-5678" />
-                    <InfoItem icon={FaLightbulb}  value="AI, 빅데이터, 블록체인" />
+                    <InfoItem icon={FaEnvelope} value={userEmail} />
+                    {/* <InfoItem icon={FaBirthdayCake}  value={new Date(birth).toLocaleDateString()} /> */}
+                    <InfoItem icon={FaPhone}  value={phoneNumber} />
+                    {/* <InfoItem icon={FaLightbulb}  value={userInterest} /> */}
                 </VStack>
             </VStack>
         </Box>

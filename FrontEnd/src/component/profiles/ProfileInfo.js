@@ -10,16 +10,16 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { FaHeart, FaStar, FaUserPlus } from 'react-icons/fa';
+
   
-  const ProfileInfo = () => {
+  const ProfileInfo = ({ userName }) => {
     return (
       <Box bg="white" p={8} borderRadius="xl" boxShadow="lg" mb={8} position="relative" overflow="hidden">
         <Box position="absolute" top="-20px" right="-20px" w="150px" h="150px" bg="brand.100" borderRadius="full" zIndex="0" />
         <VStack spacing={6} align="stretch" position="relative" zIndex="1">
           <Flex justifyContent="center" alignItems="center">
-            <Avatar size="2xl" name="John Doe" src="https://bit.ly/broken-link" border="4px solid" borderColor="brand.500" />
+            <Avatar size="2xl" name={userName} src="https://bit.ly/broken-link" border="4px solid" borderColor="brand.500" />
           </Flex>
-          <Text fontSize="3xl" fontWeight="bold" textAlign="center" color="brand.900">John Doe</Text>
           <HStack justifyContent="center" spacing={8}>
             <StatItem icon={FaHeart} value="1.2k" label="좋아요"/>
             <StatItem icon={FaStar} value="3.5k" label="스크랩" />

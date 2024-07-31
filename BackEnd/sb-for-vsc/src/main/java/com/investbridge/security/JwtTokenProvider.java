@@ -103,4 +103,16 @@ public class JwtTokenProvider {
             .getBody()
             .getExpiration();
     }
+
+    // public String getUserIdFromToken(String token) {
+    //     Claims claims = Jwts.parserBuilder()
+    //             .setSigningKey(key)
+    //             .build()
+    //             .parseClaimsJws(token)
+    //             .getBody();
+        
+    //     return claims.get("userId", String.class);
+    // }
+
+    
 }

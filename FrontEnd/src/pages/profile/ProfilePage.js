@@ -5,8 +5,11 @@ import {
   extendTheme,
   Grid,
   useColorModeValue,
+  Spinner,
+  Text,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Header from '../../component/main/Header';
 import DetailedProfileInfo from '../../component/profiles/DetailedProfileInfo';
 import ProfileInfo from '../../component/profiles/ProfileInfo';
@@ -51,6 +54,60 @@ const Profile = () => {
     { title: "AR 교육 플랫폼", team: "Team #6" },
   ];
 
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
+          method: 'GET',
+          credentials: 'include' // This is equivalent to withCredentials: true in axios
+        });
+        
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        setProfileData(data);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        setError('프로필 정보를 가져오는 데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchProfileData();
+  }, []);
+  if (loading) {
+    return (
+      <ChakraProvider theme={theme}>
+        <Box minHeight="100vh" bg={bgColor}>
+          <Header bgColor="black" textColor="white" />
+          <Container maxW="container.xl" pt="120px" centerContent>
+            <Spinner />
+          </Container>
+        </Box>
+      </ChakraProvider>
+    );
+  }
+
+  if (error) {
+    return (
+      <ChakraProvider theme={theme}>
+        <Box minHeight="100vh" bg={bgColor}>
+          <Header bgColor="black" textColor="white" />
+          <Container maxW="container.xl" pt="120px" centerContent>
+            <Text color="red.500">{error}</Text>
+          </Container>
+        </Box>
+      </ChakraProvider>
+    );
+  }
+
   return (
     <ChakraProvider theme={theme}>
     <Box minHeight="100vh" bg={bgColor}>
@@ -63,8 +120,15 @@ const Profile = () => {
           justifyContent="center"
         >
           <Box>
-            <ProfileInfo />
-            <DetailedProfileInfo />
+            <ProfileInfo 
+            userName={profileData.userName}
+            />
+            <DetailedProfileInfo 
+            userEmail={profileData.userEmail}
+            // birth={profileData.birth}
+            phoneNumber={profileData.phoneNumber}
+            // userInterest={profileData.userInterest}
+            />
           </Box>
           <Box>
             <ProjectSection title="My Dream" projects={myProjects} />
