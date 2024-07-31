@@ -35,7 +35,7 @@ public class JwtTokenProvider {
                                 .setSubject(userEmail)
                                 .setIssuedAt(now) // Token Generated Time
                                 .setExpiration(new Date(now.getTime() + validateTime)); // Expiration based on validateTime
-
+        
         // Add Customized Claims
         claims.put("userId", userId);
         claims.put("userName", userName);
@@ -77,6 +77,16 @@ public class JwtTokenProvider {
         );
     }
 
+    public String getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        
+        return claims.get("userId", String.class);
+    }
+
     public String getUserEmailFromToken(String token){
         return Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -103,16 +113,4 @@ public class JwtTokenProvider {
             .getBody()
             .getExpiration();
     }
-
-    // public String getUserIdFromToken(String token) {
-    //     Claims claims = Jwts.parserBuilder()
-    //             .setSigningKey(key)
-    //             .build()
-    //             .parseClaimsJws(token)
-    //             .getBody();
-        
-    //     return claims.get("userId", String.class);
-    // }
-
-    
 }

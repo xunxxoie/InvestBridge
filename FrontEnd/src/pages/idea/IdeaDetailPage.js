@@ -46,7 +46,7 @@ const IdeaDetailPage = () => {
         method: 'GET',
         credentials: 'include'
       });
-
+      
       if (!response.ok) {
         throw new Error('Internal Server Error');
       }
@@ -110,7 +110,7 @@ const IdeaDetailPage = () => {
                   color="white"
                   textShadow="1px 1px 3px rgba(0,0,0,0.5)"
                 >
-                  <Text fontSize="4xl" fontWeight="bold" mb={3}>{idea}</Text>
+                  <Text fontSize="4xl" fontWeight="bold" mb={3}>{idea.title}</Text>
                   <Text fontSize="xl">{idea.userName}</Text>
                 </Box>
 
