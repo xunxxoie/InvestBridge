@@ -1,10 +1,11 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import '@coreui/coreui/dist/css/coreui.min.css';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
-
+import AdminPage from './pages/admin/AdminPage';
 import IdeaDetailPage from './pages/idea/IdeaDetailPage';
 import IdeaPage from './pages/idea/IdeaPage';
 import IdeaSubmitPage from './pages/idea/IdeaSubmitPage';
@@ -55,6 +56,8 @@ function App() {
               <Route path="/ideas/detail/:id" element={<IdeaDetailPage />} />
               <Route path="/about" element={<AboutPage/>} />
               <Route path="/profile" element={<ProfilePage />}/>
+
+              <Route path="/admin/main" element={<AdminPage />}/>
             </Routes>
           </div>
         </Router>

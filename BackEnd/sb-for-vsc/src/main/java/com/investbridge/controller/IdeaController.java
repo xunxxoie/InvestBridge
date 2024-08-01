@@ -60,7 +60,7 @@ public class IdeaController {
             logger.error("Create Idea Failed : FILE ERROR : {} ", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(new ErrorResponse("File Upload Failed : {} ", e.getMessage()));
         }catch(Exception e){
-            logger.error("Create Idea Failed : INTERNAL SERVER ERROR : {} ", e.getMessage());
+            logger.error("Create Idea Failed :  INTERNAL SERVER ERROR : {} ", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Create Idea Failed : {} " , e.getMessage()));
         }
     }

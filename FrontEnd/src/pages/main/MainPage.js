@@ -1,4 +1,4 @@
-import { ChakraProvider, CircularProgress, extendTheme } from '@chakra-ui/react';
+import { Box, Button, ChakraProvider, CircularProgress, extendTheme, Link } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategorySection from "../../component/main/CategorySection";
@@ -84,9 +84,26 @@ export default function MainPage() {
 
   return (
     <ChakraProvider theme={theme}>
-      <Header />
-      <HeroSection />
-      <CategorySection />
-    </ChakraProvider>
+    <Header />
+    <HeroSection />
+    <CategorySection />
+    <Box 
+      as="footer" 
+      textAlign="right" 
+      py={4} 
+      px={6}
+    >
+      <Button 
+        as={Link} 
+        href="/admin/main" 
+        size="sm" 
+        variant="ghost" 
+        color="gray.500" 
+        _hover={{ color: "gray.700" }}
+      >
+        관리자
+      </Button>
+    </Box>
+  </ChakraProvider>
   );
 }

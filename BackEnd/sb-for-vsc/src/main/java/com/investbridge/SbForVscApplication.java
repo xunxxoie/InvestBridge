@@ -11,5 +11,4 @@ public class SbForVscApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SbForVscApplication.class, args);
 	}
-
 }
