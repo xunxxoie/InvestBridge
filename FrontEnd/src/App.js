@@ -1,5 +1,4 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import '@coreui/coreui/dist/css/coreui.min.css';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import React from 'react';

@@ -1,4 +1,3 @@
-import '@coreui/coreui/dist/css/coreui.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';

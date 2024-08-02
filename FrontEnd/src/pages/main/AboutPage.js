@@ -1,6 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, ChakraProvider, extendTheme, Flex, Heading, Icon, Image, Text, VStack } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, ChakraProvider, Divider, extendTheme, Flex, Heading, HStack, Icon, Image, Text, VStack } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import patchImg from "../../image/patchNote.png";
 import Header from "./components/Header";
 
@@ -33,7 +33,6 @@ const theme = extendTheme({
   },
 });
 
-
 const MenuItem = ({ label, isSelected, isExpanded, onClick, depth = 0, hasChildren = false }) => (
   <Flex
     py={3}
@@ -63,14 +62,79 @@ const MenuItem = ({ label, isSelected, isExpanded, onClick, depth = 0, hasChildr
   </Flex>
 );
 
+const PatchNoteContent = ({ patchNote }) => (
+  <VStack align="stretch" spacing={6} bg="white" p={8} borderRadius="lg" boxShadow="xl">
+    <Box borderRadius="md" overflow="hidden">
+      <Image 
+        src={patchImg} 
+        alt="Patch Note Header" 
+        width="75%" 
+        height="200px"
+        objectFit="fit"
+      />
+    </Box>
+    <Divider />
+    <HStack spacing={4} justifyContent="space-between">
+      <Text fontWeight="bold" color="gray.700">Version: {patchNote.version}</Text>
+      <Text color="gray.500">Author ID: {patchNote.adminId}</Text>
+    </HStack>
+    <Divider />
+    <VStack align="stretch" spacing={4}>
+      <Heading size="lg" color="black">{patchNote.title}</Heading>
+      <Text fontSize="md" color="gray.700" whiteSpace="pre-wrap">
+        {patchNote.content || "Content is not available at the moment. Please check back later."}
+      </Text>
+    </VStack>
+  </VStack>
+);
+
 const AboutPage = () => {
   const [selectedItem, setSelectedItem] = useState('기업소개');
   const [expandedItems, setExpandedItems] = useState({});
+  const [versions, setVersions] = useState([]);
+  const [selectedPatchNote, setSelectedPatchNote] = useState(null);
+
+  useEffect(() => {
+    const fetchVersions = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnotes-versions`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const versionValues = data.map(item => {
+          const parsedItem = JSON.parse(item);
+          return parsedItem.version;
+        });
+        setVersions(versionValues);
+      } catch (error) {
+        console.error("버전 목록을 가져오는데 실패했습니다:", error);
+      }
+    };
+
+    fetchVersions();
+  }, []);
+
+  const fetchPatchNote = async (version) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnote/${version}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setSelectedPatchNote(data);
+    } catch (error) {
+      console.error(`${version} 패치노트를 가져오는데 실패했습니다:`, error);
+    }
+  };
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
     if (item === '패치노트') {
       setExpandedItems(prev => ({ ...prev, '패치노트': !prev['패치노트'] }));
+    } else if (item.startsWith('버전')) {
+      const version = item.split(' ')[1];
+      fetchPatchNote(version);
     } else {
       setExpandedItems(prev => ({ ...prev, '패치노트': false }));
     }
@@ -85,14 +149,21 @@ const AboutPage = () => {
       case 'INFO':
         return "추가 정보 및 중요 공지사항은 이 섹션에서 확인하실 수 있습니다.";
       default:
-        return selectedItem.startsWith('버전') ? `${selectedItem}에 대한 패치노트 내용입니다.` : "";
+        if (selectedItem.startsWith('버전')) {
+          return selectedPatchNote ? (
+            <PatchNoteContent patchNote={selectedPatchNote} />
+          ) : (
+            "패치노트 로딩 중..."
+          );
+        }
+        return "";
     }
   };
 
   const menuItems = [
     { label: '기업소개' },
     { label: 'INFO' },
-    { label: '패치노트', children: ['1.0.2', '1.0.1', '1.0.0'] },
+    { label: '패치노트', children: versions },
   ];
 
   const isPatchNoteSelected = selectedItem.startsWith('버전');
@@ -119,12 +190,12 @@ const AboutPage = () => {
                     />
                     {item.children && expandedItems[item.label] && (
                       <VStack align="stretch" spacing={0} pl={4} bg="gray.50">
-                        {item.children.map((child, childIndex) => (
+                        {item.children.map((version, index) => (
                           <MenuItem
-                            key={childIndex}
-                            label={`버전 ${child}`}
-                            isSelected={selectedItem === `버전 ${child}`}
-                            onClick={() => setSelectedItem(`버전 ${child}`)}
+                            key={index}
+                            label={`버전 ${version}`}
+                            isSelected={selectedItem === `버전 ${version}`}
+                            onClick={() => handleItemClick(`버전 ${version}`)}
                             depth={1}
                           />
                         ))}
@@ -134,7 +205,7 @@ const AboutPage = () => {
                 ))}
               </VStack>
             </Box>
-            <Box flex={1} p={8}>
+            <Box flex={1} p={8} bg="gray.50">
               <VStack align="stretch" spacing={8}>
                 <Breadcrumb fontSize="sm" color="gray.500">
                   <BreadcrumbItem>
@@ -147,19 +218,7 @@ const AboutPage = () => {
                     <BreadcrumbLink href="#">{selectedItem}</BreadcrumbLink>
                   </BreadcrumbItem>
                 </Breadcrumb>
-                {isPatchNoteSelected && (
-                  <Box p={1} display="flex" justifyContent="center" alignItems="center">
-                    <Image
-                      src={patchImg}
-                      alt="Example Image"
-                      objectFit="contain"
-                      width="75%"
-                      height="75%"
-                      borderRadius="md"
-                    />
-                  </Box>
-                )}
-                <Text fontSize="lg" color="gray.700" lineHeight="tall">{renderContent()}</Text>
+                {renderContent()}
               </VStack>
             </Box>
           </Flex>
