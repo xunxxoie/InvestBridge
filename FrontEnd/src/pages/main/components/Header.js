@@ -73,6 +73,7 @@ export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'wh
                 textTransform={'uppercase'}
                 letterSpacing={'wider'}
                 mb={0}
+                mt={1}
               >
                 InvestBridge
               </Text>

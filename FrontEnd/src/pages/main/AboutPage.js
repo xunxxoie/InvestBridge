@@ -1,8 +1,38 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, ChakraProvider, Flex, Heading, Icon, Image, Text, VStack } from '@chakra-ui/react';
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, ChakraProvider, extendTheme, Flex, Heading, Icon, Image, Text, VStack } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import patchImg from "../../image/patchNote.png";
 import Header from "./components/Header";
+
+const theme = extendTheme({
+  styles: {
+    global: {
+      body: {
+        bg: '#000000',
+        color: 'white',
+      },
+    },
+  },
+  fonts: {
+    heading: '"Poppins", sans-serif',
+    body: '"Inter", sans-serif',
+  },
+  colors: {
+    brand: {
+      50: '#E6FFFA',
+      100: '#B2F5EA',
+      200: '#81E6D9',
+      300: '#4FD1C5',
+      400: '#38B2AC',
+      500: '#319795',
+      600: '#2C7A7B',
+      700: '#285E61',
+      800: '#234E52',
+      900: '#1D4044',
+    },
+  },
+});
+
 
 const MenuItem = ({ label, isSelected, isExpanded, onClick, depth = 0, hasChildren = false }) => (
   <Flex
@@ -68,9 +98,9 @@ const AboutPage = () => {
   const isPatchNoteSelected = selectedItem.startsWith('버전');
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <Flex flexDirection="column" minHeight="100vh">
-        <Header bgColor="Black" textColor='White' />
+        <Header />
         <Box flex={1} mt={"80px"}>
           <Flex minHeight="calc(100vh - 80px)" bg="white">
             <Box w="250px" bg="white" borderRight="1px" borderColor="gray.200">

@@ -1,66 +1,64 @@
-import { Close, CloudUpload, Delete } from '@mui/icons-material';
+import { AttachmentIcon, DeleteIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
+  ChakraProvider,
   Checkbox,
-  Chip,
-  FormControlLabel,
-  Grid,
+  Container,
+  extendTheme,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  HStack,
   IconButton,
+  Image,
+  Input,
   List,
   ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  Paper,
-  TextField,
-  TextareaAutosize,
-  Typography,
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  Text,
+  Textarea,
+  useColorModeValue,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import githubIcon from '../../image/githubc.png';
 import notionIcon from '../../image/Notion.webp';
 import Header from '../main/components/Header';
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginBottom: theme.spacing(3),
-  borderRadius: theme.shape.borderRadius,
-  boxShadow: theme.shadows[3],
-}));
-
-const DropZone = styled(Box)(({ theme }) => ({
-  width: '100%',
-  height: '120px',
-  border: `2px dashed ${theme.palette.primary.main}`,
-  borderRadius: theme.shape.borderRadius,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s',
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
+const theme = extendTheme({
+  styles: {
+    global: {
+      body: {
+        bg: '#F0F4F8',
+        color: '#2D3748',
+      },
+    },
   },
-}));
-
-const LinkInput = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: theme.spacing(1),
-}));
-
-const StepTitle = styled(Typography)(({ theme }) => ({
-  fontWeight: 'bold',
-  fontSize: '1.2rem',
-  color: 'black',
-  borderBottom: `2px solid ${theme.palette.primary.main}`,
-  paddingBottom: theme.spacing(1),
-  marginBottom: theme.spacing(2),
-}));
+  fonts: {
+    heading: '"Poppins", sans-serif',
+    body: '"Inter", sans-serif',
+  },
+  colors: {
+    brand: {
+      50: '#E6FFFA',
+      100: '#B2F5EA',
+      200: '#81E6D9',
+      300: '#4FD1C5',
+      400: '#38B2AC',
+      500: '#319795',
+      600: '#2C7A7B',
+      700: '#285E61',
+      800: '#234E52',
+      900: '#1D4044',
+    },
+  },
+});
 
 export default function DreamerIdea() {
   const [title, setTitle] = useState('');
@@ -72,6 +70,7 @@ export default function DreamerIdea() {
   const [isChecked, setIsChecked] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -109,10 +108,16 @@ export default function DreamerIdea() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!isChecked) {
-      alert("제3자 정보 활용 동의에 체크하세요.");
+      toast({
+        title: "동의 필요",
+        description: "제3자 정보 활용 동의에 체크해주세요.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
-    event.preventDefault();
+
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
@@ -128,175 +133,165 @@ export default function DreamerIdea() {
         credentials: 'include',
       });
       if (!response.ok) {
-        throw new Error('Internal Server Error');
+        throw new Error('서버 오류');
       }
       const data = await response.json();
-      console.log('Idea create successed:', data);
+      console.log('아이디어 생성 성공:', data);
+      toast({
+        title: "아이디어 등록 성공",
+        description: "아이디어가 성공적으로 등록되었습니다.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
       navigate('/main');
     } catch (error) {
-      console.error('Idea create failed:', error);
-      navigate('/main');
+      console.error('아이디어 생성 실패:', error);
+      toast({
+        title: "아이디어 등록 실패",
+        description: "아이디어 등록 중 오류가 발생했습니다. 다시 시도해주세요.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
   const categories = ['인공지능', '의료 · 보건', '빅데이터', '에너지 · 화학', '금융', '게임'];
 
+  const bgColor = useColorModeValue('white', 'gray.700');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+
   return (
-    <>
-      <Header bgColor="black" textColor="white" />
-      <Box component="form" onSubmit={handleSubmit} sx={{ padding: '20px', maxWidth: 1200, margin: '0 auto', pt:'50px' }}>
-        <Grid container spacing={8} mt={1}>
-          <Grid item xs={12} md={6}>
-            <StyledPaper>
-              <StepTitle variant="h6" gutterBottom>
-                Step 1: <span className="underline">아이디어에 대한 간단한 명세 작성</span>
-              </StepTitle>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="프로젝트 제목"
-                sx={{ marginBottom: 2 }}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-              <TextareaAutosize
-                minRows={6}
-                placeholder="아이디어 내용(간단하게 작성하여 주세요!)"
-                style={{
-                  width: '100%',
-                  marginBottom: '16px',
-                  padding: '10px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  resize: 'vertical',
-                }}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              />
-              <DropZone
+    <ChakraProvider theme={theme}>
+      <Header />
+      <Container maxW="container.xl" py={100}>
+        <VStack spacing={8} as="form" onSubmit={handleSubmit}>
+          <Heading as="h1" size="xl"></Heading>
+
+          <Box w="full" bg={bgColor} p={6} borderRadius="lg" boxShadow="md" borderColor={borderColor} borderWidth={1}>
+            <VStack spacing={4} align="stretch">
+              <Heading as="h2" size="lg">Step 1: 아이디어 명세 작성</Heading>
+              <FormControl isRequired>
+                <FormLabel>프로젝트 제목</FormLabel>
+                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="프로젝트 제목을 입력하세요" />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>아이디어 내용</FormLabel>
+                <Textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="아이디어 내용을 간단하게 작성해주세요"
+                  minH="200px"
+                />
+              </FormControl>
+              <Box
+                borderWidth={2}
+                borderStyle="dashed"
+                borderColor="gray.300"
+                borderRadius="md"
+                p={4}
+                textAlign="center"
+                cursor="pointer"
                 onDrop={handleFileDrop}
                 onDragOver={handleFileDragOver}
                 onClick={() => fileInputRef.current.click()}
               >
-                <CloudUpload color="primary" sx={{ fontSize: 40, marginBottom: 1 }} />
-                <Typography variant="body2">파일을 드래그하거나 클릭하여 추가하세요</Typography>
-                <input
+                <AttachmentIcon boxSize={8} color="gray.400" />
+                <Text mt={2}>파일을 드래그하거나 클릭하여 추가하세요</Text>
+                <Input
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileInput}
-                  style={{ display: 'none' }}
+                  hidden
                   multiple
                 />
-              </DropZone>
+              </Box>
               {files.length > 0 && (
-                <List>
+                <List spacing={2}>
                   {files.map((file, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={file.name} secondary={`${(file.size / 1024).toFixed(2)} KB`} />
-                      <ListItemSecondaryAction>
-                        <IconButton edge="end" aria-label="delete" onClick={() => handleRemoveFile(index)}>
-                          <Delete />
-                        </IconButton>
-                      </ListItemSecondaryAction>
+                    <ListItem key={index} display="flex" alignItems="center" justifyContent="space-between">
+                      <Text>{file.name} ({(file.size / 1024).toFixed(2)} KB)</Text>
+                      <IconButton
+                        icon={<DeleteIcon />}
+                        size="sm"
+                        aria-label="Remove file"
+                        onClick={() => handleRemoveFile(index)}
+                      />
                     </ListItem>
                   ))}
                 </List>
               )}
-            </StyledPaper>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <StyledPaper>
-              <StepTitle variant="h6" gutterBottom>
-                Step 2: <span className="underline">아이디어를 자세하게 나타낼 수 있는 자료 첨부</span>
-              </StepTitle>
-              <Box sx={{ display: 'flex', gap: 4, justifyContent: 'center', marginBottom: 2 }}>
-                <LinkInput>
-                  <img src={githubIcon} alt="GitHub" style={{ width: '50px', height: '50px' }} />
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="GitHub 링크 첨부"
-                    size="small"
-                    sx={{mt:'10px'}}
+            </VStack>
+          </Box>
+
+          <Box w="full" bg={bgColor} p={6} borderRadius="lg" boxShadow="md" borderColor={borderColor} borderWidth={1}>
+            <VStack spacing={4} align="stretch">
+              <Heading as="h2" size="lg">Step 2: 아이디어 포트폴리오 첨부</Heading>
+              <HStack spacing={8} justify="center">
+                <VStack>
+                  <Image src={githubIcon} alt="GitHub" boxSize="50px" />
+                  <Input
                     value={gitLink}
                     onChange={(e) => setGitLink(e.target.value)}
+                    placeholder="GitHub 링크"
                   />
-                </LinkInput>
-                <LinkInput>
-                  <img src={notionIcon} alt="Notion" style={{ width: '50px', height: '50px' }} />
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Notion 링크 첨부"
-                    size="small"
-                    sx={{mt:'10px'}}
+                </VStack>
+                <VStack>
+                  <Image src={notionIcon} alt="Notion" boxSize="50px" />
+                  <Input
                     value={notionLink}
                     onChange={(e) => setNotionLink(e.target.value)}
+                    placeholder="Notion 링크"
                   />
-                </LinkInput>
-              </Box>
-            </StyledPaper>
-            
-            <StyledPaper sx={{ mt: 2 }}>
-              <StepTitle variant="h6" gutterBottom>
-                Step 3:  <span className="underline">카테고리 선택 (최대 3개)</span>
-              </StepTitle>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', marginBottom: 2 }}>
+                </VStack>
+              </HStack>
+            </VStack>
+          </Box>
+
+          <Box w="full" bg={bgColor} p={6} borderRadius="lg" boxShadow="md" borderColor={borderColor} borderWidth={1}>
+            <VStack spacing={4} align="stretch">
+              <Heading as="h2" size="lg">Step 3: 카테고리 선택 (최대 3개)</Heading>
+              <Flex wrap="wrap" gap={2}>
                 {categories.map((category) => (
-                  <Chip
+                  <Tag
                     key={category}
-                    label={category}
+                    size="lg"
+                    variant={selectedCategories.includes(category) ? "solid" : "outline"}
+                    colorScheme="teal"
+                    cursor="pointer"
                     onClick={() => handleCategoryToggle(category)}
-                    color={selectedCategories.includes(category) ? "primary" : "default"}
-                    variant={selectedCategories.includes(category) ? "filled" : "outlined"}
-                    sx={{ borderRadius: '16px' }}
-                  />
+                  >
+                    {category}
+                  </Tag>
                 ))}
-              </Box>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginTop: 2 }}>
+              </Flex>
+              <Flex wrap="wrap" gap={2}>
                 {selectedCategories.map((category) => (
-                  <Chip
-                    key={category}
-                    label={category}
-                    onDelete={() => handleRemoveCategory(category)}
-                    color="primary"
-                    deleteIcon={<Close />}
-                    size='small'
-                    sx={{ borderRadius: '16px' }}
-                  />
+                  <Tag key={category} size="md" variant="subtle" colorScheme="teal">
+                    <TagLabel>{category}</TagLabel>
+                    <TagCloseButton onClick={() => handleRemoveCategory(category)} />
+                  </Tag>
                 ))}
-              </Box>
-            </StyledPaper>
-          </Grid>
-        </Grid>
-        
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3 }}>
-          <FormControlLabel
-            control={
-              <Checkbox 
-                color="primary" 
-                checked={isChecked}
-                onChange={(e) => setIsChecked(e.target.checked)}
-              />
-            }
-            label={
-              <Typography>
-                위 아이디어를 제 3자 <strong>'InvestBridge : 아이디어 공유 플랫폼'</strong> 에 제공함을 동의합니다.
-              </Typography>
-            }
-          />
-          <Button 
-            type="submit" 
-            variant="contained" 
-            color="primary" 
-            size="large" 
-            sx={{ mt: 2 }}
-            disabled={!isChecked}
+              </Flex>
+            </VStack>
+          </Box>
+
+          <Checkbox isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}>
+            위 아이디어를 제 3자 <strong>'InvestBridge : 아이디어 공유 플랫폼'</strong> 에 제공함을 동의합니다.
+          </Checkbox>
+
+          <Button
+            type="submit"
+            colorScheme="teal"
+            size="lg"
+            isDisabled={!isChecked}
+            w="full"
           >
             ⭐️ 아이디어 등록하기 ⭐️
           </Button>
-        </Box>
-      </Box>
-    </>
+        </VStack>
+      </Container>
+    </ChakraProvider>
   );
 }
