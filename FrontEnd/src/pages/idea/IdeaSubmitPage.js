@@ -19,9 +19,9 @@ import {
 import { styled } from '@mui/material/styles';
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../component/main/Header';
 import githubIcon from '../../image/githubc.png';
 import notionIcon from '../../image/Notion.webp';
+import Header from '../main/components/Header';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),

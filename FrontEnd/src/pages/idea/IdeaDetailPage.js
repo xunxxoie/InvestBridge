@@ -2,8 +2,8 @@ import { Box, Button, ChakraProvider, CircularProgress, Container, Divider, exte
 import React, { useEffect, useState } from 'react';
 import { FaHeart, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
-import Header from '../../component/main/Header';
 import image from '../../image/p1.jpg';
+import Header from '../main/components/Header';
 
 const theme = extendTheme({
   styles: {

@@ -16,7 +16,7 @@ import { FaHandHoldingHeart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
-import Header from '../../component/main/Header';
+import Header from "./components/Header";
 
 const theme = extendTheme({
   styles: {

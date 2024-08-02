@@ -4,16 +4,15 @@ import {
   Container,
   extendTheme,
   Grid,
-  useColorModeValue,
   Spinner,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Header from '../../component/main/Header';
-import DetailedProfileInfo from '../../component/profiles/DetailedProfileInfo';
-import ProfileInfo from '../../component/profiles/ProfileInfo';
-import ProjectSection from '../../component/profiles/ProjectSection';
+import React, { useEffect, useState } from 'react';
+import Header from '../main/components/Header';
+import ProjectSection from './components//ProjectSection';
+import DetailedProfileInfo from './components/DetailedProfileInfo';
+import ProfileInfo from './components/ProfileInfo';
 
 const theme = extendTheme({
   config: {

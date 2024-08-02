@@ -1,9 +1,9 @@
 import { Box, Button, ChakraProvider, CircularProgress, extendTheme, Link } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import CategorySection from "../../component/main/CategorySection";
-import Header from "../../component/main/Header";
-import HeroSection from "../../component/main/HeroSection";
+import CategorySection from "./components/CategorySection";
+import Header from "./components/Header";
+import HeroSection from "./components/HeroSection";
 
 const theme = extendTheme({
   styles: {

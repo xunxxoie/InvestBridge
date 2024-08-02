@@ -1,8 +1,8 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, ChakraProvider, Flex, Heading, Icon, Image, Text, VStack } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import Header from "../../component/main/Header";
 import patchImg from "../../image/patchNote.png";
+import Header from "./components/Header";
 
 const MenuItem = ({ label, isSelected, isExpanded, onClick, depth = 0, hasChildren = false }) => (
   <Flex
