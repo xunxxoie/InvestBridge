@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.dto.Http.PatchNoteRequestDTO;
 import com.investbridge.dto.Http.PatchNoteResponseDTO;
+import com.investbridge.dto.Object.AdminUserInfoDTO;
 import com.investbridge.exception.ErrorResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.AdminService;
@@ -86,4 +87,16 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/users")
+    @Operation(summary = "전체 유저 정보 불러오기", description = "전체 유저 정보를 불러옵니다.")
+    public ResponseEntity<?> getUsersInfo(){
+        try{
+            List<AdminUserInfoDTO> response = adminService.getUsersInfo();
+            logger.info("Get All User Info Succeed");
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            logger.error("Get All User Info Failed {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Get User Info failed : {}", e.getMessage()));
+        }
+    }
 }
