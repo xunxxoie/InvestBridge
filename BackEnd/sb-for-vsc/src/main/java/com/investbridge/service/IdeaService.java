@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.investbridge.dto.Http.IdeaRequestDTO;
-import com.investbridge.dto.Http.IdeaResponseDTO;
-import com.investbridge.model.FileMetaData;
-import com.investbridge.model.Idea;
+import com.investbridge.model.db.Idea;
+import com.investbridge.model.dto.Http.IdeaRequestDTO;
+import com.investbridge.model.dto.Http.IdeaResponseDTO;
+import com.investbridge.model.dto.Object.FileMetaData;
 import com.investbridge.repository.IdeaRepository;
 import com.investbridge.repository.UserRepository;
 import com.investbridge.security.JwtTokenProvider;
@@ -31,7 +31,7 @@ public class IdeaService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public IdeaResponseDTO createIdea(IdeaRequestDTO request){
+    public IdeaResponseDTO addIdea(IdeaRequestDTO request){
 
         // Convert MultipartFile to FileMetaData to save in db
         List<FileMetaData> fileMetadata = new ArrayList<>();
@@ -74,12 +74,12 @@ public class IdeaService {
             .build();
     }
 
-    public List<Idea> getAllIdeas(){
+    public List<Idea> findAllIdea(){
         List<Idea> idea = ideaRepository.findAll();
         return idea;
     }
 
-    public Idea getIdea(String id){
+    public Idea findIdea(String id){
         return ideaRepository.findById(id).orElse(null);
     }
 }

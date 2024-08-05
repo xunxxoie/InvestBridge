@@ -1,4 +1,4 @@
-import { Box, Button, ChakraProvider, CircularProgress, extendTheme, Link } from '@chakra-ui/react';
+import { Box, Button, ChakraProvider, CircularProgress, extendTheme, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CategorySection from "./components/CategorySection";
@@ -39,7 +39,8 @@ export default function MainPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  
+  const toast = useToast();
+
   useEffect(() => {
     const fetchUserData = async () => {
       setLoading(true);
@@ -48,11 +49,11 @@ export default function MainPage() {
           method: 'GET',
           credentials: 'include',
         });
-  
+
         if (!response.ok) {
           throw new Error('Failed to fetch User Data');
         }
-  
+
         const data = await response.json();
         setUserData(data);
         setLoading(false);
@@ -60,50 +61,87 @@ export default function MainPage() {
         console.log('Failed to fetch User Data:', error);
         setError('Failed to find User Data. Please try again');
         setLoading(false);
-        
+
         if (error.response && error.response.status === 401) {
           navigate('/login');
         }
       }
     };
-  
+
     fetchUserData();
   }, [navigate]);
 
-  if (loading){
-    return(
-        <ChakraProvider theme={theme}>
-          <CircularProgress size={24} color="inherit" />
-        </ChakraProvider> 
+  const handleAdminClick = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/check-admin`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        navigate('/admin/main');
+      } else {
+        toast({
+          title: "접근 권한이 없습니다.",
+          description: "관리자 권한이 필요합니다.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('관리자 권한 확인 중 오류 발생:', error);
+      toast({
+        title: "오류가 발생했습니다.",
+        description: "잠시 후 다시 시도해주세요.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <ChakraProvider theme={theme}>
+        <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+          <CircularProgress isIndeterminate color="brand.500" />
+        </Box>
+      </ChakraProvider>
     );
   }
 
-  if (error){
-    return <div>{error}</div>
+  if (error) {
+    return (
+      <ChakraProvider theme={theme}>
+        <Box textAlign="center" mt={10}>
+          <div>{error}</div>
+        </Box>
+      </ChakraProvider>
+    );
   }
 
   return (
     <ChakraProvider theme={theme}>
-    <Header />
-    <HeroSection />
-    <CategorySection />
-    <Box 
-      as="footer" 
-      textAlign="right" 
-      py={4} 
-      px={6}
-    >
-      <Button 
-        as={Link} 
-        href="/admin/main" 
-        size="sm" 
-        variant="ghost" 
-        color="gray.500" 
-        _hover={{ color: "gray.700" }}
+      <Header />
+      <HeroSection />
+      <CategorySection />
+      <Box
+        as="footer"
+        textAlign="right"
+        py={4}
+        px={6}
       >
-        관리자
-      </Button>
-    </Box>
-  </ChakraProvider>
+        <Button
+          onClick={handleAdminClick}
+          size="sm"
+          variant="ghost"
+          color="gray.500"
+          _hover={{ color: "gray.700" }}
+        >
+          관리자
+        </Button>
+      </Box>
+    </ChakraProvider>
   );
 }

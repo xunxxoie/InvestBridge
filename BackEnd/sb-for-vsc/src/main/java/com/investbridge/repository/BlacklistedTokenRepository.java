@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.investbridge.model.BlacklistedToken;
+import com.investbridge.model.db.BlacklistedToken;
 
 public interface BlacklistedTokenRepository extends MongoRepository<BlacklistedToken, String> {
     boolean existsByToken(String token);

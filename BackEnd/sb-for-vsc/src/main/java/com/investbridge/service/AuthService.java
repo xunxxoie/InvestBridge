@@ -5,11 +5,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.investbridge.dto.Http.LoginRequestDTO;
-import com.investbridge.dto.Http.LoginResponseDTO;
-import com.investbridge.dto.Http.RegisterRequestDTO;
-import com.investbridge.dto.Http.RegisterResponseDTO;
-import com.investbridge.model.User;
+import com.investbridge.model.db.User;
+import com.investbridge.model.dto.Http.LoginRequestDTO;
+import com.investbridge.model.dto.Http.LoginResponseDTO;
+import com.investbridge.model.dto.Http.RegisterRequestDTO;
+import com.investbridge.model.dto.Http.RegisterResponseDTO;
 import com.investbridge.repository.UserRepository;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.security.TokenBlacklist;
@@ -45,9 +45,11 @@ public class AuthService {
     // Join Service Logic
     public RegisterResponseDTO join(RegisterRequestDTO request){
         
+        //if Email already exits
         if(userRepository.findByUserEmail(request.getUserEmail()).isPresent())
             throw new RuntimeException("Already Exits Email");
 
+        // Encode input PassWord
         String encodedUserPw = passwordEncoder.encode(request.getUserPw());
 
         User newUser = User.builder()

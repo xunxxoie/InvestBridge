@@ -20,6 +20,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.investbridge.controller.AuthController;
+import com.investbridge.security.filter.AdminAuthorizationFilter;
+import com.investbridge.security.filter.JwtTokenFilter;
+import com.investbridge.security.filter.LogoutFilter;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -78,7 +81,8 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtTokenFilter(jwtTokenProvider, tokenBlacklist), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(new LogoutFilter(tokenBlacklist), JwtTokenFilter.class);
+            .addFilterBefore(new LogoutFilter(tokenBlacklist), JwtTokenFilter.class)
+            .addFilterBefore(new AdminAuthorizationFilter(jwtTokenProvider), LogoutFilter.class);
         return http.build();
     }
 

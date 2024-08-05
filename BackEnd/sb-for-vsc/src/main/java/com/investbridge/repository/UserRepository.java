@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.investbridge.model.User;
+import com.investbridge.model.db.User;
 import com.investbridge.model.enums.UserRole;
 
 public interface UserRepository extends MongoRepository<User, String> {

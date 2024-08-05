@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.investbridge.dto.Http.IdeaRequestDTO;
-import com.investbridge.dto.Http.IdeaResponseDTO;
 import com.investbridge.exception.ErrorResponse;
-import com.investbridge.model.Idea;
+import com.investbridge.model.db.Idea;
+import com.investbridge.model.dto.Http.IdeaRequestDTO;
+import com.investbridge.model.dto.Http.IdeaResponseDTO;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.IdeaService;
 
@@ -41,19 +41,14 @@ public class IdeaController {
 
     //Annotation states that Get request only multipart-form-data-value
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "아이디어 등록", description = "아이디어를 등록합니다.")
-    public ResponseEntity<?> createIdea(@ModelAttribute IdeaRequestDTO request, @CookieValue(name="jwt", required = false) String token){
-        
-        if(token == null){
-            logger.error("There is no Authority to Create Ideas");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is Needed");
-        }
+    @Operation(summary = "아이디어 생성", description = "새로운 아이디어를 생성합니다.")
+    public ResponseEntity<?> ideaAdd(@ModelAttribute IdeaRequestDTO request, @CookieValue(name="jwt", required = false) String token){
 
         String userName = jwtTokenProvider.getUserbyToken(token).getUserName();
         request.setUserName(userName);
 
         try{
-            IdeaResponseDTO response = ideaService.createIdea(request);
+            IdeaResponseDTO response = ideaService.addIdea(request);
             logger.info("Create Idea Succeed {}", request.getTitle());
             return ResponseEntity.ok(response);
         }catch(RuntimeException e){
@@ -65,18 +60,11 @@ public class IdeaController {
         }
     }
 
-
-    //Get All Ideas
     @GetMapping
-    @Operation(summary = "아이디어 전체 불러오기", description = "전체 아이디어를 불러옵니다.")
-    public ResponseEntity<?> getAllIdea(@CookieValue(name="jwt", required = false)String token){
-        if(token == null){
-            logger.error("There is no Authority to Load Ideas");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is Needed");
-        }
-
+    @Operation(summary = "전체 아이디어 불러오기", description = "전체 아이디어를 불러옵니다.")
+    public ResponseEntity<?> ideaList(@CookieValue(name="jwt", required = false)String token){
         try{
-            List<Idea> response = ideaService.getAllIdeas();
+            List<Idea> response = ideaService.findAllIdea();
             logger.info("Load All Idea Succeed");
             return ResponseEntity.ok(response);
         }catch(Exception e){
@@ -85,17 +73,11 @@ public class IdeaController {
         }
     }
 
-    //Get idea
     @GetMapping("/detail/{id}")
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
-    public ResponseEntity<?> getIdea(@CookieValue(name="jwt", required = false)String token, @PathVariable String id) {
-        if(token == null){
-            logger.error("There is no Authority to Load Ideas");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login is Needed");
-        }
-
+    public ResponseEntity<?> ideaDetails(@CookieValue(name="jwt", required = false)String token, @PathVariable String id) {
         try{
-            Idea response = ideaService.getIdea(id);
+            Idea response = ideaService.findIdea(id);
             logger.info("Load Idea Succeed : {} ", response.getId());
             return ResponseEntity.ok(response);
         }catch (Exception e){

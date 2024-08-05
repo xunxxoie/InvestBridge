@@ -144,7 +144,7 @@ export default function DreamerIdea() {
         duration: 3000,
         isClosable: true,
       });
-      navigate('/main');
+      navigate('/ideas');
     } catch (error) {
       console.error('아이디어 생성 실패:', error);
       toast({

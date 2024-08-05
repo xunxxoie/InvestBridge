@@ -6,7 +6,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.investbridge.dto.Object.UserDTO;
+import com.investbridge.model.dto.Object.UserDTO;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

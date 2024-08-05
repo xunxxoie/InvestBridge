@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.investbridge.model.Idea;
+import com.investbridge.model.db.Idea;
 import com.investbridge.model.enums.IdeaCategory;
 
 public interface IdeaRepository extends MongoRepository<Idea, String>{

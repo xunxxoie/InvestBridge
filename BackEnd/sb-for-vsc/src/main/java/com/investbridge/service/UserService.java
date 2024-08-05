@@ -3,9 +3,8 @@ package com.investbridge.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.investbridge.dto.Object.UserDTO;
-import com.investbridge.model.User;
-
+import com.investbridge.model.db.User;
+import com.investbridge.model.dto.Object.UserDTO;
 import com.investbridge.repository.IdeaRepository;
 import com.investbridge.repository.UserRepository;
 

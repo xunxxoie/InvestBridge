@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.investbridge.dto.Http.LoginRequestDTO;
-import com.investbridge.dto.Http.LoginResponseDTO;
-import com.investbridge.dto.Http.RegisterRequestDTO;
-import com.investbridge.dto.Http.RegisterResponseDTO;
 import com.investbridge.exception.ErrorResponse;
+import com.investbridge.model.dto.Http.LoginRequestDTO;
+import com.investbridge.model.dto.Http.LoginResponseDTO;
+import com.investbridge.model.dto.Http.RegisterRequestDTO;
+import com.investbridge.model.dto.Http.RegisterResponseDTO;
 import com.investbridge.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,8 +35,8 @@ public class AuthController {
         this.authService = authService;
     }
     
-    @PostMapping("/login") //"POST /api/login" request controller
-    @Operation(summary = "로그인", description = "사용자 이메일과 비밀번호로 로그인합니다.")
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "이메일과 비밀번호로 로그인을 시도합니다.")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request){
         try{
             LoginResponseDTO response = authService.login(request); // Object that contains ResponseDTO after login
@@ -68,7 +68,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/join") //"POST /api/join" request controller
+    @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입")
     public ResponseEntity<?> join(@RequestBody RegisterRequestDTO request){
         try{
@@ -82,6 +82,5 @@ public class AuthController {
             logger.info("Join Failed : INTERNAL SERVER ERROR : {}", request.getUserEmail());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Join Failed : {} ", e.getMessage()));
         }
-
     }
 }
