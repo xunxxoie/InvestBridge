@@ -16,4 +16,5 @@ public class AdminUserInfoDTO {
     private String phoneNumber;
     private String birth;
     private String role;
+    private String createdAt;
 }

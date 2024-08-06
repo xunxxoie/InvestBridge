@@ -49,11 +49,12 @@ const theme = createTheme({
 });
 
 const columns = [
-  { field: 'userId', headerName: 'ID', width: 220 },
-  { field: 'userEmail', headerName: 'E-mail', width: 200 },
-  { field: 'phoneNumber', headerName: 'Phone Number', width: 200 },
-  { field: 'birth', headerName: 'Birth', width: 200 },
-  { field: 'role', headerName: 'Role', width: 200 },
+  { field: 'userId', headerName: 'ID', width: 170 },
+  { field: 'userEmail', headerName: 'E-mail', width: 170 },
+  { field: 'phoneNumber', headerName: 'Phone Number', width: 170 },
+  { field: 'birth', headerName: 'Birth', width: 170 },
+  { field: 'role', headerName: 'Role', width: 170 },
+  { field: 'createdAt', headerName: 'createdAt', width: 170 },
 ];
 
 export default function UserManagement() {
@@ -65,7 +66,7 @@ export default function UserManagement() {
 
   useEffect(() => {
     fetchUser();
-  }, []); // 빈 의존성 배열
+  }, []);
 
   const fetchUser = async () => {
     try {
@@ -78,10 +79,9 @@ export default function UserManagement() {
         throw new Error('Internal Server Error');
 
       const data = await response.json();
-      // userId를 id로 사용하여 각 행에 고유 id 추가
       const rowsWithId = data.map(user => ({
         ...user,
-        id: user.userId // 또는 다른 고유한 필드
+        id: user.userId 
       }));
       setRows(rowsWithId);
     } catch (error) {

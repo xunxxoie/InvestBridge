@@ -38,7 +38,7 @@ public class AuthService {
             throw new BadCredentialsException("Invalid Password");
         }
 
-        String token = jwtTokenProvider.createToken(user.getId(), user.getUserEmail(), user.getUserName(), user.getPhoneNumber(), user.getUserRole().toString()); // Create token based on user info
+        String token = jwtTokenProvider.createToken(user.getUserId(), user.getUserEmail(), user.getUserName(), user.getPhoneNumber(), user.getUserRole().toString()); // Create token based on user info
         return new LoginResponseDTO(token, user.getUserRole().name()); // Return responsedto(token, userRole)
     }
 

@@ -29,6 +29,7 @@ public class AdminService {
     }
 
     public PatchNoteResponseDTO findPatchNote(String version){
+
         PatchNote patchNote = patchNoteRepository.findByVersion(version)
                                                     .orElse(null);
         
@@ -68,13 +69,14 @@ public class AdminService {
     public List<AdminUserInfoDTO> findAllUserInfo(){
         List<User> userInfoList = userRepository.findAll();
         return userInfoList.stream()
-                .map(user -> AdminUserInfoDTO.builder() //Convert usreIfoList's type to AdminUserInfoDTO type 
+                .map(user -> AdminUserInfoDTO.builder() //Convert userInfoList's type to AdminUserInfoDTO type 
                             .id(user.getId())
                             .userId(user.getUserId())
                             .userEmail(user.getUserEmail())
                             .phoneNumber(user.getPhoneNumber())
                             .birth(user.getBirth().format(DateTimeFormatter.ISO_DATE))
                             .role(user.getUserRole().name())
+                            .createdAt(user.getCreatedAt().format(DateTimeFormatter.ISO_DATE))
                             .build())
                 .collect(Collectors.toList());
     }

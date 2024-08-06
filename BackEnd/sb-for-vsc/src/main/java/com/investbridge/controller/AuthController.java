@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import com.investbridge.model.dto.Http.LoginRequestDTO;
 import com.investbridge.model.dto.Http.LoginResponseDTO;
 import com.investbridge.model.dto.Http.RegisterRequestDTO;
 import com.investbridge.model.dto.Http.RegisterResponseDTO;
+import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,11 +31,26 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Auth", description = "로그인/회원가입 API")
 public class AuthController {
     private final AuthService authService;
+    private final JwtTokenProvider jwtTokenProvider;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider) {
         this.authService = authService;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @GetMapping("/is-user")
+    @Operation(summary = "페이지 이동간 유효성 검증", description = "페이지로의 접근의 유효성을 검증합니다.")
+    public ResponseEntity<?> checkUser(@CookieValue(name="jwt", required = false) String token){
+        try{
+            Boolean isUser = jwtTokenProvider.validateToken(token);
+            logger.info("User validation completed : {}", isUser);
+            return ResponseEntity.ok(isUser);
+        }catch(Exception e){
+            logger.info("User validation Failed : False");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("User validation Failed : {} ", e.getMessage()));
+        }
     }
     
     @PostMapping("/login")

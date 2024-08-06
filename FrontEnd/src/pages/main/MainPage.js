@@ -35,7 +35,6 @@ const theme = extendTheme({
 });
 
 export default function MainPage() {
-  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -45,21 +44,19 @@ export default function MainPage() {
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/is-user`, {
           method: 'GET',
           credentials: 'include',
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch User Data');
+          throw new Error('Failed to validate User');
         }
 
-        const data = await response.json();
-        setUserData(data);
         setLoading(false);
       } catch (error) {
-        console.log('Failed to fetch User Data:', error);
-        setError('Failed to find User Data. Please try again');
+        console.log('Failed to validate User Data:', error);
+        setError('Failed to validate User. Please try again');
         setLoading(false);
 
         if (error.response && error.response.status === 401) {

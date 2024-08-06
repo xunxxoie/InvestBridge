@@ -10,9 +10,9 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import Header from '../main/components/Header';
-import ProjectSection from './components//ProjectSection';
 import DetailedProfileInfo from './components/DetailedProfileInfo';
 import ProfileInfo from './components/ProfileInfo';
+import ProjectSection from './components/ProjectSection';
 
 const theme = extendTheme({
   config: {
@@ -120,13 +120,11 @@ const Profile = () => {
         >
           <Box>
             <ProfileInfo 
-            userName={profileData.userName}
+            userData={profileData}
+            
             />
             <DetailedProfileInfo 
-            userEmail={profileData.userEmail}
-            // birth={profileData.birth}
-            phoneNumber={profileData.phoneNumber}
-            // userInterest={profileData.userInterest}
+            userData={profileData}
             />
           </Box>
           <Box>

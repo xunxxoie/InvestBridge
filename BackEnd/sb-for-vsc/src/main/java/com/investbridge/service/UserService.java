@@ -1,10 +1,12 @@
 package com.investbridge.service;
 
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.investbridge.model.db.User;
-import com.investbridge.model.dto.Object.UserDTO;
+import com.investbridge.model.dto.Object.UserProfileDTO;
 import com.investbridge.repository.IdeaRepository;
 import com.investbridge.repository.UserRepository;
 
@@ -20,16 +22,19 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO getUserProfile(String userId) {
+    public UserProfileDTO getUserProfile(String userId) {
+       
         User user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
         
-        return UserDTO.builder()
-            .userName(user.getUserName())
+        return UserProfileDTO.builder()
+            .userId(user.getUserId())
             .userEmail(user.getUserEmail())
-            // .birth(user.getBirth())
+            .userName(user.getUserName())
             .phoneNumber(user.getPhoneNumber())
-            // .userInterest(user.getUserInterest())
+            .birth(user.getBirth().format(DateTimeFormatter.ISO_DATE))
+            .userRole(user.getUserRole().name()) 
+            .userInterest("interest")
             .build();
     }
 }
