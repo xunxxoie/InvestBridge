@@ -25,17 +25,19 @@ public class Idea {
     @Id
     private String id;
 
-    private String userName;
+    private String userId;
+
     private String title;
+    private String projectSummary;
+    private String teamSummary;
+
     private String content;
     private String gitLink;
     private String notionLink;
 
-    private String teamSummary;
-
-    private List<String> categories;
     private List<FileMetaData> files;
-
+    private List<String> categories;
+    
     private Integer likes;
     private Integer favorites;
 

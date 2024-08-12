@@ -17,6 +17,7 @@ import com.investbridge.security.TokenBlacklist;
 import com.investbridge.service.UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -56,7 +57,11 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
 
         try {
             // Verify AccessToken "is vaild?"
-            if (!jwtTokenProvider.validateAccessToken(accessToken) || tokenBlacklist.isBlacklisted(accessToken)) 
+            if (!jwtTokenProvider.validateAccessToken(accessToken)) {
+                throw new JwtException("Invalid token");
+            }
+            
+            if(tokenBlacklist.isBlacklisted(accessToken)) 
                 throw new BadCredentialsException("Not Available Authority");
 
                 UserDTO user = jwtTokenProvider.getUserbyToken(accessToken);
@@ -75,12 +80,16 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
             //Generate new AccessToken, When accessToken is expired!
             handleExpiredToken(request, response, accessToken); 
 
+        } catch (JwtException e) {
+            // Handle invalid token
+            SecurityContextHolder.clearContext();
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid token: " + e.getMessage());
         } catch (Exception e) {
 
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("Internal Sever Error");
-
         }
 
         filterChain.doFilter(request, response);

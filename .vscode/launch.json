@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SbForVscApplication<sb-for-vsc>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.investbridge.SbForVscApplication",
+            "projectName": "sb-for-vsc",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

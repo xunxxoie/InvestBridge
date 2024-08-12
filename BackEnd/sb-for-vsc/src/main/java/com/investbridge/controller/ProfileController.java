@@ -55,23 +55,5 @@ public class ProfileController {
         }
             
     }
-    
-    // IdeaController에서 GetMapping("/{userId}") API로 처리
-    // @GetMapping("/projects")
-    // @Operation(summary = "유저 프로젝트 불러오기", description = "유저의 프로젝트를 불러옵니다.")
-    // public ResponseEntity<?> getAllProjects(@CookieValue(name = "jwt", required = false) String token) {
-    //     String userId = jwtTokenProvider.getUserIdFromToken(token);
-    //     try {
-    //         UserProfileDTO user = userService.getUserProfile(userId);
-    //         if (user == null){
-    //             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
-    //         }
-    //         List<Idea> userProjects = ideaService.findUserProjectByUserId(userId);
-    //         List<Idea> projects = ideaService.findAllIdea();
-    //         return ResponseEntity.ok(projects);
-    //     } catch (Exception e) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error retrieving projects");
-    //     }
-    // }
 }
 

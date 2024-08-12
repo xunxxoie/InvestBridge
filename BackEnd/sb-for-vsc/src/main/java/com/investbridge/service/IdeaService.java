@@ -51,8 +51,10 @@ public class IdeaService {
         }
 
         Idea newIdea = Idea.builder()
-            .userName(request.getUserName())
+            .userId(request.getUserId())
             .title(request.getTitle())
+            .projectSummary(request.getProjectSummary())
+            .teamSummary(request.getTeamSummary())
             .content(request.getContent())
             .gitLink(request.getGitLink())
             .notionLink(request.getNotionLink())
@@ -67,7 +69,7 @@ public class IdeaService {
 
         return IdeaResponseDTO.builder()
             .ideaId(savedIdea.getId())
-            .userName(savedIdea.getUserName())
+            .userId(savedIdea.getUserId())
             .build();
     }
 

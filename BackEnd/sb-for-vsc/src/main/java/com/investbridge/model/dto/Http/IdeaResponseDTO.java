@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class IdeaResponseDTO {
     private String ideaId;
-    private String userName;
+    private String userId;
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class AdminIdeaInfoDTO {
 
     private String id;
-    private String userName;
+    private String userId;
     private String title;
     private String content;
     private String gitLink;

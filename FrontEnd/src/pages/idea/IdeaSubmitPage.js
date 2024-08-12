@@ -1,30 +1,5 @@
 import { AttachmentIcon, DeleteIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  ChakraProvider,
-  Checkbox,
-  Container,
-  extendTheme,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  HStack,
-  IconButton,
-  Image,
-  Input,
-  List,
-  ListItem,
-  Tag,
-  TagCloseButton,
-  TagLabel,
-  Text,
-  Textarea,
-  useColorModeValue,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, ChakraProvider, Checkbox, Container, extendTheme, Flex, FormControl, FormLabel, Heading, HStack, IconButton, Image, Input, List, ListItem, Tag, TagCloseButton, TagLabel, Text, Textarea, useColorModeValue, useToast, VStack } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import githubIcon from '../../image/githubc.png';
@@ -32,45 +7,33 @@ import notionIcon from '../../image/Notion.webp';
 import Header from '../main/components/Header';
 
 const theme = extendTheme({
-  styles: {
-    global: {
-      body: {
-        bg: '#F0F4F8',
-        color: '#2D3748',
-      },
-    },
-  },
-  fonts: {
-    heading: '"Poppins", sans-serif',
-    body: '"Inter", sans-serif',
-  },
+  styles: { global: { body: { bg: '#F0F4F8', color: '#2D3748' } } },
+  fonts: { heading: '"Poppins", sans-serif', body: '"Inter", sans-serif' },
   colors: {
     brand: {
-      50: '#E6FFFA',
-      100: '#B2F5EA',
-      200: '#81E6D9',
-      300: '#4FD1C5',
-      400: '#38B2AC',
-      500: '#319795',
-      600: '#2C7A7B',
-      700: '#285E61',
-      800: '#234E52',
-      900: '#1D4044',
-    },
-  },
+      50: '#E6FFFA', 100: '#B2F5EA', 200: '#81E6D9', 300: '#4FD1C5', 400: '#38B2AC',
+      500: '#319795', 600: '#2C7A7B', 700: '#285E61', 800: '#234E52', 900: '#1D4044'
+    }
+  }
 });
 
 export default function DreamerIdea() {
   const [title, setTitle] = useState('');
+  const [projectSummary, setProjectSummary] = useState('');
+  const [teamSummary, setTeamSummary] = useState('')
   const [content, setContent] = useState('');
   const [gitLink, setGitLink] = useState('');
   const [notionLink, setNotionLink] = useState('');
   const [files, setFiles] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const toast = useToast();
+  const [agreements, setAgreements] = useState({
+    confidentiality: false,
+    intellectualProperty: false,
+    liability: false
+  });
 
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -105,12 +68,21 @@ export default function DreamerIdea() {
     setSelectedCategories(prev => prev.filter(category => category !== categoryToRemove));
   };
 
+  const handleAgreementChange = (event) => {
+    setAgreements({
+      ...agreements,
+      [event.target.name]: event.target.checked
+    });
+  };
+
+  const allAgreed = Object.values(agreements).every(Boolean);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!isChecked) {
+    if (!allAgreed) {
       toast({
         title: "동의 필요",
-        description: "제3자 정보 활용 동의에 체크해주세요.",
+        description: "모든 약관에 동의해주세요.",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -120,6 +92,8 @@ export default function DreamerIdea() {
 
     const formData = new FormData();
     formData.append('title', title);
+    formData.append('projectSummary', projectSummary);
+    formData.append('teamSummary', teamSummary);
     formData.append('content', content);
     formData.append('gitLink', gitLink);
     formData.append('notionLink', notionLink);
@@ -171,57 +145,41 @@ export default function DreamerIdea() {
 
           <Box w="full" bg={bgColor} p={6} borderRadius="lg" boxShadow="md" borderColor={borderColor} borderWidth={1}>
             <VStack spacing={4} align="stretch">
-              <Heading as="h2" size="lg">Step 1: 아이디어 명세 작성</Heading>
+              <Heading as="h2" size="lg">Step 1: 아이디어 명세 및 팀 소개 작성</Heading>
               <FormControl isRequired>
                 <FormLabel>프로젝트 제목</FormLabel>
                 <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="프로젝트 제목을 입력하세요" />
               </FormControl>
               <FormControl isRequired>
-                <FormLabel>아이디어 내용</FormLabel>
-                <Textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="아이디어 내용을 간단하게 작성해주세요"
-                  minH="200px"
-                />
+                <FormLabel>프로젝트 한줄소개!</FormLabel>
+                <Input value={projectSummary} onChange={(e) => setProjectSummary(e.target.value)} placeholder="프로젝트를 한줄로 요약해주세요!" />
               </FormControl>
-              <Box
-                borderWidth={2}
-                borderStyle="dashed"
-                borderColor="gray.300"
-                borderRadius="md"
-                p={4}
-                textAlign="center"
-                cursor="pointer"
-                onDrop={handleFileDrop}
-                onDragOver={handleFileDragOver}
-                onClick={() => fileInputRef.current.click()}
-              >
-                <AttachmentIcon boxSize={8} color="gray.400" />
-                <Text mt={2}>파일을 드래그하거나 클릭하여 추가하세요</Text>
-                <Input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileInput}
-                  hidden
-                  multiple
-                />
-              </Box>
-              {files.length > 0 && (
-                <List spacing={2}>
-                  {files.map((file, index) => (
-                    <ListItem key={index} display="flex" alignItems="center" justifyContent="space-between">
-                      <Text>{file.name} ({(file.size / 1024).toFixed(2)} KB)</Text>
-                      <IconButton
-                        icon={<DeleteIcon />}
-                        size="sm"
-                        aria-label="Remove file"
-                        onClick={() => handleRemoveFile(index)}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              )}
+              <FormControl isRequired>
+                <FormLabel>팀 소개</FormLabel>
+                <Textarea value={teamSummary} onChange={(e) => setTeamSummary(e.target.value)} placeholder="팀에 대한 간단한 소개를 적어주세요(구성 인원, 방향성, 간단한 소개 등)" minH="70px"/>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>아이디어 내용 및 기술 스팩</FormLabel>
+                <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="아이디어 내용을 간단하게 작성해주세요" minH="200px" />
+              </FormControl>
+              <FormControl>
+                <FormLabel htmlFor="file-upload">파일 첨부</FormLabel>
+                <Box borderWidth={2} borderStyle="dashed" borderColor="gray.300" borderRadius="md" p={4} textAlign="center" cursor="pointer" onDrop={handleFileDrop} onDragOver={handleFileDragOver} onClick={() => fileInputRef.current.click()} id="file-upload">
+                  <AttachmentIcon boxSize={8} color="gray.400" />
+                  <Text mt={2}>파일을 드래그하거나 클릭하여 추가하세요</Text>
+                  <Input type="file" ref={fileInputRef} onChange={handleFileInput} hidden multiple id="file-upload-input" />
+                </Box>
+                {files.length > 0 && (
+                  <List spacing={2} mt={4}>
+                    {files.map((file, index) => (
+                      <ListItem key={index} display="flex" alignItems="center" justifyContent="space-between">
+                        <Text>{file.name} ({(file.size / 1024).toFixed(2)} KB)</Text>
+                        <IconButton icon={<DeleteIcon />} size="sm" aria-label="Remove file" onClick={() => handleRemoveFile(index)} />
+                      </ListItem>
+                    ))}
+                  </List>
+                )}
+             </FormControl>
             </VStack>
           </Box>
 
@@ -231,19 +189,11 @@ export default function DreamerIdea() {
               <HStack spacing={8} justify="center">
                 <VStack>
                   <Image src={githubIcon} alt="GitHub" boxSize="50px" />
-                  <Input
-                    value={gitLink}
-                    onChange={(e) => setGitLink(e.target.value)}
-                    placeholder="GitHub 링크"
-                  />
+                  <Input value={gitLink} onChange={(e) => setGitLink(e.target.value)} placeholder="GitHub 링크" />
                 </VStack>
                 <VStack>
                   <Image src={notionIcon} alt="Notion" boxSize="50px" />
-                  <Input
-                    value={notionLink}
-                    onChange={(e) => setNotionLink(e.target.value)}
-                    placeholder="Notion 링크"
-                  />
+                  <Input value={notionLink} onChange={(e) => setNotionLink(e.target.value)} placeholder="Notion 링크" />
                 </VStack>
               </HStack>
             </VStack>
@@ -254,14 +204,7 @@ export default function DreamerIdea() {
               <Heading as="h2" size="lg">Step 3: 카테고리 선택 (최대 3개)</Heading>
               <Flex wrap="wrap" gap={2}>
                 {categories.map((category) => (
-                  <Tag
-                    key={category}
-                    size="lg"
-                    variant={selectedCategories.includes(category) ? "solid" : "outline"}
-                    colorScheme="teal"
-                    cursor="pointer"
-                    onClick={() => handleCategoryToggle(category)}
-                  >
+                  <Tag key={category} size="lg" variant={selectedCategories.includes(category) ? "solid" : "outline"} colorScheme="teal" cursor="pointer" onClick={() => handleCategoryToggle(category)}>
                     {category}
                   </Tag>
                 ))}
@@ -277,15 +220,47 @@ export default function DreamerIdea() {
             </VStack>
           </Box>
 
-          <Checkbox isChecked={isChecked} onChange={(e) => setIsChecked(e.target.checked)}>
-            위 아이디어를 제 3자 <strong>'InvestBridge : 아이디어 공유 플랫폼'</strong> 에 제공함을 동의합니다.
-          </Checkbox>
+          <Box w="full" bg={bgColor} p={6} borderRadius="lg" boxShadow="md" borderColor={borderColor} borderWidth={1} alignItems="center">
+            <VStack spacing={4} align="stretch">
+              <Heading as="h2" size="lg" textAlign="center">Step 4: 약관 동의</Heading>
+              <VStack spacing={4} alignItems="center">
+                <Checkbox 
+                  name="confidentiality" 
+                  isChecked={agreements.confidentiality} 
+                  onChange={handleAgreementChange}
+                >
+                  <Text textAlign="center">
+                    <strong>본인</strong>은 등록한 아이디어의 기밀성을 유지하며, 제 3자 <strong>InvestBridge</strong>가 투자자 매칭을 위해 필요한 범위 내에서 정보를 사용할 수 있음에 동의합니다.
+                  </Text>
+                </Checkbox>
+                <Checkbox 
+                  name="intellectualProperty" 
+                  isChecked={agreements.intellectualProperty} 
+                  onChange={handleAgreementChange}
+                >
+                  <Text textAlign="center">
+                    <strong>본인</strong>은 제출한 아이디어에 대한 지적재산권을 보유하며, <strong>InvestBridge</strong>이 투자자 매칭 목적으로 아이디어를 사용할 수 있는 권한을 부여합니다. 
+                  </Text>
+                  
+                </Checkbox>
+                <Checkbox 
+                  name="liability" 
+                  isChecked={agreements.liability} 
+                  onChange={handleAgreementChange}
+                >
+                  <Text textAlign="center">
+                    <strong>본인</strong>은 <strong>InvestBridge</strong>이 투자의 성사나 아이디어의 성공을 보장하지 않으며, 발생 가능한 모든 결과에 대해 본인이 책임짐을 인정합니다.                    
+                  </Text>
+                </Checkbox>
+              </VStack>
+            </VStack>
+          </Box>
 
-          <Button
-            type="submit"
-            colorScheme="teal"
-            size="lg"
-            isDisabled={!isChecked}
+          <Button 
+            type="submit" 
+            colorScheme="teal" 
+            size="lg" 
+            isDisabled={!allAgreed} 
             w="full"
           >
             ⭐️ 아이디어 등록하기 ⭐️

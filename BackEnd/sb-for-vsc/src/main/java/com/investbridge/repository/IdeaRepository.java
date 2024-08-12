@@ -13,7 +13,7 @@ public interface IdeaRepository extends MongoRepository<Idea, String>{
     Optional<Idea> findByTitleContaining(String keyword);
     Optional<Idea> findByContentContaining(String keyword);
 
-    Optional<List<Idea>> findByUserName(String userName);
+    Optional<List<Idea>> findByUserId(String userId);
 
     Optional<Idea> findByIsContracted(boolean isContracted);
     Optional<Idea> findByCategories(IdeaCategory category);

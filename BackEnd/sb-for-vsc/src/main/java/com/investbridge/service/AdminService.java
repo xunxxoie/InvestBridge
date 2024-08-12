@@ -107,10 +107,8 @@ public PatchNoteResponseDTO findPatchNote(String version){
     }
 
     public List<IdeaSummaryDTO> findUserIdea(String userId){
-        User user = userRepository.findByUserId(userId).orElse(null);
-        String userName = user.getUserName();
 
-        List<Idea> userIdeaSumList = ideaRepository.findByUserName(userName).orElse(Collections.emptyList());
+        List<Idea> userIdeaSumList = ideaRepository.findByUserId(userId).orElse(Collections.emptyList());
         return userIdeaSumList.stream()
                 .map(ideaSum -> IdeaSummaryDTO.builder()
                                 .title(ideaSum.getTitle())
@@ -125,7 +123,7 @@ public PatchNoteResponseDTO findPatchNote(String version){
         return ideaInfoList.stream()
                 .map(idea -> AdminIdeaInfoDTO.builder()
                             .id(idea.getId())
-                            .userName(idea.getUserName())
+                            .userId(idea.getUserId())
                             .title(idea.getTitle())
                             .content(idea.getContent())
                             .gitLink(idea.getGitLink())

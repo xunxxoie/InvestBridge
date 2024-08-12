@@ -45,8 +45,10 @@ public class IdeaController {
     @Operation(summary = "아이디어 생성", description = "새로운 아이디어를 생성합니다.")
     public ResponseEntity<?> ideaAdd(@ModelAttribute IdeaRequestDTO request, @CookieValue(name="jwt", required = false) String token){
 
-        String userName = jwtTokenProvider.getUserbyToken(token).getUserName();
-        request.setUserName(userName);
+        String userId = jwtTokenProvider.getUserbyToken(token).getUserId();
+        request.setUserId(userId);
+
+        logger.info(userId);
 
         try{
             IdeaResponseDTO response = ideaService.addIdea(request);

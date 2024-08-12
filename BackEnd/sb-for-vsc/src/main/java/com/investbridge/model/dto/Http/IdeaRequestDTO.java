@@ -14,8 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IdeaRequestDTO {
-    private String userName;
+    private String userId;
+
     private String title;
+    private String projectSummary;
+    private String teamSummary;
+    
     private String content;
     private String gitLink;
     private String notionLink;
