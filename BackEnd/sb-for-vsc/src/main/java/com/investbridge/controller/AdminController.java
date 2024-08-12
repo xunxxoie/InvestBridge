@@ -81,7 +81,7 @@ public class AdminController {
 
         try{
             String response = adminService.addPatchNote(request);
-            logger.info("Add PatchNote Succeed {}", request.getVersion());
+            logger.info("Add Patchnote Succeed {}", request.getVersion());
             return ResponseEntity.ok(response);
         }catch(Exception e){
             logger.error("Add PatchNote Failed {}", e.getMessage());
