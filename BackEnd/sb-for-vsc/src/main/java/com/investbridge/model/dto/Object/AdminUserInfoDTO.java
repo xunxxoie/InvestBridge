@@ -17,4 +17,5 @@ public class AdminUserInfoDTO {
     private String birth;
     private String role;
     private String createdAt;
+    private boolean isBlocked;
 }

@@ -1,8 +1,8 @@
-import { Box, Center, Flex, Heading, Icon, Tag, Text } from '@chakra-ui/react';
+import { Badge, Box, Flex, Heading, HStack, Icon, Image, Spacer, Tag, Text, VStack } from '@chakra-ui/react';
 import React from 'react';
-import { FaHeart, FaStar } from 'react-icons/fa';
+import { FaEye, FaHeart, FaStar, FaUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import image from '../../../image/p1.jpg';
+import CardImg from '../../../image/p4.jpg';
 
 const categoryColors = {
   '인공지능': 'blue',
@@ -15,7 +15,7 @@ const categoryColors = {
 };
 
 const IdeaCard = ({ project }) => {
-  const { id, userName, title, categories, likes, favorites } = project;
+  const { id, userName, title, categories, likes, favorites, viewCount, studentCount = 100 } = project;
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -29,8 +29,9 @@ const IdeaCard = ({ project }) => {
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
-      w="300px"
-      boxShadow="lg"
+      w="280px"
+      h="380px"
+      boxShadow="md"
       bg="white"
       transition="all 0.3s"
       _hover={{
@@ -38,38 +39,49 @@ const IdeaCard = ({ project }) => {
         boxShadow: 'xl',
       }}
     >
-      <Box h="150px" bgImage={`url(${image})`} bgSize="cover" bgPosition="center" />
-      <Box p={4}>
-        <Heading as="h3" size="md" mb={2} color="blue.600">
-          {userName}
-        </Heading>
-        <Heading as="h2" size="lg" mb={4}>
+      <Box position="relative">
+        <Image src={CardImg} alt={title} h="160px" w="100%" objectFit="cover" />
+        <Badge colorScheme="green" position="absolute" top="10px" left="10px" fontSize="xs" px={2}>
+          NEW
+        </Badge>
+      </Box>
+      <VStack align="stretch" p={3} spacing={2} h="220px">
+        <Heading as="h3" size="lg" noOfLines={2} lineHeight="shorter" mb={1}>
           {title}
         </Heading>
-        <Center mb={4}>
-          <Flex wrap="wrap" justify="center">
-            {categories.map((tag, index) => (
-              <Tag 
-                key={index} 
-                m={1} 
-                colorScheme={categoryColors[tag] || categoryColors.default}
-              >
-                #{tag}
-              </Tag>
-            ))}
-          </Flex>
-        </Center>
-        <Flex justify="center" align="center">
-          <Flex align="center" mr={4}>
-            <Icon as={FaHeart} color="red.500" mr={1} />
-            <Text>{likes}</Text>
+        <Flex justify="center" wrap="wrap" mb={1}>
+          {categories && categories.slice(0, 2).map((tag, index) => (
+            <Tag
+              key={index}
+              size="sm"
+              mx={1}
+              mb={1}
+              colorScheme={categoryColors[tag] || categoryColors.default}
+            >
+              {tag}
+            </Tag>
+          ))}
+        </Flex>
+        <Spacer />
+        <HStack justify="space-between" align="center">
+          <HStack>
+            <Icon as={FaUser} color="gray.500" />
+            <Text fontSize="sm" color="gray.500">{userName}</Text>
+          </HStack>
+        </HStack>
+        <HStack justify="space-between" align="center" mt={2}>
+          <Flex align="center">
+            <Icon as={FaEye} color="gray.500" mr={1} />
+            <Text fontSize="sm" color="gray.500">{viewCount || 0}</Text>
           </Flex>
           <Flex align="center">
+            <Icon as={FaHeart} color="red.500" mr={1} />
+            <Text fontSize="sm" mr={3}>{likes || 0}</Text>
             <Icon as={FaStar} color="yellow.400" mr={1} />
-            <Text>{favorites}</Text>
+            <Text fontSize="sm">{favorites || 0}</Text>
           </Flex>
-        </Flex>
-      </Box>
+        </HStack>
+      </VStack>
     </Box>
   );
 };

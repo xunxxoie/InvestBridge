@@ -65,12 +65,40 @@ const IdeaDetailPage = () => {
     }
   }
 
-  const handleLike = () => {
-    setIdea(prevIdea => ({ ...prevIdea, likes: (prevIdea?.likes || 0) + 1 }));
+  const handleLike = async () => {
+    try{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/ideas/${idea.id}/like`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if(!response.ok){
+        throw new Error('Failed to like idea');
+      }
+
+      const updatedIdea = await response.json();
+      setIdea(updatedIdea);
+    }catch(error){
+      console.error('Internal Server Error', error);
+    }
   };
 
-  const handleFavorite = () => {
-    setIdea(prevIdea => ({ ...prevIdea, favorites: (prevIdea?.favorites || 0) + 1 }));
+  const handleFavorite = async () => {
+    try{
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/ideas/${idea.id}/favorite`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if(!response.ok){
+        throw new Error('Failed to like idea');
+      }
+
+      const updatedIdea = await response.json();
+      setIdea(updatedIdea);
+    }catch(error){
+      console.error('Internal Server Error', error);
+    }
   };
 
   if (isLoading) {

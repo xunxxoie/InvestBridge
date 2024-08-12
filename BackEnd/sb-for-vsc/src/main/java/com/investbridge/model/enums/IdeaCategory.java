@@ -1,10 +1,16 @@
 package com.investbridge.model.enums;
 
 public enum IdeaCategory {
-    AI,
+    Design,
+    Bio,
     Medical,
-    Bigdata,
-    EnergyChemical,
+    Chemical,
+    Game,
+    AI,
+    Data_Science,
+    HW_Engineering,
+    SW_Engineering,
+    Engineering,
     Finance,
-    Game
+    Business,
 }

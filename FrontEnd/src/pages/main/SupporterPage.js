@@ -36,7 +36,7 @@ const theme = extendTheme({
 const Supporter = () => {
   const navigate = useNavigate();
   const handleButtonClick = () => {
-    navigate('/idea');
+    navigate('/ideas');
   };
 
   const particlesInit = useCallback(async (engine) => {

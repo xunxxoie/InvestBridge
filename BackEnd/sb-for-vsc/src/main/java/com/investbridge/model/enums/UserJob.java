@@ -1,8 +1,10 @@
 package com.investbridge.model.enums;
 
 public enum UserJob {
-    EMPLOYEE,
-    STUDENT,
-    UNEMPLOYED,
-    BUSINESS_OWNER
+    Student,
+    Unemployed,
+    Military_Personnel,
+    Businessperson,
+    Employee,
+    Civil_Servant
 }

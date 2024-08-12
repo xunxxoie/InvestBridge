@@ -2,10 +2,12 @@ package com.investbridge.service;
 
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.investbridge.model.db.User;
+import com.investbridge.model.dto.Object.UserDTO;
 import com.investbridge.model.dto.Object.UserProfileDTO;
 import com.investbridge.repository.IdeaRepository;
 import com.investbridge.repository.UserRepository;
@@ -36,5 +38,21 @@ public class UserService {
             .userRole(user.getUserRole().name()) 
             .userInterest("interest")
             .build();
+    }
+
+    public UserDTO getUserInfoFromUserEmail(String userEmail){
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new BadCredentialsException("Invalid Email"));
+
+        return UserDTO.builder()
+            .userId(user.getUserId())
+            .userEmail(user.getUserEmail())
+            .userRole(user.getUserRole().name())
+            .build();
+    }
+
+    public String getRefreshToken(String userEmail){
+        User user = userRepository.findByUserEmail(userEmail).orElse(null);
+        return user.getRefreshToken();      
     }
 }

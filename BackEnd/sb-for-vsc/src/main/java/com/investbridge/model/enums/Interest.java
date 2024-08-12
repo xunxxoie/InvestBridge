@@ -1,10 +1,13 @@
 package com.investbridge.model.enums;
 
 public enum Interest {
-    BIG_DATA,
+    Computer_Engineering,
+    Bio,
+    Medical,
+    Chemical,
     AI,
-    GAME,
-    HEALTHCARE,
-    ENERGY_CHEMISTRY,
-    FINANCE
+    Data_Science,
+    Finance,
+    Business,
+    NONE
 }

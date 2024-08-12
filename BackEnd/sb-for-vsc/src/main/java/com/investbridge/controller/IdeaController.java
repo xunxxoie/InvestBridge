@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 
 
+
 @RestController
 @RequestMapping("/api/ideas")
 public class IdeaController {
@@ -75,7 +76,7 @@ public class IdeaController {
 
     @GetMapping("/detail/{id}")
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
-    public ResponseEntity<?> ideaDetails(@CookieValue(name="jwt", required = false)String token, @PathVariable String id) {
+    public ResponseEntity<?> ideaDetails(@PathVariable String id) {
         try{
             Idea response = ideaService.findIdea(id);
             logger.info("Load Idea Succeed : {} ", response.getId());
@@ -83,6 +84,34 @@ public class IdeaController {
         }catch (Exception e){
             logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Load Idea Failed : {} ", e.getMessage() ));
+        }
+    }
+    
+    @PostMapping("/{id}/like")
+    @Operation(summary = "좋아요 수 업데이트", description = "좋아요 수를 업데이트 합니다.")
+    public ResponseEntity<?> updateLikes (@CookieValue(name="jwt", required = false)String token, @PathVariable String id){
+        String userId = jwtTokenProvider.getUserIdFromToken(token);
+        try{
+            Idea response = ideaService.updateLikes(id, userId);
+            logger.info("Update Like Succeed");
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+            logger.error("Update Like Failed : {} ", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Update Like Failed : {}", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{id}/favorite")
+    @Operation(summary = "스크랩 수 업데이트", description = "스크랩 수를 업데이트 합니다.")
+    public ResponseEntity<?> updateFavorites(@CookieValue(name="jwt", required = false)String token, @PathVariable String id){
+        String userId = jwtTokenProvider.getUserIdFromToken(token);
+        try{
+            Idea response = ideaService.updateFavorites(id, userId);
+            logger.info("Update Favorite Succeed");
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+            logger.error("Update Favorite Failed : {} ", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Update Favorite Failed : {}", e.getMessage()));
         }
     }
 }

@@ -3,18 +3,27 @@ package com.investbridge.security;
 import java.security.Key;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.investbridge.model.dto.Object.UserDTO;
+import com.investbridge.security.filter.LogoutFilter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenProvider {
+
+    private static final long ACCESS_TOKEN_VALIDITY = 15 * 60 * 1000; 
+    private static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000;
+
+    private static final Logger logger = LoggerFactory.getLogger(LogoutFilter.class);
 
     private final Key key; // JWT - Verify Signature
     private final long validateTime; // JWT - Expiration Time
@@ -25,8 +34,8 @@ public class JwtTokenProvider {
         this.validateTime = validateTime;
     }
 
-    //Jwt Token create method
-    public String createToken(String userId, String userEmail, String userName, String phoneNumber, String userRole){
+    //Access Token create method
+    public String generateAccessToken(String userId, String userEmail, String userName, String phoneNumber, String userRole){
         // Set payLoad (payLode includes several claims)
         Date now = new Date();
         Claims claims = Jwts.claims()
@@ -34,7 +43,7 @@ public class JwtTokenProvider {
                                 .setIssuer("Invest Bridge") // Token Provider
                                 .setSubject(userEmail)
                                 .setIssuedAt(now) // Token Generated Time
-                                .setExpiration(new Date(now.getTime() + validateTime)); // Expiration based on validateTime
+                                .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_VALIDITY)); // Expiration based on validateTime
         
         // Add Customized Claims
         claims.put("userId", userId);
@@ -48,15 +57,43 @@ public class JwtTokenProvider {
                     .compact();
     }
 
+    //Refresh Token create method
+    public String generateRefreshToken(String userEmail){
+        return Jwts.builder()
+                    .setSubject(userEmail)
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis()+REFRESH_TOKEN_VALIDITY))
+                    .signWith(key,SignatureAlgorithm.HS256)
+                    .compact();
+    }
+    
     // Validate Token Method
-    public boolean validateToken(String token){
+    public boolean validateAccessToken(String token) throws ExpiredJwtException {
         try{
             Jwts.parserBuilder() // Start Parser Builder
                 .setSigningKey(key) // Set key to use to varify token's sign
                 .build() // Make parser(based on our settings)
                 .parseClaimsJws(token); // Parsing token And varify '형식, 서명, 만료기간'
             return true;
+        }catch(ExpiredJwtException e){
+            throw e;
         }catch(Exception e){
+            logger.error("Unexpected error is occured : {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean validateRefreshToken(String token) throws ExpiredJwtException {
+        try{
+            Jwts.parserBuilder() // Start Parser Builder
+                .setSigningKey(key) // Set key to use to varify token's sign
+                .build() // Make parser(based on our settings)
+                .parseClaimsJws(token); // Parsing token And varify '형식, 서명, 만료기간'
+            return true;
+        }catch(ExpiredJwtException e){
+            throw e;
+        }catch(Exception e){
+            logger.error("Unexpected error is occured : {}", e.getMessage());
             return false;
         }
     }
@@ -71,12 +108,26 @@ public class JwtTokenProvider {
 
         return new UserDTO(
             claims.get("userId", String.class),
-            claims.getSubject(),
+            claims.getSubject(), // Email
             claims.get("userName", String.class),
-            claims.get("phoneNumber", String.class)
+            claims.get("phoneNumber", String.class),
+            claims.get("userRole", String.class)
         );
     }
 
+    public String getUserEmailFromExpiredToken(String token){
+        try {
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+            return claims.getSubject();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims().getSubject();
+        }
+    }
+    
     public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)

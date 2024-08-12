@@ -2,7 +2,6 @@ package com.investbridge.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -61,8 +60,6 @@ public class IdeaService {
             .files(fileMetadata)
             .favorites(0)
             .likes(0)
-            .createdAt(new Date())
-            .updatedAt(new Date())
             .isContracted(false)
             .build();
 
@@ -81,5 +78,54 @@ public class IdeaService {
 
     public Idea findIdea(String id){
         return ideaRepository.findById(id).orElse(null);
+    }
+
+    public Idea updateLikes(String id, String userId){
+        Idea idea = ideaRepository.findById(id).orElse(null);
+
+        List<String> likedUsers = idea.getLikedUsers();
+
+        //if user already push likes -> cancel like
+        if(likedUsers.contains(userId)){
+            likedUsers.remove(userId);
+            idea.setLikes(idea.getLikes()-1);
+        }else{
+            likedUsers.add(userId);
+            idea.setLikes(idea.getLikes()+1);
+        }
+
+        idea.setLikedUsers(likedUsers);
+        return ideaRepository.save(idea);
+    }
+
+    public Idea updateFavorites(String id, String userId){
+        Idea idea = ideaRepository.findById(id).orElse(null);
+
+        List<String> favoritedUsers = idea.getFavoritedUsers();
+
+        if(favoritedUsers.contains(userId)){
+            favoritedUsers.remove(userId);
+            idea.setFavorites(idea.getFavorites() - 1);
+        }else{
+            favoritedUsers.add(userId);
+            idea.setFavorites(idea.getFavorites() + 1);
+        }
+
+        idea.setFavoritedUsers(favoritedUsers);
+        return ideaRepository.save(idea);
+    }
+
+    public void deleteIdea(String id){
+        ideaRepository.deleteById(id);
+    }
+
+    public boolean updateIdeaBlockStatus(String id, boolean isBlocked){
+        return ideaRepository.findById(id)
+            .map(idea -> {
+                idea.setBlocked(isBlocked);
+                ideaRepository.save(idea);
+                return idea.isBlocked();
+            })
+            .orElse(true);
     }
 }

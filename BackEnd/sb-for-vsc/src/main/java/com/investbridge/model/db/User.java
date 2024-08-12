@@ -42,4 +42,8 @@ public class User {
 
     @DBRef
     private List<Idea> ideas;
+
+    private String refreshToken;
+
+    private boolean isBlocked;
 }

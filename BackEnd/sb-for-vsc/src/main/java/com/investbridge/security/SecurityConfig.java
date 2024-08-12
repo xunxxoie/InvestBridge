@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +22,7 @@ import com.investbridge.controller.AuthController;
 import com.investbridge.security.filter.AdminAuthorizationFilter;
 import com.investbridge.security.filter.JwtTokenFilter;
 import com.investbridge.security.filter.LogoutFilter;
+import com.investbridge.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -30,15 +30,17 @@ import jakarta.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlacklist tokenBlacklist;
+    private final UserService userService;
 
-    @Autowired
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist) {
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.tokenBlacklist = tokenBlacklist;
+        this.userService = userService;
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Value("${cors.allowed-origins}")
     private List<String> allowedOrigins;
@@ -76,13 +78,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/user/**").permitAll()
                 .requestMatchers("/api/ideas/**").permitAll()
                 .requestMatchers("/api/admin/**").permitAll()
+                .requestMatchers("/api/about/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider, tokenBlacklist), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(new LogoutFilter(tokenBlacklist), JwtTokenFilter.class)
-            .addFilterBefore(new AdminAuthorizationFilter(jwtTokenProvider), LogoutFilter.class);
+            .addFilterAt(new JwtTokenFilter(jwtTokenProvider, tokenBlacklist, userService), UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(new LogoutFilter(tokenBlacklist), JwtTokenFilter.class)
+            .addFilterAfter(new AdminAuthorizationFilter(jwtTokenProvider), LogoutFilter.class);
         return http.build();
     }
 

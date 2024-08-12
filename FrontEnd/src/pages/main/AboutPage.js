@@ -97,7 +97,7 @@ const AboutPage = () => {
   useEffect(() => {
     const fetchVersions = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnotes-versions`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/about/patchnotes-versions`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -117,7 +117,7 @@ const AboutPage = () => {
 
   const fetchPatchNote = async (version) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnote/${version}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/about/patchnote/${version}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

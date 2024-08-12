@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class UserProfileDTO {
     private String userId;
     private String userEmail;
@@ -19,3 +18,4 @@ public class UserProfileDTO {
     private String userRole;
     private String userInterest;
 }
+

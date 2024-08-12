@@ -38,14 +38,37 @@ const theme = extendTheme({
   },
 });
 
+const fetchProjects = async (userName) => {
+  try {
+    const projectsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/profile/projects`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!projectsResponse.ok) {
+      throw new Error('Failed to fetch projects');
+    }
+
+    const projectsData = await projectsResponse.json();
+    console.log('Fetched projects:', projectsData);
+
+    if (Array.isArray(projectsData)) {
+      return projectsData.filter(project => project.userName === userName);
+    } else {
+      console.error('Unexpected projects data structure:', projectsData);
+      throw new Error('프로젝트 데이터 구조가 예상과 다릅니다.');
+    }
+  } catch (error) {
+    console.error('프로젝트를 불러오는 데 실패했습니다:', error);
+    throw error;
+  }
+};
+
 const Profile = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
 
-  const myProjects = [
-    { title: "AI 헬스케어", team: "Team #1" },
-    { title: "빅데이터 분석 플랫폼", team: "Team #2" },
-    { title: "블록체인 기반 계약 시스템", team: "Team #3" },
-  ];
+  // (profileData.userName == projects.userName) idea
+  const [myProjects, setMyProjects] = useState([]);
 
   const supportedProjects = [
     { title: "스마트 시티 프로젝트", team: "Team #4" },
@@ -56,13 +79,14 @@ const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/profile`, {
           method: 'GET',
-          credentials: 'include' // This is equivalent to withCredentials: true in axios
+          credentials: 'include'
         });
         
         if (!response.ok) {
@@ -71,6 +95,16 @@ const Profile = () => {
         
         const data = await response.json();
         setProfileData(data);
+  
+        if (data.userRole === 'DREAMER') {
+          try {
+            const userProjects = await fetchProjects(data.userName);
+            setMyProjects(userProjects);
+          } catch (error) {
+            console.error('Error fetching projects:', error);
+            setError('프로젝트 정보를 가져오는 데 실패했습니다.');
+          }
+        }
       } catch (error) {
         console.error('Error fetching profile data:', error);
         setError('프로필 정보를 가져오는 데 실패했습니다.');
@@ -81,6 +115,7 @@ const Profile = () => {
   
     fetchProfileData();
   }, []);
+
   if (loading) {
     return (
       <ChakraProvider theme={theme}>
@@ -128,8 +163,14 @@ const Profile = () => {
             />
           </Box>
           <Box>
-            <ProjectSection title="My Dream" projects={myProjects} />
-            <ProjectSection title="My Support" projects={supportedProjects} />
+            {/* if userRole == DREAMER -> myProjects */}
+            {profileData?.userRole === 'DREAMER' && (
+              <ProjectSection title="My Dream" projects={myProjects} />
+            )}
+            {/* if userRole == SUPPORTER -> supportedProjects */}
+            {profileData?.userRole === 'SUPPORTER' && (
+              <ProjectSection title="My Support" projects={supportedProjects} />
+            )}
           </Box>
         </Grid>
       </Container>

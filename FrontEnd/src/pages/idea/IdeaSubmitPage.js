@@ -157,7 +157,7 @@ export default function DreamerIdea() {
     }
   };
 
-  const categories = ['인공지능', '의료 · 보건', '빅데이터', '에너지 · 화학', '금융', '게임'];
+  const categories = ['Design','Bio','Medical','Chemical','Game','AI','Data_Science','HW_Engineering','SW_Engineering','Engineering','Finance','Business'];
 
   const bgColor = useColorModeValue('white', 'gray.700');
   const borderColor = useColorModeValue('gray.200', 'gray.600');

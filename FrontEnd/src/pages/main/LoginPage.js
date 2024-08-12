@@ -1,5 +1,6 @@
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
@@ -9,6 +10,7 @@ import {
   FormControlLabel,
   Link,
   Paper,
+  Snackbar,
   TextField,
   ThemeProvider,
   Typography,
@@ -86,6 +88,8 @@ export default function Login() {
   const [userPw, setUserPw] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -106,18 +110,30 @@ export default function Login() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+        if (response.status === 403) {
+          setSnackbarMessage('계정이 일시적으로 정지되었습니다!');
+          setOpenSnackbar(true);
+        } else {
+          throw new Error(errorData.message || 'Login failed');
+        }
+      } else {
+        const data = await response.json();
+        console.log('Login successful', data);
+        navigate('/main');
       }
-
-      const data = await response.json();
-      console.log('Login successful', data);
-      navigate('/main');
     } catch (error) {
       console.error('Login failed', error.message);
-      setError('Wrong PassWord!');
+      setError('Wrong Password!');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
   };
 
   return (
@@ -238,10 +254,15 @@ export default function Login() {
                 </Link>
               </Box>
             </Box>
-          </Paper>
+            </Paper>
           <Copyright sx={{ mt: 5, color: 'text.secondary' }} />
         </Container>
       </Box>
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="warning" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

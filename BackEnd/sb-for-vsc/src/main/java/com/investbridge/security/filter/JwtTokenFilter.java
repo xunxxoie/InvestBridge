@@ -11,9 +11,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.investbridge.model.dto.Object.UserDTO;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.security.TokenBlacklist;
+import com.investbridge.service.UserService;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,56 +26,66 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogoutFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlacklist tokenBlacklist;
-
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist) {
+    private final UserService userService;
+    
+    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.tokenBlacklist = tokenBlacklist;
+        this.userService = userService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
                                     throws ServletException, IOException {
-
-        String token = getTokenFromRequest(request);
-
-        // In case, When user Login, Pass filter
-        if (token == null) {
+        logger.info("JwtTokenFIlter is processing a request to {}", request.getRequestURI());
+        String accessToken = getTokenFromRequest(request);
+        
+        if ("/api/auth/login".equals(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
-        
+
+        if (accessToken == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
-            if (!jwtTokenProvider.validateToken(token) || tokenBlacklist.isBlacklisted(token)) {
+            // Verify AccessToken "is vaild?"
+            if (!jwtTokenProvider.validateAccessToken(accessToken) || tokenBlacklist.isBlacklisted(accessToken)) 
                 throw new BadCredentialsException("Not Available Authority");
-            }
-            String userEmail = jwtTokenProvider.getUserEmailFromToken(token);
-            Authentication auth = new UsernamePasswordAuthenticationToken(userEmail, null, Collections.emptyList());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            
+
+                UserDTO user = jwtTokenProvider.getUserbyToken(accessToken);
+                Authentication auth = new UsernamePasswordAuthenticationToken(user.getUserEmail(), null, Collections.emptyList());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                logger.debug("Set Authentication to security context for '{}', uri: {}", user.getUserEmail(), request.getRequestURI());
+
         } catch (BadCredentialsException e) {
+
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Authentication failed: " + e.getMessage());
-            return;
+
+        } catch (ExpiredJwtException e){
+
+            //Generate new AccessToken, When accessToken is expired!
+            handleExpiredToken(request, response, accessToken); 
+
         } catch (Exception e) {
+
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("Internal Sever Error");
-            return;
+
         }
 
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * Why use "HttpServletRequest"??
-     *  1. 별다른 구현 없이, HTTP 요청을 받아와 다룰 수 있음. 
-     *  2. 클라이언트가 서버로 보낸 HTTP 요청들을 캡슐화해서 갖고 있음. 
-     */
     private String getTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -85,4 +98,44 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
         return null;
     }
 
+    private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response, String accessToken) throws IOException{
+        try{
+            String userEmail = jwtTokenProvider.getUserEmailFromExpiredToken(accessToken);
+            String refreshToken = userService.getRefreshToken(userEmail);
+
+            try{
+                if(refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)){
+                    UserDTO user = userService.getUserInfoFromUserEmail(userEmail);
+                    String newAccessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), user.getUserEmail(), user.getUserName(), user.getPhoneNumber(), user.getUserRole());
+                    
+                    Cookie jwtCookie = new Cookie("jwt", newAccessToken);
+                    jwtCookie.setHttpOnly(true);
+                    jwtCookie.setPath("/");
+                    jwtCookie.setMaxAge(24*60*60);
+                    
+                    response.addCookie(jwtCookie);
+        
+                    Authentication newAuth = new UsernamePasswordAuthenticationToken(user.getUserEmail(), null, Collections.emptyList());
+                    SecurityContextHolder.getContext().setAuthentication(newAuth);
+            }
+            }catch(ExpiredJwtException e){
+                //Redirect Login Page, When refreshToken is also expired
+                SecurityContextHolder.clearContext();
+        
+                // Clear the existing JWT cookie
+                Cookie jwtCookie = new Cookie("jwt", null);
+                jwtCookie.setMaxAge(0);
+                jwtCookie.setPath("/");
+                response.addCookie(jwtCookie);
+            
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setHeader("X-Auth-Error", "refresh_token_expired");
+                
+                logger.info("Refresh token expired. Sending 401 with custom header.");
+            }
+        }catch (Exception e){
+            logger.error("Internal Server Error", e);
+        }
+    }
 }

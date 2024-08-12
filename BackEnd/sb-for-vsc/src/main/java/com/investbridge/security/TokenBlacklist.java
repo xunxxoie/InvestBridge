@@ -2,7 +2,6 @@ package com.investbridge.security;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,6 @@ public class TokenBlacklist {
     private BlacklistedTokenRepository blacklistedTokenRepository;
     private JwtTokenProvider jwtTokenProvider;
     
-    @Autowired
     public TokenBlacklist(BlacklistedTokenRepository blacklistedTokenRepository, JwtTokenProvider jwtTokenProvider) {
         this.blacklistedTokenRepository = blacklistedTokenRepository;
         this.jwtTokenProvider = jwtTokenProvider;

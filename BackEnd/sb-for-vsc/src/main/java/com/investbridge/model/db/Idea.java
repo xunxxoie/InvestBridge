@@ -1,6 +1,7 @@
 package com.investbridge.model.db;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -30,17 +31,30 @@ public class Idea {
     private String gitLink;
     private String notionLink;
 
+    private String teamSummary;
+
     private List<String> categories;
     private List<FileMetaData> files;
 
     private Integer likes;
     private Integer favorites;
 
+    private boolean isContracted;
+    private String supporterName;
+    private LocalDateTime contractedDate;
+
+    @Builder.Default
+    private List<String> likedUsers = new ArrayList<>();
+
+    @Builder.Default
+    private List<String> favoritedUsers = new ArrayList<>();
+
     @CreatedDate
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
-    private boolean isContracted;
+    private boolean isBlocked;
 }
+

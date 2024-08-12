@@ -181,10 +181,12 @@ const JoinDreamer = () => {
                   label="직업"
                   name="job"
                 >
-                  <MenuItem value="EMPLOYEE">직장인</MenuItem>
-                  <MenuItem value="STUDENT">학생</MenuItem>
-                  <MenuItem value="UNEMPLOYED">무직</MenuItem>
-                  <MenuItem value="ENTREPRENEUR">사업가</MenuItem>
+                  <MenuItem value="Student">학생</MenuItem>
+                  <MenuItem value="Employee">직장인</MenuItem>
+                  <MenuItem value="Unemployed">무직</MenuItem>
+                  <MenuItem value="Military_Personnel">군인</MenuItem>
+                  <MenuItem value="Businessperson">사업가</MenuItem>
+                  <MenuItem value="Civil_Servant">공무원</MenuItem>
                 </Select>
               </StyledFormControl>
             </ListItem>
@@ -198,12 +200,15 @@ const JoinDreamer = () => {
                   label="관심분야"
                   name="interest"
                 >
-                  <MenuItem value="BIG_DATA">빅데이터</MenuItem>
-                  <MenuItem value="AI">인공지능</MenuItem>
-                  <MenuItem value="GAME">게임</MenuItem>
-                  <MenuItem value="HEALTHCARE">의료-보건</MenuItem>
-                  <MenuItem value="ENERGY_CHEMISTRY">에너지-화학</MenuItem>
-                  <MenuItem value="FINANCE">금융</MenuItem>
+                <MenuItem value="Computer_Engineering">컴퓨터공학</MenuItem>
+                <MenuItem value="Bio">생명공학</MenuItem>
+                <MenuItem value="Medical">의료</MenuItem>
+                <MenuItem value="Chemical">화학</MenuItem>
+                <MenuItem value="AI">인공지능</MenuItem>
+                <MenuItem value="Data_Science">데이터처리</MenuItem>
+                <MenuItem value="Finance">금융</MenuItem>
+                <MenuItem value="Business">사업</MenuItem>
+                <MenuItem value="NONE">없음</MenuItem>
                 </Select>
               </StyledFormControl>
             </ListItem>
