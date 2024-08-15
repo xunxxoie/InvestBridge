@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.Operation;
 public class IdeaController {
 
     private static final Logger logger = LoggerFactory.getLogger(IdeaController.class);
-    
+
     private final IdeaService ideaService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -55,7 +55,6 @@ public class IdeaController {
         }
     }
 
-    //Annotation states that Get request only multipart-form-data-value
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "아이디어 생성하기", description = "새로운 아이디어를 생성합니다.")
     public ResponseEntity<?> ideaAdd(@ModelAttribute IdeaRequestDTO request, @CookieValue(name="jwt", required = false) String token){
