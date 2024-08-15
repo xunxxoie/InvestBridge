@@ -12,27 +12,20 @@ import com.investbridge.model.db.Idea;
 import com.investbridge.model.dto.Http.IdeaRequestDTO;
 import com.investbridge.model.dto.Http.IdeaResponseDTO;
 import com.investbridge.model.dto.Object.FileMetaData;
+import com.investbridge.model.dto.Object.IdeaDetailDTO;
 import com.investbridge.repository.IdeaRepository;
-import com.investbridge.repository.UserRepository;
-import com.investbridge.security.JwtTokenProvider;
 
 @Service
 @Transactional
 public class IdeaService {
     private final IdeaRepository ideaRepository;
-    private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     
-    public IdeaService(IdeaRepository ideaRepository, UserRepository userRepository,
-            JwtTokenProvider jwtTokenProvider) {
+    public IdeaService(IdeaRepository ideaRepository){
         this.ideaRepository = ideaRepository;
-        this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public IdeaResponseDTO addIdea(IdeaRequestDTO request){
 
-        // Convert MultipartFile to FileMetaData to save in db
         List<FileMetaData> fileMetadata = new ArrayList<>();
         if(request.getFiles() != null){
             for(MultipartFile file : request.getFiles()){
@@ -78,8 +71,25 @@ public class IdeaService {
         return idea;
     }
 
-    public Idea findIdea(String id){
-        return ideaRepository.findById(id).orElse(null);
+    public IdeaDetailDTO findIdea(String userId, String ideaId){
+        Idea ideaDetail = ideaRepository.findById(ideaId).orElse(null);
+
+        boolean isOwner = (ideaDetail.getUserId().equals(userId));
+
+        IdeaDetailDTO response = IdeaDetailDTO.builder()
+                        .ideaId(ideaDetail.getId())
+                        .dreamerId(ideaDetail.getUserId())
+                        .title(ideaDetail.getTitle())
+                        .projectSummary(ideaDetail.getProjectSummary())
+                        .teamSummary(ideaDetail.getTeamSummary())
+                        .content(ideaDetail.getContent())
+                        .likes(ideaDetail.getLikes())
+                        .favorites(ideaDetail.getFavorites())
+                        .isContracted(ideaDetail.isContracted())
+                        .isOwner(isOwner)
+                        .build();
+        
+        return response;
     }
 
     public Idea updateLikes(String id, String userId){
@@ -87,7 +97,6 @@ public class IdeaService {
 
         List<String> likedUsers = idea.getLikedUsers();
 
-        //if user already push likes -> cancel like
         if(likedUsers.contains(userId)){
             likedUsers.remove(userId);
             idea.setLikes(idea.getLikes()-1);

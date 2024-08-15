@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/api/chat")
 public class ChatAppController {
     
-    private static final Logger logger = LoggerFactory.getLogger(IdeaController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChatAppController.class);
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ChatAppService chatAppService;

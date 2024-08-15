@@ -19,6 +19,7 @@ import com.investbridge.exception.ErrorResponse;
 import com.investbridge.model.db.Idea;
 import com.investbridge.model.dto.Http.IdeaRequestDTO;
 import com.investbridge.model.dto.Http.IdeaResponseDTO;
+import com.investbridge.model.dto.Object.IdeaDetailDTO;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.IdeaService;
 
@@ -31,18 +32,32 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/api/ideas")
 public class IdeaController {
 
+    private static final Logger logger = LoggerFactory.getLogger(IdeaController.class);
+    
     private final IdeaService ideaService;
     private final JwtTokenProvider jwtTokenProvider;
-    private static final Logger logger = LoggerFactory.getLogger(IdeaController.class);
 
     public IdeaController(IdeaService ideaService, JwtTokenProvider jwtTokenProvider) {
         this.ideaService = ideaService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @GetMapping
+    @Operation(summary = "전체 아이디어 불러오기", description = "전체 아이디어를 불러옵니다.")
+    public ResponseEntity<?> ideaList(@CookieValue(name="jwt", required = false)String token){
+        try{
+            List<Idea> response = ideaService.findAllIdea();
+            logger.info("Load All Idea Succeed");
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Load All Idea Failed : {} ", e.getMessage() ));
+        }
+    }
+
     //Annotation states that Get request only multipart-form-data-value
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "아이디어 생성", description = "새로운 아이디어를 생성합니다.")
+    @Operation(summary = "아이디어 생성하기", description = "새로운 아이디어를 생성합니다.")
     public ResponseEntity<?> ideaAdd(@ModelAttribute IdeaRequestDTO request, @CookieValue(name="jwt", required = false) String token){
 
         String userId = jwtTokenProvider.getUserbyToken(token).getUserId();
@@ -63,25 +78,13 @@ public class IdeaController {
         }
     }
 
-    @GetMapping
-    @Operation(summary = "전체 아이디어 불러오기", description = "전체 아이디어를 불러옵니다.")
-    public ResponseEntity<?> ideaList(@CookieValue(name="jwt", required = false)String token){
-        try{
-            List<Idea> response = ideaService.findAllIdea();
-            logger.info("Load All Idea Succeed");
-            return ResponseEntity.ok(response);
-        }catch(Exception e){
-            logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Load All Idea Failed : {} ", e.getMessage() ));
-        }
-    }
-
     @GetMapping("/detail/{id}")
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
-    public ResponseEntity<?> ideaDetails(@PathVariable String id) {
+    public ResponseEntity<?> ideaDetails(@PathVariable String id, @CookieValue(name="jwt", required = false)String token) {
+        String userId = jwtTokenProvider.getUserIdFromToken(token);
         try{
-            Idea response = ideaService.findIdea(id);
-            logger.info("Load Idea Succeed : {} ", response.getId());
+            IdeaDetailDTO response = ideaService.findIdea(userId, id);
+            logger.info("Load Idea Succeed : {} ", response.getIdeaId());
             return ResponseEntity.ok(response);
         }catch (Exception e){
             logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());

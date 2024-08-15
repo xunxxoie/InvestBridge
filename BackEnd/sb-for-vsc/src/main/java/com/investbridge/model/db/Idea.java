@@ -30,8 +30,8 @@ public class Idea {
     private String title;
     private String projectSummary;
     private String teamSummary;
-
     private String content;
+
     private String gitLink;
     private String notionLink;
 

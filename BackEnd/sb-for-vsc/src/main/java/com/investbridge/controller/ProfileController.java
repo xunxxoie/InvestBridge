@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/api/profile")
 public class ProfileController {
     
-    private static final Logger logger = LoggerFactory.getLogger(IdeaController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;

@@ -33,9 +33,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/auth")
 @Tag(name = "Auth", description = "로그인/회원가입 API")
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider) {

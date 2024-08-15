@@ -101,7 +101,7 @@ import React, { useEffect, useRef, useState } from 'react';
   
     const fetchPatchNotes = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnotes`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/patchnote`, {
           method: 'GET',
           credentials: 'include'
         });
@@ -170,7 +170,7 @@ import React, { useEffect, useRef, useState } from 'react';
         formData.append('adminId', patchNote.adminId);
         formData.append('createdAt', new Date().toISOString());
   
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnote`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/patchnote`, {
           method: 'POST',
           body: formData,
           credentials: 'include'
@@ -201,7 +201,7 @@ import React, { useEffect, useRef, useState } from 'react';
         formData.append('createdAt', new Date().toISOString());
         formData.append('existingFiles', JSON.stringify(existingFiles));
   
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnote/${currentEditId}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/patchnote/${currentEditId}`, {
           method: 'PUT',
           body: formData,
           credentials: 'include'
@@ -237,7 +237,7 @@ import React, { useEffect, useRef, useState } from 'react';
       });
   
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnote/${row.version}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/patchnote/${row.version}`, {
           method: 'GET',
           credentials: 'include'
         });
@@ -258,7 +258,7 @@ import React, { useEffect, useRef, useState } from 'react';
     const handleDelete = async (version) => {
       if (!window.confirm('Are you sure you want to delete this patch note?')) return;
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/patchnote/${version}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/patchnote/${version}`, {
           method: 'DELETE',
           credentials: 'include'
         });
