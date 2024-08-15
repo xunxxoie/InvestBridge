@@ -5,6 +5,7 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import AdminPage from './pages/admin/AdminPage';
+import ChatApp from './pages/chat/ChatApp';
 import IdeaDetailPage from './pages/idea/IdeaDetailPage';
 import IdeaPage from './pages/idea/IdeaPage';
 import IdeaSubmitPage from './pages/idea/IdeaSubmitPage';
@@ -55,6 +56,7 @@ function App() {
               <Route path="/ideas/detail/:id" element={<IdeaDetailPage />} />
               <Route path="/about" element={<AboutPage/>} />
               <Route path="/profile" element={<ProfilePage />}/>
+              <Route path="/chat-App" element={<ChatApp />}/>
 
               <Route path="/admin/main" element={<AdminPage />}/>
             </Routes>

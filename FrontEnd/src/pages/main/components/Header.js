@@ -51,7 +51,7 @@ export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'wh
   }
 
   return (
-    <Box position="fixed" w="100%" zIndex={1000}>
+    <Box position="sticky" top="0" w="100%" zIndex={1000}>
       <Flex
         bg={bgColor}
         color={textColor}

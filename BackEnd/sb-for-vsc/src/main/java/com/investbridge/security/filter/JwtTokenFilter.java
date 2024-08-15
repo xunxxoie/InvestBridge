@@ -76,10 +76,8 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
             response.getWriter().write("Authentication failed: " + e.getMessage());
 
         } catch (ExpiredJwtException e){
-
             //Generate new AccessToken, When accessToken is expired!
             handleExpiredToken(request, response, accessToken); 
-
         } catch (JwtException e) {
             // Handle invalid token
             SecurityContextHolder.clearContext();

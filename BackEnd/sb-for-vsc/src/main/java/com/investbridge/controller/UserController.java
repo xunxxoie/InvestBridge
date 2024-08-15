@@ -18,4 +18,3 @@ public class UserController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 }
-

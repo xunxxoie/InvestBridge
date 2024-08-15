@@ -139,7 +139,7 @@ export default function DreamerIdea() {
   return (
     <ChakraProvider theme={theme}>
       <Header />
-      <Container maxW="container.xl" py={100}>
+      <Container maxW="container.xl" py={30}>
         <VStack spacing={8} as="form" onSubmit={handleSubmit}>
           <Heading as="h1" size="xl"></Heading>
 

@@ -172,7 +172,7 @@ const AboutPage = () => {
     <ChakraProvider theme={theme}>
       <Flex flexDirection="column" minHeight="100vh">
         <Header />
-        <Box flex={1} mt={"80px"}>
+        <Box flex={1} mt={0}>
           <Flex minHeight="calc(100vh - 80px)" bg="white">
             <Box w="250px" bg="white" borderRight="1px" borderColor="gray.200">
               <VStack align="stretch" spacing={0}>
