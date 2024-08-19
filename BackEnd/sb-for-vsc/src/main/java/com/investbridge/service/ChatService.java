@@ -52,7 +52,7 @@ public class ChatService {
         return saveAndSendMessage(roomId, message);
     }
 
-    private ChatRoom getChatRoom(String investorId, String dreamerId){
+    public ChatRoom getChatRoom(String investorId, String dreamerId){
         return chatRoomRepository.findByInvestorIdAndDreamerId(investorId, dreamerId).orElseGet(() -> {
             ChatRoom newChatRoom = ChatRoom.builder()
                     .investorId(investorId)
@@ -65,8 +65,8 @@ public class ChatService {
         });
     }
 
-    private List<ChatRoomListDTO> getChatRoomList(String userId){
-        List<ChatRoom> chatRooms = chatRoomRepository.findByInvestorIdAndDreamerId(userId, userId);
+    public List<ChatRoomListDTO> getChatRoomList(String userId){
+        List<ChatRoom> chatRooms = chatRoomRepository.findByInvestorIdOrDreamerId(userId, userId);
 
         return chatRooms.stream().map(chatRoom -> {
             ChatRoomListDTO dto = new ChatRoomListDTO();

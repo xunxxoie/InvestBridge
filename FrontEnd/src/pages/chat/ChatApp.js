@@ -50,7 +50,7 @@ const ChatApp = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chat/room/list`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chat/rooms`, {
         method: 'GET',
         credentials: 'include'
       });

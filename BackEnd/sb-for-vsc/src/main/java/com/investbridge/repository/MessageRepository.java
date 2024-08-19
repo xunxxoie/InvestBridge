@@ -8,4 +8,5 @@ import com.investbridge.model.db.Message;
 
 public interface MessageRepository extends MongoRepository<Message, String> {
     List<Message> findByRoomIdOrderByTimestampAsc(String roomId);
+    Message findTopByRoomIdOrderByTimestampDesc(String roomId);
 }
