@@ -67,7 +67,7 @@ const ChatApp = () => {
 
   const fetchUserId = async () => {
     try{
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/id`, {
         method: 'GET',
         credentials: 'include'
       });
@@ -109,7 +109,7 @@ const ChatApp = () => {
                         {/* 마지막 메시지가 없을 경우를 대비한 조건부 렌더링 */}
                         {chat.lastMessage ? (
                           <>
-                            {chat.lastMessage.content} · {new Date(chat.lastMessage.createdAt).toLocaleTimeString()}
+                            {chat.lastMessage} · {new Date(chat.lastMessage).toLocaleTimeString()}
                           </>
                         ) : (
                           "No messages yet"

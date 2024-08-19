@@ -20,7 +20,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
-    private static final long ACCESS_TOKEN_VALIDITY = 15 * 60 * 1000; 
+    private static final long ACCESS_TOKEN_VALIDITY = 60 * 60 * 1000;
     private static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000;
 
     private static final Logger logger = LoggerFactory.getLogger(LogoutFilter.class);

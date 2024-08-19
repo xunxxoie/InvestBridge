@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminIdeaInfoDTO {
-
+    
     private String id;
     private String userId;
     private String title;

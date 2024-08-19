@@ -18,3 +18,4 @@ public class FileMetaData {
     private long fileSize;
     private byte[] fileData;
 }
+
