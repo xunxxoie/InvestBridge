@@ -1,5 +1,7 @@
 package com.investbridge.model.dto.Object;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +22,8 @@ public class IdeaDetailDTO {
 
     private Integer likes;
     private Integer favorites;
+
+    private List<String> categories;
 
     private boolean isContracted;
 

@@ -1,16 +1,7 @@
-import {
-  Box,
-  Button,
-  ChakraProvider,
-  Container,
-  Heading,
-  Text,
-  VStack,
-  extendTheme,
-  useColorModeValue
-} from '@chakra-ui/react';
+import { Box, Button, ChakraProvider, Container, Heading, Icon, Text, VStack, extendTheme, useColorModeValue } from '@chakra-ui/react';
 import { motion } from "framer-motion";
 import React, { useCallback } from 'react';
+import { CiLight } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
@@ -57,18 +48,14 @@ const Dreamer = () => {
           bottom={0}
           bgGradient={bgGradient}
         />
-        <Header 
-          bgColor="rgba(10, 25, 41, 0.7)"
-          textColor="white"
-          boxShadow="0 2px 10px rgba(0,0,0,0.1)"
-        />
+        <Header/>
         <Particles
           id="tsparticles"
           init={particlesInit}
           options={{
             background: {
               color: {
-                value: "transparent",
+                value: "rgba(0, 0, 0, 0.7)",
               },
             },
             fpsLimit: 60,
@@ -90,7 +77,7 @@ const Dreamer = () => {
             },
             particles: {
               color: {
-                value: ["#ffffff", "#87CEFA", "#E6E6FA", "#4F46E5"],
+                value: ["#2C3E50", "#34495E", "#3A4A5C", "#445566"],
               },
               links: {
                 color: "#E6E6FA",
@@ -143,18 +130,31 @@ const Dreamer = () => {
               transition={{ duration: 0.8 }}
             >
               <VStack align="center" spacing={12} py={20}>
-                <Heading
-                  as="h1"
-                  fontSize={["4xl", "5xl", "6xl", "7xl"]}
-                  fontWeight="extrabold"
-                  color="white"
-                  textAlign="center"
-                  textShadow="0 0 15px rgba(255,255,255,0.7)"
-                  letterSpacing="tight"
-                >
-                  당신의 꿈,<br />우리가 함께 이루어갑니다
-                </Heading>
+              <Icon as={CiLight} w={20} h={20} color="skyblue" />
+              <Heading
+                fontSize={["4xl", "5xl", "6xl", "7xl"]}
+                fontWeight="extrabold"
+                color="white"
+                textAlign="center"
+                textShadow="0 0 15px rgba(255,255,255,0.7)"
+                letterSpacing="tight"
+                lineHeight={1}  // 줄 간격을 줄입니다
+              >
+                당신의 꿈,
+              </Heading>
+              <Heading
+                fontSize={["1xl", "2xl", "3xl", "4xl"]}
+                fontWeight="extrabold"
+                color="white"
+                textAlign="center"
+                textShadow="0 0 15px rgba(255,255,255,0.7)"
+                letterSpacing="tight"
+                lineHeight={0}  // 약간의 줄 간격을 유지합니다
+              >
+                InvestBridge가 함께 이뤄가겠습니다.
+              </Heading>
                 <Text
+                  pt={10}
                   color="whiteAlpha.900"
                   textAlign="center"
                   fontSize={["lg", "xl", "2xl"]}
@@ -172,13 +172,13 @@ const Dreamer = () => {
                   fontSize="2xl"
                   py={8}
                   px={12}
-                  bgGradient="linear(to-r, #4F46E5, #7C3AED)"
+                  bgGradient="linear(to-r, #4AD5B7, #20B2AA)"
                   color="white"
-                  boxShadow="0 0 20px rgba(124, 58, 237, 0.6)"
+                  boxShadow="0 0 20px rgba(74, 213, 183, 0.6)"
                   _hover={{
-                    bgGradient: "linear(to-r, #5E54E6, #8B4FEE)",
+                    bgGradient: "linear(to-r, #5AE5C7, #30C2BA)",
                     transform: 'translateY(-3px)',
-                    boxShadow: '0 0 25px rgba(124, 58, 237, 0.8)'
+                    boxShadow: '0 0 25px rgba(74, 213, 183, 0.8)'
                   }}
                   transition="all 0.4s ease"
                   borderRadius="full"

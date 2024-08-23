@@ -10,6 +10,8 @@ const theme = extendTheme({
       body: {
         bg: '#000000',
         color: 'white',
+        margin: 0,  // 추가
+        padding: 0, // 추가
       },
     },
   },
@@ -35,8 +37,10 @@ const theme = extendTheme({
 
 const MenuItem = ({ label, isSelected, isExpanded, onClick, depth = 0, hasChildren = false }) => (
   <Flex
+    position="flex"
     py={3}
     px={4 + depth * 4}
+    pt="25px"
     cursor="pointer"
     alignItems="center"
     justifyContent="space-between"
@@ -170,10 +174,10 @@ const AboutPage = () => {
 
   return (
     <ChakraProvider theme={theme}>
-      <Flex flexDirection="column" minHeight="100vh">
+      <Flex flexDirection="column" minHeight="100vh" position="flex">
         <Header />
         <Box flex={1} mt={0}>
-          <Flex minHeight="calc(100vh - 80px)" bg="white">
+          <Flex minHeight="100vh" bg="white">
             <Box w="250px" bg="white" borderRight="1px" borderColor="gray.200">
               <VStack align="stretch" spacing={0}>
                 <Box p={6} borderBottom="1px" borderColor="gray.200">

@@ -1,7 +1,5 @@
 package com.investbridge.controller;
 
-import java.util.Collections;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.exception.ErrorResponse;
+import com.investbridge.model.dto.Object.UserDTO;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.UserService;
 
@@ -34,13 +33,13 @@ public class UserController {
     @GetMapping("/id")
     private ResponseEntity<?> getUserId(@CookieValue(name="jwt", required = false) String token) {
         try {
-            String userId = jwtTokenProvider.getUserIdFromToken(token);
-            return ResponseEntity.ok(Collections.singletonMap("userId", userId));
+            String userEmail = jwtTokenProvider.getUserEmailFromToken(token);
+            UserDTO userInfo = userService.getUserInfoFromUserEmail(userEmail);
+            return ResponseEntity.ok(userInfo);
         } catch (Exception e) {
             logger.error("Get userId Failed with Unexpected Error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body(new ErrorResponse("Get userId Failed", e.getMessage()));
         }
     }
-
 }

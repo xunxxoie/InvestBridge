@@ -30,39 +30,39 @@ const NavItem = ({ children, to = '/', color }) => (
   </Link>
 );
 
-export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'white' }) {
+export default function Header({ textColor = 'white' }) {
   const navigate = useNavigate();
   const { isOpen, onToggle } = useDisclosure();
 
-  const handleLogout = async () =>{
-    try{
+  const handleLogout = async () => {
+    try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/logout`, {
-        method : 'POST',
-        credentials : 'include'
+        method: 'POST',
+        credentials: 'include'
       });
 
-      if(response.ok){
+      if (response.ok) {
         console.log('Logout Succeed');
         navigate('/');
       }
-    }catch(error){
+    } catch (error) {
       console.log('Logout Failed : Unexpected Error');
     }
   }
 
   return (
-    <Box position="sticky" top="0" w="100%" zIndex={1000}>
+    <Box position="fixed" top="0" w="100%" zIndex={1000}>
       <Flex
-        bg={bgColor}
+        bgGradient="linear(to-r, #000000, #1a1a1a, #000000)"
         color={textColor}
-        minH={'60px'}
+        minH={'80px'}
         py={{ base: 4 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle={'solid'}
-        borderColor={'whiteAlpha.300'}
+        borderColor={'gray.800'}
         align={'center'}
-        backdropFilter="blur(10px)"
+        boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
       >
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align="center">
           <Link to="/main">
@@ -74,6 +74,8 @@ export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'wh
                 letterSpacing={'wider'}
                 mb={0}
                 mt={1}
+                bgGradient="linear(to-r, #f7f7f7, #c3c3c3)"
+                bgClip="text"
               >
                 InvestBridge
               </Text>
@@ -90,62 +92,72 @@ export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'wh
           </Flex>
         </Flex>
 
-            <Stack
-            flex={{ base: 1, md: 0 }}
-            justify={'flex-end'}
-            direction={'row'}
-            spacing={6}
+        <Stack
+          flex={{ base: 1, md: 0 }}
+          justify={'flex-end'}
+          direction={'row'}
+          spacing={6}
+        >
+          <Menu>
+            <MenuButton
+              as={Button}
+              rounded={'full'}
+              variant={'link'}
+              cursor={'pointer'}
+              minW={0}
             >
-            <Menu>
-                <MenuButton
-                as={Button}
-                rounded={'full'}
-                variant={'link'}
-                cursor={'pointer'}
-                minW={0}
-                >
-                <Box
-                    width="40px"
-                    height="40px"
-                    borderRadius="full"
-                    bg="gray.600"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                >
-                    <Text fontSize="sm" fontWeight="bold" mb={0}>
-                    User
-                    </Text>
-                </Box>
-                </MenuButton>
-                <MenuList bg="gray.800">
-                <MenuItem as={Link} to="/profile" bg="gray.800" _hover={{ bg: 'gray.700' }}>
-                    Profile
-                </MenuItem>
-                <MenuItem onClick={handleLogout} bg="gray.800" _hover={{ bg: 'gray.700' }}>
-                    Logout
-                </MenuItem>
-                </MenuList>
-            </Menu>
-            </Stack>
+              <Box
+                width="40px"
+                height="40px"
+                borderRadius="full"
+                bg="gray.700"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                border="2px solid"
+                borderColor="gray.600"
+              >
+                <Text fontSize="sm" fontWeight="bold" mb={0}>
+                  User
+                </Text>
+              </Box>
+            </MenuButton>
+            <MenuList bg="gray.900" borderColor="gray.700">
+              <MenuItem as={Link} to="/profile" bg="gray.900" _hover={{ bg: 'gray.800' }}>
+                Profile
+              </MenuItem>
+              <MenuItem as={Link} to="/chat-App" bg="gray.900" _hover={{ bg: 'gray.800' }}>
+                Message
+              </MenuItem>
+              <MenuItem onClick={handleLogout} bg="gray.900" _hover={{ bg: 'gray.800' }}>
+                Logout
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </Stack>
 
-            <Flex
-            flex={{ base: 1, md: 'auto' }}
-            ml={{ base: -2 }}
-            display={{ base: 'flex', md: 'none' }}
-            justify="flex-end"
-            >
-            <IconButton
-                onClick={onToggle}
-                icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
-                variant={'ghost'}
-                aria-label={'Toggle Navigation'}
-            />
+        <Flex
+          flex={{ base: 1, md: 'auto' }}
+          ml={{ base: -2 }}
+          display={{ base: 'flex', md: 'none' }}
+          justify="flex-end"
+        >
+          <IconButton
+            onClick={onToggle}
+            icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
+            variant={'ghost'}
+            aria-label={'Toggle Navigation'}
+            color={textColor}
+          />
         </Flex>
       </Flex>
 
       {isOpen && (
-        <Box pb={4} display={{ md: 'none' }} bg={bgColor}>
+        <Box 
+          pb={4} 
+          display={{ md: 'none' }} 
+          bgGradient="linear(to-r, #1a1a1a, #2a2a2a, #1a1a1a)" 
+        >
           <Stack as={'nav'} spacing={4}>
             <NavItem to="/dreamer" color={textColor}>Dreamer</NavItem>
             <NavItem to="/supporter" color={textColor}>Supporter</NavItem>

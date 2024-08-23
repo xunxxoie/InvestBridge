@@ -111,7 +111,7 @@ export default function MainPage() {
   if (error) {
     return (
       <ChakraProvider theme={theme}>
-        <Box textAlign="center" mt={10}>
+        <Box textAlign="center" mt={2}>
           <div>{error}</div>
         </Box>
       </ChakraProvider>

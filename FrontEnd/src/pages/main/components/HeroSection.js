@@ -92,9 +92,9 @@ export default function HeroSection() {
         }}
       />
       <Container maxW="container.xl" zIndex={1}>
-        <VStack spacing={8} textAlign="center">
+        <VStack spacing={8} textAlign="center" >
           <Heading as="h1" size="2xl" fontWeight="bold" letterSpacing="wide">
-            아이디어를 공유하고 투자하세요 🚀
+            아이디어를 공유하고 투자하세요
           </Heading>
           <Text fontSize="xl" maxW="2xl" color="gray.300">
             혁신적인 아이디어와 투자자를 연결하는 플랫폼

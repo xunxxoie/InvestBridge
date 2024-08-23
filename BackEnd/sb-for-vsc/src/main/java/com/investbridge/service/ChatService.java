@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.investbridge.model.db.ChatRoom;
@@ -17,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
     
     private final ChatRoomRepository chatRoomRepository;
     private final MessageRepository messageRepository;
@@ -28,6 +32,7 @@ public class ChatService {
     }
 
     public Message enterChatRoom(String investorId, String dreamerId, Message message){
+        logger.info("enterChatRoom Logic Start at ChatService");
         ChatRoom chatRoom = getChatRoom(investorId, dreamerId);
 
         boolean isInvestor = message.getSenderId().equals(investorId);
@@ -52,10 +57,10 @@ public class ChatService {
         return saveAndSendMessage(roomId, message);
     }
 
-    public ChatRoom getChatRoom(String investorId, String dreamerId){
-        return chatRoomRepository.findByInvestorIdAndDreamerId(investorId, dreamerId).orElseGet(() -> {
+    public ChatRoom getChatRoom(String supporterId, String dreamerId){
+        return chatRoomRepository.findBySupporterIdAndDreamerId(supporterId, dreamerId).orElseGet(() -> {
             ChatRoom newChatRoom = ChatRoom.builder()
-                    .investorId(investorId)
+                    .supporterId(supporterId)
                     .dreamerId(dreamerId)
                     .status(ChatRoom.ChatRoomStatus.PENDING)
                     .createdAt(LocalDateTime.now())
@@ -66,13 +71,15 @@ public class ChatService {
     }
 
     public List<ChatRoomListDTO> getChatRoomList(String userId){
-        List<ChatRoom> chatRooms = chatRoomRepository.findByInvestorIdOrDreamerId(userId, userId);
+        List<ChatRoom> chatRooms = chatRoomRepository.findBySupporterIdOrDreamerId(userId, userId);
 
         return chatRooms.stream().map(chatRoom -> {
             ChatRoomListDTO dto = new ChatRoomListDTO();
 
             dto.setChatRoomId(chatRoom.getId());
-            dto.setPartnerId(chatRoom.getInvestorId().equals(userId) ? chatRoom.getDreamerId() : chatRoom.getInvestorId());
+            dto.setSupporterId(chatRoom.getSupporterId());
+            dto.setDreamerId(chatRoom.getDreamerId());
+            
             dto.setChatRoomStatus(chatRoom.getStatus().toString());
 
             Message latestMessage = messageRepository.findTopByRoomIdOrderByTimestampDesc(chatRoom.getId());
@@ -88,4 +95,21 @@ public class ChatService {
         }).collect(Collectors.toList());
     }
 
+    public boolean setRoomStatus(String chatRoomId, String action){
+        try{
+            ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null);
+            ChatRoom.ChatRoomStatus status = "accept".equals(action) ? ChatRoom.ChatRoomStatus.ACTIVE : ChatRoom.ChatRoomStatus.CLOSED;
+            
+            chatRoom.setStatus(status);
+            chatRoomRepository.save(chatRoom);
+
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
+    public List<Message> getChatMessages(String chatRoomId){
+        return messageRepository.findByRoomIdOrderByTimestampAsc(chatRoomId);
+    }
 }

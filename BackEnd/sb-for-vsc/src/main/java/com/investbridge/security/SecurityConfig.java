@@ -2,8 +2,6 @@ package com.investbridge.security;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +16,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.investbridge.controller.AuthController;
 import com.investbridge.security.filter.AdminAuthorizationFilter;
 import com.investbridge.security.filter.JwtTokenFilter;
 import com.investbridge.security.filter.LogoutFilter;
@@ -34,14 +31,6 @@ public class SecurityConfig {
     private final TokenBlacklist tokenBlacklist;
     private final UserService userService;
 
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenBlacklist = tokenBlacklist;
-        this.userService = userService;
-    }
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
     @Value("${cors.allowed-origins}")
     private List<String> allowedOrigins;
 
@@ -53,6 +42,12 @@ public class SecurityConfig {
 
     @Value("${cors.exposed-headers}")
     private List<String> exposedHeaders;
+
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenBlacklist = tokenBlacklist;
+        this.userService = userService;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -72,22 +67,13 @@ public class SecurityConfig {
                     })
             )
             .authorizeHttpRequests(authz -> authz
-                // .requestMatchers("/api/auth/login").permitAll()
-                // .requestMatchers("/api/auth/join/**").permitAll()
-                // .requestMatchers("/api/auth/logout/**").permitAll()
-                // .requestMatchers("/api/chat/**").permitAll()
-                // .requestMatchers("/api/user/**").permitAll()
-                // .requestMatchers("/api/ideas/**").permitAll()
-                // .requestMatchers("/api/admin/**").permitAll()
-                // .requestMatchers("/api/about/**").permitAll()
-                // .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/api/**", "/ws/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterAt(new JwtTokenFilter(jwtTokenProvider, tokenBlacklist, userService), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider, tokenBlacklist, userService), UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(new LogoutFilter(tokenBlacklist), JwtTokenFilter.class)
             .addFilterAfter(new AdminAuthorizationFilter(jwtTokenProvider), LogoutFilter.class);
+            
         return http.build();
     }
 
@@ -99,7 +85,6 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(allowedHeaders);
         configuration.setExposedHeaders(exposedHeaders);
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOriginPattern("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

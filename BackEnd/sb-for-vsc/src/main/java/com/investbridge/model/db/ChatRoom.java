@@ -21,7 +21,7 @@ public class ChatRoom {
     
     @Id
     private String id;
-    private String investorId;
+    private String supporterId;
     private String dreamerId;
 
     private ChatRoomStatus status;

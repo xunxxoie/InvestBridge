@@ -18,10 +18,10 @@ public class ChatController {
     
     private final ChatService chatService;
 
-    @MessageMapping("/chat.sendMessage/{roomId}")
-    @SendTo("/topic/chatroom.{roomId}")
-    public Message sendMessage(@DestinationVariable String roomId, @Payload Message message){
-        return chatService.saveAndSendMessage(roomId, message);
+    @MessageMapping("/chat.sendMessage/{chatRoomId}")
+    @SendTo("/topic/chatroom.{chatRoomId}")
+    public Message sendMessage(@DestinationVariable String chatRoomId, @Payload Message message){
+        return chatService.saveAndSendMessage(chatRoomId, message);
     }
 
     /**
@@ -30,23 +30,23 @@ public class ChatController {
      * getSessionAttribute는 웹소켓 세션과 연관된 속성을 담고 있는 Map<>을 반환
      * 따라서 이 세션을 통해서 사용자가 현재 어떤 채팅방에 속해있는지를 확인할 수 있음!
      */
-    @MessageMapping("/chat.enterRoom/{roomId}")
-    @SendTo("/topic/chatroom.{roomId}")
-    public Message enterRoom(@DestinationVariable String roomId, @Payload Message message, SimpMessageHeaderAccessor headerAccessor){
+    @MessageMapping("/chat.enterRoom/{chatRoomId}")
+    @SendTo("/topic/chatroom.{chatRoomId}")
+    public Message enterRoom(@DestinationVariable String chatRoomId, @Payload Message message, SimpMessageHeaderAccessor headerAccessor){
 
-        String investorId = message.getSenderId();
-        String dreamerId = message.getRecipientId();
-        Message resultMessage = chatService.enterChatRoom(investorId, dreamerId, message);
+        String senderId = message.getSenderId();
+        String partnerId = message.getRecipientId();
+        Message resultMessage = chatService.enterChatRoom(senderId, partnerId, message);
 
-        headerAccessor.getSessionAttributes().put("roomId", roomId);
-        headerAccessor.getSessionAttributes().put("userId", message.getSenderId());
+        headerAccessor.getSessionAttributes().put("roomId", chatRoomId);
+        headerAccessor.getSessionAttributes().put("userId", senderId);
 
         return resultMessage;
     }
 
-    @MessageMapping("/chat.leaveRoom/{roomId}")
-    @SendTo("/topic/chatroom.{roomId}")
-    public Message leaveRoom(@DestinationVariable String roomId, @Payload Message message){
-        return chatService.leaveChatRoom(roomId, message);
+    @MessageMapping("/chat.leaveRoom/{chatRoomId}")
+    @SendTo("/topic/chatroom.{chatRoomId}")
+    public Message leaveRoom(@DestinationVariable String chatRoomId, @Payload Message message){
+        return chatService.leaveChatRoom(chatRoomId, message);
     }
 }

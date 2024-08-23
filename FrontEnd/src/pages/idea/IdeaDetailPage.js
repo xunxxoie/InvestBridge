@@ -43,6 +43,7 @@ const formatContent = (text) => {
 
 const IdeaDetailPage = () => {
   const [idea, setIdea] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,10 +67,29 @@ const IdeaDetailPage = () => {
   const checkboxTextColor = useColorModeValue('gray.700', 'gray.200');
 
   useEffect(() => {
-    fetchProject();
+    const initializePage = async () => {
+      await fetchUserId();
+      await fetchIdea();
+    };
+
+    initializePage();
   }, [id]);
 
-  const fetchProject = async () => {
+  const fetchUserId = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/id`, {
+         method: 'GET', 
+         credentials: 'include' 
+        });
+      if (!response.ok) throw new Error('Failed to fetch userId');
+      const data = await response.json();
+      setUserInfo(data.userId);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const fetchIdea = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/ideas/detail/${id}`, { method: 'GET', credentials: 'include' });
       if (!response.ok) throw new Error('Internal Server Error');
@@ -137,10 +157,25 @@ const IdeaDetailPage = () => {
     });
   };
 
-  const handleEnterChatRoom = () => {
-    console.log("Entering chat room...");
-    handleCloseModal();
-    navigate('/chat-App');
+  const handleEnterChatRoom = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chatroom/${idea.dreamerId}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) throw new Error('Failed to enter chat room');
+
+      const data = await response.json();
+      const chatRoomId = data.id;
+      console.log(chatRoomId);
+      navigate('/chat-App', { state: { chatRoomId } });
+    } catch (error) {
+      console.error('Error entering chat room:', error);
+    }
   };
 
   if (isLoading) return (<Flex justify="center" align="center" height="100vh"><CircularProgress isIndeterminate color="mint.500" /></Flex>);
@@ -149,14 +184,14 @@ const IdeaDetailPage = () => {
 
   return (
     <ChakraProvider theme={theme}>
-      <Box minHeight="100vh" bg="gray.50">
-        <Header bgColor="black" textColor="white" />
+      <Header />
+      <Box minHeight="100vh" bg="gray.50" mt={24}>
         <Container maxW="container.xl">
-          <Box position="relative" height="270px" my={8}>
+        <Box position="relative" height="270px" my={8}>
             <Image src={CoverImg} alt="Project background" objectFit="cover" width="100%" height="100%" filter="brightness(50%)" borderRadius="lg" />
             <Box position="absolute" top="50%" left="50%" transform="translate(-50%, -50%)" textAlign="center" color="white">
               <Text fontSize="6xl" fontWeight="bold">{idea.title}</Text>
-              <Text fontSize="2xl" mt={2}>{idea.userId}</Text>
+              <Text fontSize="2xl" mt={2}>{idea.dreamerId}</Text>
             </Box>
           </Box>
           <Flex direction={{ base: 'column', lg: 'row' }} gap={8} mb={8}>
@@ -167,7 +202,7 @@ const IdeaDetailPage = () => {
                 { title: 'Details', content: idea.content }
               ].map((section, index) => (
                 <Box key={index} bg={bgColor} p={8} borderRadius="lg" boxShadow="md">
-                  <Text fontSize="2xl" fontWeight="bold" mb={4} textAlign="left">{section.title}</Text>
+                  <Text fontSize="4xl" fontWeight="extrabold" mb={3} textAlign="left">{section.title}</Text>
                   <Divider mb={4} borderWidth="2px" borderColor="black"  />
                   <Text fontSize="lg" textAlign="start">{formatContent(section.content)}</Text>
                 </Box>
@@ -180,7 +215,7 @@ const IdeaDetailPage = () => {
                   <ActionButton icon={FaBookmark} isActive={idea.isFavorited} count={idea.favorites} onClick={handleFavorite} activeColor="yellow.500" inactiveColor="gray.400" />
                 </Flex>
                 <Divider my={4} />
-                <Text fontWeight="bold" fontSize="xl" mb={3}>Categories</Text>
+                <Text fontWeight="extrabold" fontSize="2xl" mb={3}>Categories</Text>
                 <Flex flexWrap="wrap" gap={3}>
                   {(idea.categories || []).map((tag, index) => (
                     <Badge key={index} colorScheme="mint" fontSize="sm" py={1} px={3} borderRadius="full">#{tag}</Badge>
@@ -188,7 +223,7 @@ const IdeaDetailPage = () => {
                 </Flex>
               </Box>
               <Box bg="white" p={6} borderRadius="lg" boxShadow="md">
-                <Text fontSize="xl" fontWeight="bold" color="black" mb={4}>Interested in this idea?</Text>
+                <Text fontSize="2xl" fontWeight="extrabold" color="black" mb={4}>Interested in this idea?</Text>
                 <Button 
                   leftIcon={<FaRocket />} 
                   colorScheme="mint" 
@@ -218,8 +253,8 @@ const IdeaDetailPage = () => {
             <ModalCloseButton />
             <ModalBody py={6}>
               <Text mb={6} fontSize="md" color={textColor}>
-                드리머 <Text as="span" fontWeight="bold" color={highlightColor}>{idea.userId}</Text>
-                와의 채팅방으로 연결됩니다. <Text as="span" fontWeight="bold" color={highlightColor}>{idea.userId}</Text>님이 대화를 승인하면, 채팅룸이 활성화되며, 대화를 나누실 수 있습니다.
+                드리머 <Text as="span" fontWeight="bold" color={highlightColor}>{idea.dreamerId}</Text>
+                와의 채팅방으로 연결됩니다. <Text as="span" fontWeight="bold" color={highlightColor}>{idea.dreamerId}</Text>님이 대화를 승인하면, 채팅룸이 활성화되며, 대화를 나누실 수 있습니다.
               </Text>
               <VStack align="start" spacing={4} bg={checkboxBgColor} p={4} borderRadius="md">
                 <Text fontWeight="semibold" color={checkboxTextColor}>채팅 시작 전 아래 사항에 동의해주세요:</Text>

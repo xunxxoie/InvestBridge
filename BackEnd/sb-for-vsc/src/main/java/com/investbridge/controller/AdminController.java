@@ -54,7 +54,7 @@ public class AdminController {
 
     @GetMapping("/users/{role}")
     @Operation(summary = "특정 역할을 가진 유저의 정보 불러오기", description = "특정 역할을 가진 유저의 정보를 불러옵니다.")
-    public ResponseEntity<?> getUserListByRole(@PathVariable String role){
+    public ResponseEntity<?> getUserListByRole(@PathVariable("role") String role){
         try{
             List<AdminUserInfoDTO> response = adminService.findUsersByRole(role);
             logger.info("Find User Infos By userRole Succeed");
@@ -80,7 +80,7 @@ public class AdminController {
 
     @GetMapping("/users/{userId}/idea-summary")
     @Operation(summary = "특정 유저 아이디어 요약 불러오기", description = "특정 유저의 아이디어 요약을 불러옵니다.")
-    public ResponseEntity<?> UserIdeaSummary(@PathVariable String userId){
+    public ResponseEntity<?> UserIdeaSummary(@PathVariable("userId") String userId){
         try{
             List<IdeaSummaryDTO> response = adminService.findUserIdea(userId);
             logger.info("Find All User Infos Succeed");

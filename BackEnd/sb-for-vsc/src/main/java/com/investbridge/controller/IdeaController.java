@@ -25,9 +25,6 @@ import com.investbridge.service.IdeaService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
-
 @RestController
 @RequestMapping("/api/ideas")
 public class IdeaController {
@@ -79,7 +76,7 @@ public class IdeaController {
 
     @GetMapping("/detail/{id}")
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
-    public ResponseEntity<?> ideaDetails(@PathVariable String id, @CookieValue(name="jwt", required = false)String token) {
+    public ResponseEntity<?> ideaDetails(@PathVariable("id") String id, @CookieValue(name="jwt", required = false)String token) {
         String userId = jwtTokenProvider.getUserIdFromToken(token);
         try{
             IdeaDetailDTO response = ideaService.findIdea(userId, id);

@@ -139,12 +139,10 @@ export default function DreamerIdea() {
   return (
     <ChakraProvider theme={theme}>
       <Header />
-      <Container maxW="container.xl" py={30}>
-        <VStack spacing={8} as="form" onSubmit={handleSubmit}>
-          <Heading as="h1" size="xl"></Heading>
-
-          <Box w="full" bg={bgColor} p={6} borderRadius="lg" boxShadow="md" borderColor={borderColor} borderWidth={1}>
-            <VStack spacing={4} align="stretch">
+      <Container maxW="container.xl"  py={30}>
+        <VStack spacing={8}  as="form" onSubmit={handleSubmit}>
+          <Box w="full" bg={bgColor} p={6} pt={20} borderRadius="lg" boxShadow="md"  borderColor={borderColor} borderWidth={1}>
+            <VStack spacing={4}  align="stretch">
               <Heading as="h2" size="lg">Step 1: 아이디어 명세 및 팀 소개 작성</Heading>
               <FormControl isRequired>
                 <FormLabel>프로젝트 제목</FormLabel>

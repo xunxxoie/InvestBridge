@@ -9,7 +9,7 @@ const CategoryCard = ({ icon, label, value }) => {
   return (
     <VStack
       bg={useColorModeValue('whiteAlpha.100', 'whiteAlpha.50')}
-      p={5}
+      p={6}
       borderRadius="lg"
       transition="all 0.3s"
       cursor="pointer"

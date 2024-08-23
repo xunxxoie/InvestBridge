@@ -83,6 +83,7 @@ public class IdeaService {
                         .projectSummary(ideaDetail.getProjectSummary())
                         .teamSummary(ideaDetail.getTeamSummary())
                         .content(ideaDetail.getContent())
+                        .categories(ideaDetail.getCategories())
                         .likes(ideaDetail.getLikes())
                         .favorites(ideaDetail.getFavorites())
                         .isContracted(ideaDetail.isContracted())
