@@ -72,14 +72,16 @@ public class SecurityConfig {
                     })
             )
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/login").permitAll()
-                .requestMatchers("/api/auth/join/**").permitAll()
-                .requestMatchers("/api/auth/logout/**").permitAll()
-                .requestMatchers("/api/user/**").permitAll()
-                .requestMatchers("/api/ideas/**").permitAll()
-                .requestMatchers("/api/admin/**").permitAll()
-                .requestMatchers("/api/about/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
+                // .requestMatchers("/api/auth/login").permitAll()
+                // .requestMatchers("/api/auth/join/**").permitAll()
+                // .requestMatchers("/api/auth/logout/**").permitAll()
+                // .requestMatchers("/api/chat/**").permitAll()
+                // .requestMatchers("/api/user/**").permitAll()
+                // .requestMatchers("/api/ideas/**").permitAll()
+                // .requestMatchers("/api/admin/**").permitAll()
+                // .requestMatchers("/api/about/**").permitAll()
+                // .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
@@ -96,6 +98,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(allowedMethods);
         configuration.setAllowedHeaders(allowedHeaders);
         configuration.setExposedHeaders(exposedHeaders);
+        configuration.setMaxAge(3600L);
         configuration.setAllowCredentials(true);
         configuration.addAllowedOriginPattern("*");
 

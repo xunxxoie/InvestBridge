@@ -56,8 +56,8 @@ public PatchNoteResponseDTO findPatchNote(String version){
                             .content(patchNote.getContent())
                             .version(patchNote.getVersion())
                             .adminId(patchNote.getAdminId())
-                            .createdAt(patchNote.getCreatedAt()) // 추가
-                            .files(files) // 추가
+                            .createdAt(patchNote.getCreatedAt())
+                            .files(files)
                             .build();
         
         return responseDTO;
@@ -69,15 +69,15 @@ public PatchNoteResponseDTO findPatchNote(String version){
         if(patchNoteRepository.findByVersion(request.getVersion()).isPresent())
             throw new RuntimeException("Already Exits Version");
 
-        List<FileMetaData> fileMetadata = convertFilesToFileMetadata(request.getFiles()); // 추가
+        List<FileMetaData> fileMetadata = convertFilesToFileMetadata(request.getFiles());
     
         PatchNote newPatchNote = PatchNote.builder()
             .version(request.getVersion())
             .title(request.getTitle())
             .content(request.getContent())
             .adminId(request.getAdminId())
-            .createdAt(LocalDateTime.now()) // 추가
-            .files(fileMetadata) // 추가
+            .createdAt(LocalDateTime.now())
+            .files(fileMetadata)
             .build();
 
         PatchNote savedPatchNote = patchNoteRepository.save(newPatchNote);

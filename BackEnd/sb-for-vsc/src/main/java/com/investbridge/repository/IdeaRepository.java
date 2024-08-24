@@ -17,5 +17,7 @@ public interface IdeaRepository extends MongoRepository<Idea, String>{
 
     Optional<Idea> findByIsContracted(boolean isContracted);
     Optional<Idea> findByCategories(IdeaCategory category);
+
+    long countByIsContracted(boolean isContracted); // 추가
     
 }

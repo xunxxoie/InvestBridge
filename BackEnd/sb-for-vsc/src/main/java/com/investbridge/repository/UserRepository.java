@@ -1,5 +1,6 @@
 package com.investbridge.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Update("{ '$set' : { 'refreshToken' : ?1 }}")
     void saveRefreshToken(String userId, String refreshToken);
 
+    // 추가
+    long countByCreatedAtAfter(LocalDateTime createdAt);
+    long countByUserRole(String UserRole);
 }

@@ -184,7 +184,6 @@ public class AdminController {
         }
     }
 
-    // 추가
     @PutMapping(value = "/patchnote/{version}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "패치 노트 수정하기", description = "기존의 패치 노트를 수정합니다.")
     public ResponseEntity<?> updatePatchNote(
@@ -204,7 +203,6 @@ public class AdminController {
         }
     }
 
-    // 추가
     @DeleteMapping("/patchnote/{version}")
     @Operation(summary = "패치 노트 삭제하기", description = "특정 패치 노트를 삭제합니다.")
     public ResponseEntity<?> deletePatchNote(

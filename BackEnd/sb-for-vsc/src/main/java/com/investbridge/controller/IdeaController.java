@@ -24,9 +24,6 @@ import com.investbridge.service.IdeaService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-
-
-
 @RestController
 @RequestMapping("/api/ideas")
 public class IdeaController {
@@ -61,6 +58,7 @@ public class IdeaController {
         }
     }
 
+    
     @GetMapping
     @Operation(summary = "전체 아이디어 불러오기", description = "전체 아이디어를 불러옵니다.")
     public ResponseEntity<?> ideaList(@CookieValue(name="jwt", required = false)String token){
@@ -112,6 +110,34 @@ public class IdeaController {
         }catch (Exception e){
             logger.error("Update Favorite Failed : {} ", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Update Favorite Failed : {}", e.getMessage()));
+        }
+    }
+
+    // 추가
+    @GetMapping("/top-viewed")
+    @Operation(summary = "이번 주 최고 조회수 아이디어 불러오기", description = "이번 주 최고 조회수 아이디어를 불러옵니다.")
+    public ResponseEntity<?> topViewedIdea(){
+        try{
+            Idea response = ideaService.findTopViewedIdea();
+            logger.info("Find Top Viewed Idea Succeed");
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            logger.error("Find Top Viewed Idea Failed : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Find Top Viewed Idea Failed : {}", e.getMessage()));
+        }
+    }
+    
+    // 추가
+    @PostMapping("/{id}/view")
+    @Operation(summary = "조회수 업데이트", description = "아이디어의 조회수를 업데이트 합니다.")
+    public ResponseEntity<?> updateViewCount(@PathVariable String id) {
+        try {
+            Idea response = ideaService.incrementViewCount(id);
+            logger.info("Update View Count Succeed for Idea ID: {}", id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Update View Count Failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Update View Count Failed: {}", e.getMessage()));
         }
     }
 }
