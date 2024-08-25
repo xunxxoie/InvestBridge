@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.investbridge.model.dto.Object.UserDTO;
+import com.investbridge.model.dto.User.UserInfoResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.security.TokenBlacklist;
 import com.investbridge.service.UserService;
@@ -24,7 +24,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
@@ -32,12 +34,6 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlacklist tokenBlacklist;
     private final UserService userService;
-    
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenBlacklist = tokenBlacklist;
-        this.userService = userService;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
@@ -45,12 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
         logger.info("JwtTokenFIlter is processing a request to {}", request.getRequestURI());
         String accessToken = getTokenFromRequest(request);
         
-        if ("/api/auth/login".equals(request.getRequestURI())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (accessToken == null) {
+        if ("/api/auth/login".equals(request.getRequestURI()) || "/api/auth/join".equals(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -64,7 +55,7 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
             if(tokenBlacklist.isBlacklisted(accessToken)) 
                 throw new BadCredentialsException("Not Available Authority");
 
-                UserDTO user = jwtTokenProvider.getUserbyToken(accessToken);
+                UserInfoResponse user = jwtTokenProvider.getUserbyToken(accessToken);
                 Authentication auth = new UsernamePasswordAuthenticationToken(user.getUserEmail(), null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 logger.debug("Set Authentication to security context for '{}', uri: {}", user.getUserEmail(), request.getRequestURI());
@@ -112,7 +103,7 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
 
             try{
                 if(refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)){
-                    UserDTO user = userService.getUserInfoFromUserEmail(userEmail);
+                    UserInfoResponse user = userService.getUserInfoFromUserEmail(userEmail);
                     String newAccessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), user.getUserEmail(), user.getUserName(), user.getPhoneNumber(), user.getUserRole());
                     
                     Cookie jwtCookie = new Cookie("jwt", newAccessToken);

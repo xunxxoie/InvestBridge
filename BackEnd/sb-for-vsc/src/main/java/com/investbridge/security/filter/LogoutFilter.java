@@ -13,15 +13,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class LogoutFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(LogoutFilter.class);
+    
     private final TokenBlacklist tokenBlacklist;
-
-    public LogoutFilter(TokenBlacklist tokenBlacklist) {
-        this.tokenBlacklist = tokenBlacklist;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 

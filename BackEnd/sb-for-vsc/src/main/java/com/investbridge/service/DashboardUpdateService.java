@@ -1,9 +1,5 @@
 package com.investbridge.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,23 +9,22 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import com.investbridge.model.db.Dashboard;
-import com.investbridge.model.db.Idea;
 import com.investbridge.model.db.SubscribersOverTime;
 import com.investbridge.repository.DashboardRepository;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class DashboardUpdateService {
     private static final int MAX_DAYS = 5;
 
-    @Autowired
     private IdeaService ideaService;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private DashboardRepository dashboardRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(DashboardUpdateService.class);

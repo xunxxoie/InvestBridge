@@ -11,22 +11,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.investbridge.model.db.PatchNote;
-import com.investbridge.model.dto.Http.PatchNoteRequestDTO;
-import com.investbridge.model.dto.Http.PatchNoteResponseDTO;
+import com.investbridge.model.dto.Admin.PatchNoteRequest;
+import com.investbridge.model.dto.Admin.PatchNoteResponse;
 import com.investbridge.model.dto.Object.FileMetaData;
 import com.investbridge.repository.PatchNoteRepository;
 
+import lombok.AllArgsConstructor;
+
 @Service
 @Transactional
+@AllArgsConstructor
 public class PatchNoteService {
 
     private final PatchNoteRepository patchNoteRepository;
 
-    public PatchNoteService(PatchNoteRepository patchNoteRepository) {
-        this.patchNoteRepository = patchNoteRepository;
-    }
-
-    public PatchNoteResponseDTO findPatchNote(String version){
+    public PatchNoteResponse findPatchNote(String version){
 
         PatchNote patchNote = patchNoteRepository.findByVersion(version)
                                                     .orElse(null);
@@ -36,7 +35,7 @@ public class PatchNoteService {
                                             
         List<FileMetaData> files = patchNote.getFiles();
         
-        PatchNoteResponseDTO responseDTO = PatchNoteResponseDTO.builder()
+        PatchNoteResponse responseDTO = PatchNoteResponse.builder()
                             .title(patchNote.getTitle())
                             .content(patchNote.getContent())
                             .version(patchNote.getVersion())
@@ -48,7 +47,7 @@ public class PatchNoteService {
         return responseDTO;
     }
 
-        public String addPatchNote(PatchNoteRequestDTO request){
+        public String addPatchNote(PatchNoteRequest request){
 
         //Exception Handling for Already exits PatchNote version
         if(patchNoteRepository.findByVersion(request.getVersion()).isPresent())
@@ -75,9 +74,9 @@ public class PatchNoteService {
         return versions;
     }
 
-    public List<PatchNoteResponseDTO> findAllPatchNotes() {
+    public List<PatchNoteResponse> findAllPatchNotes() {
         return patchNoteRepository.findAll().stream()
-                .map(patchNote -> PatchNoteResponseDTO.builder()
+                .map(patchNote -> PatchNoteResponse.builder()
                         .version(patchNote.getVersion())
                         .title(patchNote.getTitle())
                         .content(patchNote.getContent())
@@ -107,7 +106,7 @@ public class PatchNoteService {
         return fileMetadata;
     }
 
-    public void updatePatchNoteByVersion(String version, PatchNoteRequestDTO request) {
+    public void updatePatchNoteByVersion(String version, PatchNoteRequest request) {
         PatchNote patchNote = patchNoteRepository.findByVersion(version).orElseThrow(() ->
                 new RuntimeException("Patch Note not found for version: " + version));
 

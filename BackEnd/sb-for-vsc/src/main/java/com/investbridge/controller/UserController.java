@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.exception.ErrorResponse;
-import com.investbridge.model.dto.Object.UserDTO;
+import com.investbridge.model.dto.User.UserInfoResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.UserService;
+
+import lombok.AllArgsConstructor;
 
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
     
@@ -25,16 +28,11 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(UserService userService, JwtTokenProvider jwtTokenProvider) {
-        this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     @GetMapping("/id")
     private ResponseEntity<?> getUserId(@CookieValue(name="jwt", required = false) String token) {
         try {
             String userEmail = jwtTokenProvider.getUserEmailFromToken(token);
-            UserDTO userInfo = userService.getUserInfoFromUserEmail(userEmail);
+            UserInfoResponse userInfo = userService.getUserInfoFromUserEmail(userEmail);
             return ResponseEntity.ok(userInfo);
         } catch (Exception e) {
             logger.error("Get userId Failed with Unexpected Error: {}", e.getMessage());

@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.investbridge.model.db.ChatRoom;
 import com.investbridge.model.db.Message;
-import com.investbridge.model.dto.Object.ChatRoomListDTO;
+import com.investbridge.model.dto.Chat.ChatRoomListResponse;
 import com.investbridge.repository.ChatRoomRepository;
 import com.investbridge.repository.MessageRepository;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ChatService {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
@@ -70,11 +70,11 @@ public class ChatService {
         });
     }
 
-    public List<ChatRoomListDTO> getChatRoomList(String userId){
+    public List<ChatRoomListResponse> getChatRoomList(String userId){
         List<ChatRoom> chatRooms = chatRoomRepository.findBySupporterIdOrDreamerId(userId, userId);
 
         return chatRooms.stream().map(chatRoom -> {
-            ChatRoomListDTO dto = new ChatRoomListDTO();
+            ChatRoomListResponse dto = new ChatRoomListResponse();
 
             dto.setChatRoomId(chatRoom.getId());
             dto.setSupporterId(chatRoom.getSupporterId());

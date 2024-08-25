@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.investbridge.model.dto.Object.UserDTO;
+import com.investbridge.model.dto.User.UserInfoResponse;
 import com.investbridge.security.filter.LogoutFilter;
 
 import io.jsonwebtoken.Claims;
@@ -26,12 +26,10 @@ public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(LogoutFilter.class);
 
     private final Key key; // JWT - Verify Signature
-    private final long validateTime; // JWT - Expiration Time
 
     // @Value Annotation is able to use value in 'application.properties'
     public JwtTokenProvider(@Value("${jwt.secret}")String secret, @Value("${jwt.expiration}")long validateTime) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.validateTime = validateTime;
     }
 
     //Access Token create method
@@ -99,14 +97,14 @@ public class JwtTokenProvider {
     }
 
     //Get User by token
-    public UserDTO getUserbyToken(String token){
+    public UserInfoResponse getUserbyToken(String token){
         Claims claims = Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
             .parseClaimsJws(token)
             .getBody();
 
-        return new UserDTO(
+        return new UserInfoResponse(
             claims.get("userId", String.class),
             claims.getSubject(), // Email
             claims.get("userName", String.class),

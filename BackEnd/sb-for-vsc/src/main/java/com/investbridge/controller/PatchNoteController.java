@@ -18,14 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.exception.ErrorResponse;
-import com.investbridge.model.dto.Http.PatchNoteRequestDTO;
-import com.investbridge.model.dto.Http.PatchNoteResponseDTO;
+import com.investbridge.model.dto.Admin.PatchNoteRequest;
+import com.investbridge.model.dto.Admin.PatchNoteResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.PatchNoteService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/patchnote")
 public class PatchNoteController {
 
@@ -34,14 +36,9 @@ public class PatchNoteController {
     private final PatchNoteService patchNoteService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public PatchNoteController(PatchNoteService patchNoteService, JwtTokenProvider jwtTokenProvider) {
-        this.patchNoteService = patchNoteService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "새로운 패치노트 등록하기", description = "새로운 패치노트를 등록합니다.")
-    public ResponseEntity<?> patchNoteAdd(@ModelAttribute PatchNoteRequestDTO request, @CookieValue(name="jwt", required = false) String token){
+    public ResponseEntity<?> patchNoteAdd(@ModelAttribute PatchNoteRequest request, @CookieValue(name="jwt", required = false) String token){
 
         String adminId = jwtTokenProvider.getUserEmailFromToken(token);
         request.setAdminId(adminId);
@@ -60,7 +57,7 @@ public class PatchNoteController {
     @Operation(summary = "모든 패치노트 불러오기", description = "데이터베이스에 저장된 모든 패치노트를 불러옵니다.")
     public ResponseEntity<?> getAllPatchNotes(@CookieValue(name = "jwt", required = false)String token) {
         try {
-            List<PatchNoteResponseDTO> response = patchNoteService.findAllPatchNotes();
+            List<PatchNoteResponse> response = patchNoteService.findAllPatchNotes();
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Get All PatchNotes Failed {}", e.getMessage());
@@ -72,7 +69,7 @@ public class PatchNoteController {
     @Operation(summary = "특정 패치노트 불러오기", description = "특정 패치노트를 불러옵니다.")
     public ResponseEntity<?> patchnNoteDetails(@PathVariable String version){
         try{
-            PatchNoteResponseDTO response = patchNoteService.findPatchNote(version);
+            PatchNoteResponse response = patchNoteService.findPatchNote(version);
             logger.info("Find PatchNote Succeed {}", response.getVersion());
             return ResponseEntity.ok(response);
         }catch(Exception e){
@@ -100,7 +97,7 @@ public class PatchNoteController {
     @Operation(summary = "특정 패치노트 수정하기", description = "특정 패치노트를 수정합니다.")
     public ResponseEntity<?> updatePatchNote(
         @PathVariable String version,
-        @ModelAttribute PatchNoteRequestDTO request,
+        @ModelAttribute PatchNoteRequest request,
         @CookieValue(name = "jwt", required = false) String token) {
         try {
             logger.info("Update token Success: {}", token);

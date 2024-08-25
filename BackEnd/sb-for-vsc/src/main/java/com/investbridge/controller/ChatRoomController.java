@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.investbridge.exception.ErrorResponse;
 import com.investbridge.model.db.ChatRoom;
 import com.investbridge.model.db.Message;
-import com.investbridge.model.dto.Object.ChatRoomListDTO;
+import com.investbridge.model.dto.Chat.ChatRoomListResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.ChatService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping("/api/chatroom")
 public class ChatRoomController {
     
@@ -39,7 +39,7 @@ public class ChatRoomController {
     public ResponseEntity<?> getChatRoomList(@CookieValue(name="jwt", required = false) String token) {
         try{
             String userId = jwtTokenProvider.getUserIdFromToken(token);
-            List<ChatRoomListDTO> chatRooms = chatService.getChatRoomList(userId);
+            List<ChatRoomListResponse> chatRooms = chatService.getChatRoomList(userId);
             logger.info("Get chat room list successfully");
 
             return ResponseEntity.ok(chatRooms);
@@ -76,9 +76,6 @@ public class ChatRoomController {
         }
     }
     
-
-
-
     @PostMapping("/{chatRoomId}/{action}")
     @Operation(summary = "수락 대기중인 채팅룸의 수락/거절 여부 결정", description = "채팅룸 요청의 수락/거절 여부를 결정합니다.")
     public ResponseEntity<?> setChatRoomStatus(@PathVariable String chatRoomId, @PathVariable String action){

@@ -23,8 +23,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query("{ 'id' : ?0 }")
     @Update("{ '$set' : { 'refreshToken' : ?1 }}")
     void saveRefreshToken(String userId, String refreshToken);
-
-    // 추가
+    
     long countByCreatedAtAfter(LocalDateTime createdAt);
     long countByUserRole(String UserRole);
 }

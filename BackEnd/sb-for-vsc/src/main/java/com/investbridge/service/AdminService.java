@@ -15,12 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.investbridge.model.db.Idea;
 import com.investbridge.model.db.PatchNote;
 import com.investbridge.model.db.User;
-import com.investbridge.model.dto.Http.PatchNoteRequestDTO;
-import com.investbridge.model.dto.Http.PatchNoteResponseDTO;
-import com.investbridge.model.dto.Object.AdminIdeaInfoDTO;
-import com.investbridge.model.dto.Object.AdminUserInfoDTO;
+import com.investbridge.model.dto.Admin.AdminIdeaInfoResponse;
+import com.investbridge.model.dto.Admin.AdminUserInfoResponse;
+import com.investbridge.model.dto.Admin.PatchNoteRequest;
+import com.investbridge.model.dto.Admin.PatchNoteResponse;
+import com.investbridge.model.dto.Idea.IdeaSummaryResponse;
 import com.investbridge.model.dto.Object.FileMetaData;
-import com.investbridge.model.dto.Object.IdeaSummaryDTO;
 import com.investbridge.model.enums.UserRole;
 import com.investbridge.repository.IdeaRepository;
 import com.investbridge.repository.PatchNoteRepository;
@@ -38,7 +38,7 @@ public class AdminService {
     private final IdeaRepository ideaRepository;
     private final PatchNoteRepository patchNoteRepository;
 
-    public PatchNoteResponseDTO findPatchNote(String version){
+    public PatchNoteResponse findPatchNote(String version){
 
         PatchNote patchNote = patchNoteRepository.findByVersion(version)
                                                     .orElse(null);
@@ -48,7 +48,7 @@ public class AdminService {
                                             
         List<FileMetaData> files = patchNote.getFiles();
         
-        PatchNoteResponseDTO responseDTO = PatchNoteResponseDTO.builder()
+        PatchNoteResponse responseDTO = PatchNoteResponse.builder()
                             .title(patchNote.getTitle())
                             .content(patchNote.getContent())
                             .version(patchNote.getVersion())
@@ -60,7 +60,7 @@ public class AdminService {
         return responseDTO;
     }
 
-    public String addPatchNote(PatchNoteRequestDTO request){
+    public String addPatchNote(PatchNoteRequest request){
 
         //Exception Handling for Already exits PatchNote version
         if(patchNoteRepository.findByVersion(request.getVersion()).isPresent())
@@ -87,10 +87,10 @@ public class AdminService {
         return versions;
     }
 
-    public List<AdminUserInfoDTO> findAllUserInfo(){
+    public List<AdminUserInfoResponse> findAllUserInfo(){
         List<User> userInfoList = userRepository.findAll();
         return userInfoList.stream()
-                .map(user -> AdminUserInfoDTO.builder() //Convert userInfoList's type to AdminUserInfoDTO type 
+                .map(user -> AdminUserInfoResponse.builder() //Convert userInfoList's type to AdminUserInfoDTO type 
                             .id(user.getId())
                             .userId(user.getUserId())
                             .userEmail(user.getUserEmail())
@@ -103,11 +103,11 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public List<IdeaSummaryDTO> findUserIdea(String userId){
+    public List<IdeaSummaryResponse> findUserIdea(String userId){
 
         List<Idea> userIdeaSumList = ideaRepository.findByUserId(userId).orElse(Collections.emptyList());
         return userIdeaSumList.stream()
-                .map(ideaSum -> IdeaSummaryDTO.builder()
+                .map(ideaSum -> IdeaSummaryResponse.builder()
                                 .title(ideaSum.getTitle())
                                 .cratedAt(ideaSum.getCreatedAt().format(DateTimeFormatter.ISO_DATE))
                                 .isContracted(ideaSum.isContracted())
@@ -115,10 +115,10 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public List<AdminIdeaInfoDTO> findAllIdeaInfo(){
+    public List<AdminIdeaInfoResponse> findAllIdeaInfo(){
         List<Idea> ideaInfoList = ideaRepository.findAll();
         return ideaInfoList.stream()
-                .map(idea -> AdminIdeaInfoDTO.builder()
+                .map(idea -> AdminIdeaInfoResponse.builder()
                             .id(idea.getId())
                             .userId(idea.getUserId())
                             .title(idea.getTitle())
@@ -154,7 +154,7 @@ public class AdminService {
         return fileMetadata;
     }
 
-    public List<AdminUserInfoDTO> findUsersByRole(String role){
+    public List<AdminUserInfoResponse> findUsersByRole(String role){
 
         UserRole userRole;
 
@@ -168,7 +168,7 @@ public class AdminService {
 
         List<User> userInfoList = userRepository.findByUserRole(userRole);
         return userInfoList.stream()
-                .map(user -> AdminUserInfoDTO.builder()
+                .map(user -> AdminUserInfoResponse.builder()
                             .id(user.getId())
                             .userId(user.getUserId())
                             .userEmail(user.getUserEmail())

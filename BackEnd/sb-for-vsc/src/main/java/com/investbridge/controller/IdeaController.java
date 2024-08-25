@@ -17,15 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.exception.ErrorResponse;
 import com.investbridge.model.db.Idea;
-import com.investbridge.model.dto.Http.IdeaRequestDTO;
-import com.investbridge.model.dto.Http.IdeaResponseDTO;
-import com.investbridge.model.dto.Object.IdeaDetailDTO;
+import com.investbridge.model.dto.Idea.IdeaCreateRequest;
+import com.investbridge.model.dto.Idea.IdeaCreateResponse;
+import com.investbridge.model.dto.Idea.IdeaDetailResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.IdeaService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.AllArgsConstructor;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/ideas")
 public class IdeaController {
 
@@ -33,11 +35,6 @@ public class IdeaController {
 
     private final IdeaService ideaService;
     private final JwtTokenProvider jwtTokenProvider;
-
-    public IdeaController(IdeaService ideaService, JwtTokenProvider jwtTokenProvider) {
-        this.ideaService = ideaService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     @GetMapping
     @Operation(summary = "전체 아이디어 불러오기", description = "전체 아이디어를 불러옵니다.")
@@ -54,7 +51,7 @@ public class IdeaController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "아이디어 생성하기", description = "새로운 아이디어를 생성합니다.")
-    public ResponseEntity<?> ideaAdd(@ModelAttribute IdeaRequestDTO request, @CookieValue(name="jwt", required = false) String token){
+    public ResponseEntity<?> ideaAdd(@ModelAttribute IdeaCreateRequest request, @CookieValue(name="jwt", required = false) String token){
 
         String userId = jwtTokenProvider.getUserbyToken(token).getUserId();
         request.setUserId(userId);
@@ -62,7 +59,7 @@ public class IdeaController {
         logger.info(userId);
 
         try{
-            IdeaResponseDTO response = ideaService.addIdea(request);
+            IdeaCreateResponse response = ideaService.addIdea(request);
             logger.info("Create Idea Succeed {}", request.getTitle());
             return ResponseEntity.ok(response);
         }catch(RuntimeException e){
@@ -79,7 +76,7 @@ public class IdeaController {
     public ResponseEntity<?> ideaDetails(@PathVariable("id") String id, @CookieValue(name="jwt", required = false)String token) {
         String userId = jwtTokenProvider.getUserIdFromToken(token);
         try{
-            IdeaDetailDTO response = ideaService.findIdea(userId, id);
+            IdeaDetailResponse response = ideaService.findIdea(userId, id);
             logger.info("Load Idea Succeed : {} ", response.getIdeaId());
             return ResponseEntity.ok(response);
         }catch (Exception e){

@@ -2,7 +2,6 @@ package com.investbridge.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -19,18 +18,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.exception.ErrorResponse;
-import com.investbridge.model.dto.Http.LoginRequestDTO;
-import com.investbridge.model.dto.Http.LoginResponseDTO;
-import com.investbridge.model.dto.Http.RegisterRequestDTO;
-import com.investbridge.model.dto.Http.RegisterResponseDTO;
+import com.investbridge.model.dto.Auth.LoginRequest;
+import com.investbridge.model.dto.Auth.LoginResponse;
+import com.investbridge.model.dto.Auth.RegisterRequest;
+import com.investbridge.model.dto.Auth.RegisterResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
+@AllArgsConstructor
 @Tag(name = "Auth", description = "로그인/회원가입 API")
 public class AuthController {
 
@@ -38,13 +39,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider) {
-        this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
+    
     @GetMapping("/is-user")
     @Operation(summary = "페이지 이동간 유효성 검증", description = "페이지로의 접근의 유효성을 검증합니다.")
     public ResponseEntity<?> checkUser(@CookieValue(name="jwt", required = false) String token){
@@ -73,9 +68,9 @@ public class AuthController {
     
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "이메일과 비밀번호로 로그인을 시도합니다.")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request){
+    public ResponseEntity<?> login(@RequestBody LoginRequest request){
         try{
-            LoginResponseDTO response = authService.login(request); // Object that contains ResponseDTO after login
+            LoginResponse response = authService.login(request); // Object that contains ResponseDTO after login
 
             ResponseCookie jwtCookie = ResponseCookie.from("jwt", response.getToken())
                 .httpOnly(true)
@@ -112,9 +107,9 @@ public class AuthController {
 
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입")
-    public ResponseEntity<?> join(@RequestBody RegisterRequestDTO request){
+    public ResponseEntity<?> join(@RequestBody RegisterRequest request){
         try{
-            RegisterResponseDTO response = authService.join(request); 
+            RegisterResponse response = authService.join(request); 
             logger.info("Join Succeed {}", request.getUserEmail());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }catch(RuntimeException e){

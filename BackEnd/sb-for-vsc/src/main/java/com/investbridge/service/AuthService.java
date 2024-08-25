@@ -8,35 +8,28 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.investbridge.controller.AuthController;
 import com.investbridge.model.db.User;
-import com.investbridge.model.dto.Http.LoginRequestDTO;
-import com.investbridge.model.dto.Http.LoginResponseDTO;
-import com.investbridge.model.dto.Http.RegisterRequestDTO;
-import com.investbridge.model.dto.Http.RegisterResponseDTO;
+import com.investbridge.model.dto.Auth.LoginRequest;
+import com.investbridge.model.dto.Auth.LoginResponse;
+import com.investbridge.model.dto.Auth.RegisterRequest;
+import com.investbridge.model.dto.Auth.RegisterResponse;
 import com.investbridge.repository.UserRepository;
 import com.investbridge.security.JwtTokenProvider;
-import com.investbridge.security.TokenBlacklist;
+
+import lombok.AllArgsConstructor;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final TokenBlacklist tokenBlacklist;
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
-    public AuthService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder, TokenBlacklist tokenBlacklist) {
-        this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenBlacklist = tokenBlacklist;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     // Login Service Logic
-    public LoginResponseDTO login(LoginRequestDTO request) {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUserEmail(request.getUserEmail()) // Find the user whose email address matches.
                 .orElseThrow(() -> new BadCredentialsException("Invalid Email")); // Throws error when find user fail.
 
@@ -53,11 +46,11 @@ public class AuthService {
 
         userRepository.saveRefreshToken(user.getId(), refreshToken);
 
-        return new LoginResponseDTO(accessToken, user.getUserRole().name()); // Return responsedto(token, userRole)
+        return new LoginResponse(accessToken, user.getUserRole().name()); // Return responsedto(token, userRole)
     }
 
     // Join Service Logic
-    public RegisterResponseDTO join(RegisterRequestDTO request){
+    public RegisterResponse join(RegisterRequest request){
         
         //if Email already exits
         if(userRepository.findByUserEmail(request.getUserEmail()).isPresent())
@@ -80,7 +73,7 @@ public class AuthService {
         
         User savedUser = userRepository.save(newUser);
 
-        return new RegisterResponseDTO(savedUser.getId());
+        return new RegisterResponse(savedUser.getId());
     }
 
     public boolean updateUserBlockStatus(String userId, boolean isBlocked){

@@ -22,9 +22,11 @@ import com.investbridge.security.filter.LogoutFilter;
 import com.investbridge.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -42,12 +44,6 @@ public class SecurityConfig {
 
     @Value("${cors.exposed-headers}")
     private List<String> exposedHeaders;
-
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenBlacklist = tokenBlacklist;
-        this.userService = userService;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -67,21 +63,7 @@ public class SecurityConfig {
                     })
             )
             .authorizeHttpRequests(authz -> authz
-<<<<<<< HEAD
                 .requestMatchers("/api/**", "/ws/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-=======
-                // .requestMatchers("/api/auth/login").permitAll()
-                // .requestMatchers("/api/auth/join/**").permitAll()
-                // .requestMatchers("/api/auth/logout/**").permitAll()
-                // .requestMatchers("/api/chat/**").permitAll()
-                // .requestMatchers("/api/user/**").permitAll()
-                // .requestMatchers("/api/ideas/**").permitAll()
-                // .requestMatchers("/api/admin/**").permitAll()
-                // .requestMatchers("/api/about/**").permitAll()
-                // .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/**").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
->>>>>>> develop
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtTokenFilter(jwtTokenProvider, tokenBlacklist, userService), UsernamePasswordAuthenticationFilter.class)

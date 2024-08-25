@@ -14,24 +14,23 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.investbridge.model.db.Idea;
-import com.investbridge.model.dto.Http.IdeaRequestDTO;
-import com.investbridge.model.dto.Http.IdeaResponseDTO;
+import com.investbridge.model.dto.Idea.IdeaCreateRequest;
+import com.investbridge.model.dto.Idea.IdeaCreateResponse;
+import com.investbridge.model.dto.Idea.IdeaDetailResponse;
 import com.investbridge.model.dto.Object.FileMetaData;
-import com.investbridge.model.dto.Object.IdeaDetailDTO;
 import com.investbridge.repository.IdeaRepository;
+
+import lombok.AllArgsConstructor;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class IdeaService {
-    private static final Logger logger = LoggerFactory.getLogger(DashboardUpdateService.class);
+    private static final Logger logger = LoggerFactory.getLogger(IdeaService.class);
 
     private final IdeaRepository ideaRepository;
-    
-    public IdeaService(IdeaRepository ideaRepository){
-        this.ideaRepository = ideaRepository;
-    }
 
-    public IdeaResponseDTO addIdea(IdeaRequestDTO request){
+    public IdeaCreateResponse addIdea(IdeaCreateRequest request){
 
         List<FileMetaData> fileMetadata = new ArrayList<>();
         if(request.getFiles() != null){
@@ -68,7 +67,7 @@ public class IdeaService {
 
         Idea savedIdea = ideaRepository.save(newIdea);
 
-        return IdeaResponseDTO.builder()
+        return IdeaCreateResponse.builder()
             .ideaId(savedIdea.getId())
             .userId(savedIdea.getUserId())
             .build();
@@ -79,12 +78,12 @@ public class IdeaService {
         return idea;
     }
 
-    public IdeaDetailDTO findIdea(String userId, String ideaId){
+    public IdeaDetailResponse findIdea(String userId, String ideaId){
         Idea ideaDetail = ideaRepository.findById(ideaId).orElse(null);
 
         boolean isOwner = (ideaDetail.getUserId().equals(userId));
 
-        IdeaDetailDTO response = IdeaDetailDTO.builder()
+        IdeaDetailResponse response = IdeaDetailResponse.builder()
                         .ideaId(ideaDetail.getId())
                         .dreamerId(ideaDetail.getUserId())
                         .title(ideaDetail.getTitle())

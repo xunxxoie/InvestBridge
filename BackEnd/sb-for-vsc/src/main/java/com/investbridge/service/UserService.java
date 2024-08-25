@@ -1,36 +1,32 @@
 package com.investbridge.service;
 
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.investbridge.model.db.User;
-import com.investbridge.model.dto.Object.UserDTO;
-import com.investbridge.model.dto.Object.UserProfileDTO;
-import com.investbridge.repository.IdeaRepository;
+import com.investbridge.model.dto.User.UserInfoResponse;
+import com.investbridge.model.dto.User.UserProfileInfoResponse;
 import com.investbridge.repository.UserRepository;
+
+import lombok.AllArgsConstructor;
 
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class UserService {
-    private final IdeaRepository ideaRepository;
     private final UserRepository userRepository;
-    
-    public UserService(IdeaRepository ideaRepository, UserRepository userRepository) {
-        this.ideaRepository = ideaRepository;
-        this.userRepository = userRepository;
-    }
 
-    public UserProfileDTO getUserProfile(String userId) {
+    public UserProfileInfoResponse getUserProfile(String userId) {
        
         User user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
         
-        return UserProfileDTO.builder()
+        return UserProfileInfoResponse.builder()
             .userId(user.getUserId())
             .userEmail(user.getUserEmail())
             .userName(user.getUserName())
@@ -41,11 +37,11 @@ public class UserService {
             .build();
     }
 
-    public UserDTO getUserInfoFromUserEmail(String userEmail){
+    public UserInfoResponse getUserInfoFromUserEmail(String userEmail){
         User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new BadCredentialsException("Invalid Email"));
 
-        return UserDTO.builder()
+        return UserInfoResponse.builder()
             .userId(user.getUserId())
             .userEmail(user.getUserEmail())
             .userRole(user.getUserRole().name())
