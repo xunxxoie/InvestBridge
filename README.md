@@ -55,7 +55,7 @@ InvestBridge is a revolutionary platform that connects innovative ideas with pot
 ### FullStack Dev 2 (ijnim1121)
 [![FullStack Dev 2](https://github-readme-stats.vercel.app/api?username=ijnim1121&show_icons=true&theme=merko&hide_title=true&hide_rank=true)](https://github.com/ijnim1121)
 
-### Backend Dev 1 (minjichoii)
-[![Backend Dev 1](https://github-readme-stats.vercel.app/api?username=minjichoii&show_icons=true&theme=tokyonight&hide_title=true&hide_rank=true)](https://github.com/minjichoii)
+### Backend Dev 1 (Hongeunjean)
+[![Backend Dev 1](https://github-readme-stats.vercel.app/api?username=minjichoii&show_icons=true&theme=tokyonight&hide_title=true&hide_rank=true)](https://github.com/Hongeunjean)
 
 </div>
