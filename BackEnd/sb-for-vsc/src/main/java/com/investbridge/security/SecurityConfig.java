@@ -67,7 +67,21 @@ public class SecurityConfig {
                     })
             )
             .authorizeHttpRequests(authz -> authz
+<<<<<<< HEAD
                 .requestMatchers("/api/**", "/ws/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+=======
+                // .requestMatchers("/api/auth/login").permitAll()
+                // .requestMatchers("/api/auth/join/**").permitAll()
+                // .requestMatchers("/api/auth/logout/**").permitAll()
+                // .requestMatchers("/api/chat/**").permitAll()
+                // .requestMatchers("/api/user/**").permitAll()
+                // .requestMatchers("/api/ideas/**").permitAll()
+                // .requestMatchers("/api/admin/**").permitAll()
+                // .requestMatchers("/api/about/**").permitAll()
+                // .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
+>>>>>>> develop
                 .anyRequest().authenticated()
             )
             .addFilterBefore(new JwtTokenFilter(jwtTokenProvider, tokenBlacklist, userService), UsernamePasswordAuthenticationFilter.class)
@@ -84,6 +98,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(allowedMethods);
         configuration.setAllowedHeaders(allowedHeaders);
         configuration.setExposedHeaders(exposedHeaders);
+        configuration.setMaxAge(3600L);
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

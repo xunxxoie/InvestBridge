@@ -40,6 +40,7 @@ public class Idea {
     
     private Integer likes;
     private Integer favorites;
+    private Integer views; // 추가
 
     private boolean isContracted;
     private String supporterName;

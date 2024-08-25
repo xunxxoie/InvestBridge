@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import com.investbridge.model.db.Idea;
 import com.investbridge.model.enums.IdeaCategory;
-
+@Repository
 public interface IdeaRepository extends MongoRepository<Idea, String>{
 
     Optional<Idea> findByTitleContaining(String keyword);
@@ -17,5 +18,7 @@ public interface IdeaRepository extends MongoRepository<Idea, String>{
 
     Optional<Idea> findByIsContracted(boolean isContracted);
     Optional<Idea> findByCategories(IdeaCategory category);
+
+    long countByIsContracted(boolean isContracted); // 추가
     
 }
