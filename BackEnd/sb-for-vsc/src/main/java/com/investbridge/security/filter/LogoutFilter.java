@@ -27,7 +27,6 @@ public class LogoutFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
             throws ServletException, IOException {
         
-
         if ("/api/auth/logout".equals(request.getRequestURI()) && "POST".equalsIgnoreCase(request.getMethod())) {
             logger.info("LogoutFilter is processing a request to {}", request.getRequestURI());
             logger.info("Logout processing is start");
