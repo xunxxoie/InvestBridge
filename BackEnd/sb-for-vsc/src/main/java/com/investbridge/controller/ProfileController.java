@@ -21,7 +21,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/profile")
-
 public class ProfileController {
     
     private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
