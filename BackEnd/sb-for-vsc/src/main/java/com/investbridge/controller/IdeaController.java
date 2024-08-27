@@ -24,11 +24,13 @@ import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.IdeaService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/ideas")
+@Tag(name = "Idea", description = "아이디어 API")
 public class IdeaController {
 
     private static final Logger logger = LoggerFactory.getLogger(IdeaController.class);
@@ -41,75 +43,90 @@ public class IdeaController {
     public ResponseEntity<?> ideaList(@CookieValue(name="jwt", required = false)String token){
         try{
             List<Idea> response = ideaService.findAllIdea();
-            logger.info("Load All Idea Succeed");
+
+            logger.info("Load {} Ideas Succeed", response.size());
             return ResponseEntity.ok(response);
         }catch(Exception e){
-            logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Load All Idea Failed : {} ", e.getMessage() ));
+            logger.error("Load Ideas Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
+    //TODO 아이디어 생성 예외처리 로직 보완하기
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "아이디어 생성하기", description = "새로운 아이디어를 생성합니다.")
     public ResponseEntity<?> ideaAdd(@ModelAttribute IdeaCreateRequest request, @CookieValue(name="jwt", required = false) String token){
-
-        String userId = jwtTokenProvider.getUserbyToken(token).getUserId();
-        request.setUserId(userId);
-
-        logger.info(userId);
-
         try{
+            String userId = jwtTokenProvider.getUserIdFromToken(token);
+            request.setUserId(userId);
+
             IdeaCreateResponse response = ideaService.addIdea(request);
-            logger.info("Create Idea Succeed {}", request.getTitle());
+
+            logger.info("Create Idea Succeed! Title: {}, Author: {}", response.getTitle(), response.getUserId());
             return ResponseEntity.ok(response);
         }catch(RuntimeException e){
-            logger.error("Create Idea Failed : FILE ERROR : {} ", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(new ErrorResponse("File Upload Failed : {} ", e.getMessage()));
+            logger.error("Create Idea Failed(File upload Error) : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+                .body(new ErrorResponse("File Upload Failed : {} ", e.getMessage()));
         }catch(Exception e){
-            logger.error("Create Idea Failed :  INTERNAL SERVER ERROR : {} ", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Create Idea Failed : {} " , e.getMessage()));
+            logger.error("Create Idea Failed(Unexpected Error) {} ", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
     @GetMapping("/detail/{id}")
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
     public ResponseEntity<?> ideaDetails(@PathVariable("id") String id, @CookieValue(name="jwt", required = false)String token) {
-        String userId = jwtTokenProvider.getUserIdFromToken(token);
         try{
+            String userId = jwtTokenProvider.getUserIdFromToken(token);
             IdeaDetailResponse response = ideaService.findIdea(userId, id);
-            logger.info("Load Idea Succeed : {} ", response.getIdeaId());
+           
+            logger.info("Get Idea Succeed! IdeaId: {}", response.getIdeaId());
             return ResponseEntity.ok(response);
         }catch (Exception e){
-            logger.error("Load All Ideas Failed : INTERNAL SERVER ERROR : {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Load Idea Failed : {} ", e.getMessage() ));
+            logger.error("GET Idea Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
     
     @PostMapping("/{id}/like")
     @Operation(summary = "좋아요 수 업데이트", description = "좋아요 수를 업데이트 합니다.")
     public ResponseEntity<?> updateLikes (@CookieValue(name="jwt", required = false)String token, @PathVariable String id){
-        String userId = jwtTokenProvider.getUserIdFromToken(token);
         try{
+            String userId = jwtTokenProvider.getUserIdFromToken(token);
             Idea response = ideaService.updateLikes(id, userId);
-            logger.info("Update Like Succeed");
+
+            logger.info("Update Like Succeed! Updated Likes: {}", response.getLikes());
             return ResponseEntity.ok(response);
         }catch (Exception e){
             logger.error("Update Like Failed : {} ", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Update Like Failed : {}", e.getMessage()));
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
     @PostMapping("/{id}/favorite")
-    @Operation(summary = "스크랩 수 업데이트", description = "스크랩 수를 업데이트 합니다.")
+    @Operation(summary = "즐겨찾기 수 업데이트", description = "즐겨찾기 수를 업데이트 합니다.")
     public ResponseEntity<?> updateFavorites(@CookieValue(name="jwt", required = false)String token, @PathVariable String id){
-        String userId = jwtTokenProvider.getUserIdFromToken(token);
         try{
+            String userId = jwtTokenProvider.getUserIdFromToken(token);
             Idea response = ideaService.updateFavorites(id, userId);
-            logger.info("Update Favorite Succeed");
+            
+            logger.info("Update favorites Succeed! Updated favorites: {}", response.getFavorites());
             return ResponseEntity.ok(response);
         }catch (Exception e){
             logger.error("Update Favorite Failed : {} ", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Update Favorite Failed : {}", e.getMessage()));
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 }

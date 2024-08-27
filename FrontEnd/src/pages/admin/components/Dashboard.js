@@ -46,11 +46,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/dashboard/main', {
-          headers: { 'Accept': 'application/json' }
+      try{
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/main`,{
+          headers: { 'Accept': 'application/json' },
+          method: 'GET',
+          credentials: 'include'
         });
-
+        
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }

@@ -24,13 +24,15 @@ import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.PatchNoteService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/patchnote")
+@RequiredArgsConstructor
+@Tag(name = "PatchNote", description = "패치노트 API")
 public class PatchNoteController {
-
+    //TODO 관리자 권한 부여하기 
     private static final Logger logger = LoggerFactory.getLogger(PatchNoteController.class);
 
     private final PatchNoteService patchNoteService;
@@ -39,29 +41,35 @@ public class PatchNoteController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "새로운 패치노트 등록하기", description = "새로운 패치노트를 등록합니다.")
     public ResponseEntity<?> patchNoteAdd(@ModelAttribute PatchNoteRequest request, @CookieValue(name="jwt", required = false) String token){
-
-        String adminId = jwtTokenProvider.getUserEmailFromToken(token);
-        request.setAdminId(adminId);
-
         try{
+            String adminId = jwtTokenProvider.getUserIdFromToken(token);
+            request.setAdminId(adminId);
+
             String response = patchNoteService.addPatchNote(request);
-            logger.info("Add PatchNote Succeed {}", request.getVersion());
+
+            logger.info("Create PatchNote Succeed! Version: {}", request.getVersion());
             return ResponseEntity.ok(response);
         }catch(Exception e){
-            logger.error("Add PatchNote Failed {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Add PatchNote Failed : {} ", e.getMessage()));
+            logger.error("Create PatchNote Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
     @GetMapping
-    @Operation(summary = "모든 패치노트 불러오기", description = "데이터베이스에 저장된 모든 패치노트를 불러옵니다.")
+    @Operation(summary = "모든 패치노트 불러오기", description = "모든 패치노트를 불러옵니다.")
     public ResponseEntity<?> getAllPatchNotes(@CookieValue(name = "jwt", required = false)String token) {
         try {
             List<PatchNoteResponse> response = patchNoteService.findAllPatchNotes();
+
+            logger.info("Get {} PatchNotes Succeed", response.size());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Get All PatchNotes Failed {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Get All PatchNotes Failed : {}", e.getMessage()));
+            logger.error("Get All PatchNotes Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
@@ -70,56 +78,63 @@ public class PatchNoteController {
     public ResponseEntity<?> patchnNoteDetails(@PathVariable String version){
         try{
             PatchNoteResponse response = patchNoteService.findPatchNote(version);
-            logger.info("Find PatchNote Succeed {}", response.getVersion());
+
+            logger.info("Get Patchnote Succeed! Version: {}", response.getVersion());
             return ResponseEntity.ok(response);
         }catch(Exception e){
-            logger.error("ind PatchNote failed {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("INTERNAL SERVER ERROR : {}", e.getMessage()));
+            logger.error("Get Patchnote Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
     @DeleteMapping("/{version}")
     @Operation(summary = "특정 패치노트 삭제하기", description = "특정 패치 노트를 삭제합니다.")
-    public ResponseEntity<?> deletePatchNote(
-        @PathVariable String version,
-        @CookieValue(name = "jwt", required = false) String token) {
+    public ResponseEntity<?> deletePatchNote(@PathVariable String version, @CookieValue(name = "jwt", required = false) String token) {
         try {
             patchNoteService.deletePatchNoteByVersion(version);
-            logger.info("Patch note deleted successfully: {}", version);
-            return ResponseEntity.ok("Patch note deleted successfully.");
+            logger.info("Delete Patchnote Succeed! Version: {}", version);
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
-            logger.error("Failed to delete patch note: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Failed to delete patch note: {}", e.getMessage()));
+            logger.error("Delete Patchnote Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
     @PutMapping(value = "/{version}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "특정 패치노트 수정하기", description = "특정 패치노트를 수정합니다.")
-    public ResponseEntity<?> updatePatchNote(
-        @PathVariable String version,
-        @ModelAttribute PatchNoteRequest request,
-        @CookieValue(name = "jwt", required = false) String token) {
+    public ResponseEntity<?> updatePatchNote(@PathVariable String version, @ModelAttribute PatchNoteRequest request,
+                                                            @CookieValue(name = "jwt", required = false) String token) {
         try {
-            logger.info("Update token Success: {}", token);
-            String adminId = jwtTokenProvider.getUserEmailFromToken(token);
+            String adminId = jwtTokenProvider.getUserIdFromToken(token);
             request.setAdminId(adminId);
+
             patchNoteService.updatePatchNoteByVersion(version, request);
-            logger.info("Update PatchNote Success: {}", version);
-            return ResponseEntity.ok("Update PatchNote Success.");
+
+            logger.info("Update PatchNote Succeed! Version: {}", version);
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
-            logger.error("Update PatchNote Failed: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Update PatchNote Failed: {}", e.getMessage()));
+            logger.error("Update PatchNote Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 
-    @GetMapping("/patchnotes-versions")
+    @GetMapping("/versions")
     @Operation(summary = "패치노트 버전 불러오기", description = "패치노트의 버전 목록을 불러옵니다.")
     public ResponseEntity<?> patchNoteVersionList(){
         try{
             List<String> response = patchNoteService.findAllPatchNoteVersions();
+            logger.info("Get {} Patchnote versions Succeed", response.size());
             return ResponseEntity.ok(response);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Find All PatchNote Version failed : {}", e.getMessage()));
+        } catch(Exception e){
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 }

@@ -7,10 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.investbridge.model.db.Idea;
@@ -20,13 +17,11 @@ import com.investbridge.model.dto.Idea.IdeaDetailResponse;
 import com.investbridge.model.dto.Object.FileMetaData;
 import com.investbridge.repository.IdeaRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class IdeaService {
-    private static final Logger logger = LoggerFactory.getLogger(IdeaService.class);
 
     private final IdeaRepository ideaRepository;
 
@@ -68,7 +63,7 @@ public class IdeaService {
         Idea savedIdea = ideaRepository.save(newIdea);
 
         return IdeaCreateResponse.builder()
-            .ideaId(savedIdea.getId())
+            .title(savedIdea.getTitle())
             .userId(savedIdea.getUserId())
             .build();
     }
@@ -134,8 +129,13 @@ public class IdeaService {
         return ideaRepository.save(idea);
     }
 
-    public void deleteIdea(String id){
-        ideaRepository.deleteById(id);
+    public boolean deleteIdea(String id){
+        try{
+            ideaRepository.deleteById(id);
+            return true;
+        }catch(Exception e){
+            return false;
+        }        
     }
 
     public boolean updateIdeaBlockStatus(String id, boolean isBlocked){

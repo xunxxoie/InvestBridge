@@ -27,11 +27,11 @@ import com.investbridge.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
-@AllArgsConstructor
 @Tag(name = "Auth", description = "로그인/회원가입 API")
 public class AuthController {
 
@@ -39,7 +39,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
-    
+
     @GetMapping("/is-user")
     @Operation(summary = "페이지 이동간 유효성 검증", description = "페이지로의 접근의 유효성을 검증합니다.")
     public ResponseEntity<?> checkUser(@CookieValue(name="jwt", required = false) String token){
@@ -53,24 +53,12 @@ public class AuthController {
         }
     }
 
-    @PutMapping("/block/{userId}")
-    @Operation(summary = "유저 계정 정지/해제", description = "유저의 계정을 정지/해제합니다.")
-    public ResponseEntity<?> blockUnblockUser(@PathVariable String userId, @RequestBody boolean isBlocked){
-        try{
-            boolean response = authService.updateUserBlockStatus(userId, isBlocked);
-            logger.info("User BlockStatus Update is Succeed with {}", response);
-            return ResponseEntity.ok(response);
-        }catch(Exception e){
-            logger.info("User BlockStatus Failed with Unexpected Error : {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Internal Server Error", e.getMessage()));
-        }
-    }
-    
+    //TODO 예외 처리 로직 보완
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "이메일과 비밀번호로 로그인을 시도합니다.")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
         try{
-            LoginResponse response = authService.login(request); // Object that contains ResponseDTO after login
+            LoginResponse response = authService.login(request);
 
             ResponseCookie jwtCookie = ResponseCookie.from("jwt", response.getToken())
                 .httpOnly(true)
@@ -80,44 +68,63 @@ public class AuthController {
                 .path("/")
                 .build();
 
-            logger.info("Login Succeed {} ", request.getUserEmail());
-
+            logger.info("Login Succeed UserEmail : {} ", request.getUserEmail());
             return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(response);
 
         }catch(BadCredentialsException e){
-            logger.info("Login Failed : PASSWORD DISMATCHED");
+           logger.error("Login Failed : PASSWORD DISMATCHED");
             return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse("Login Failed : {} ", e.getMessage()));
         }catch(AccessDeniedException e){
-            logger.info("Login Failed : Blocked User");
+            logger.error("Login Failed : Blocked User");
             return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse("Login Failed : {}", e.getMessage()));
         }catch(Exception e){
-            logger.info("Login Failed : INTERNAL SERVER ERROR : {}", request.getUserEmail());
+           logger.error("Login Failed with Unexpected Error");
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("Login Failed : {}", e.getMessage()));
+                .body(new ErrorResponse("Unexpected Error occurred : {}", e.getMessage()));
         }
-            
     }
 
+    //TODO 예외 처리 로직 보완
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "회원가입")
     public ResponseEntity<?> join(@RequestBody RegisterRequest request){
         try{
             RegisterResponse response = authService.join(request); 
-            logger.info("Join Succeed {}", request.getUserEmail());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            logger.info("Join Succeed UserEmail : {}", request.getUserEmail());
+            return ResponseEntity
+                .status(HttpStatus.CREATED).body(response);
         }catch(RuntimeException e){
-            logger.info("Join Failed : EMAIL ALREADY EXITS", request.getUserEmail());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Join Failed : {} ", e.getMessage()));
+            logger.error("Join Failed : EMAIL ALREADY EXITS", request.getUserEmail());
+            return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("Join Failed : {} ", e.getMessage()));
         }catch(Exception e){
-            logger.info("Join Failed : INTERNAL SERVER ERROR : {}", request.getUserEmail());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Join Failed : {} ", e.getMessage()));
+            logger.error("Join Failed with Unexpected Error : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error occurred : {}", e.getMessage()));
+        }
+    }
+
+    @PutMapping("/block/{userId}")
+    @Operation(summary = "유저 계정 정지/해제", description = "유저의 계정을 정지/해제합니다.")
+    public ResponseEntity<?> blockUnblockUser(@PathVariable String userId, @RequestBody boolean isBlocked){
+        try{
+            boolean response = authService.updateUserBlockStatus(userId, isBlocked);
+            logger.info("Block/Unblock User Succeed {} -> {}", !response, response);
+            return ResponseEntity.ok(response);
+        }catch(Exception e){
+            logger.error("Block/Unblock User Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Internal Server Error", e.getMessage()));
         }
     }
 }

@@ -14,25 +14,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.investbridge.exception.ErrorResponse;
-import com.investbridge.model.db.ChatRoom;
 import com.investbridge.model.db.Message;
 import com.investbridge.model.dto.Chat.ChatRoomListResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.ChatService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/chatroom")
+@Tag(name = "ChatRoom", description = "채팅룸 API")
 public class ChatRoomController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChatRoomController.class);
     
     private final ChatService chatService;
     private final JwtTokenProvider jwtTokenProvider;
-
-    private static final Logger logger = LoggerFactory.getLogger(ChatRoomController.class);
 
     @GetMapping("/list")
     @Operation(summary = "채팅룸 목록 가져오기", description = "유저가 참여하고 있는 채팅룸 목록을 가져옵니다.")
@@ -40,39 +41,30 @@ public class ChatRoomController {
         try{
             String userId = jwtTokenProvider.getUserIdFromToken(token);
             List<ChatRoomListResponse> chatRooms = chatService.getChatRoomList(userId);
-            logger.info("Get chat room list successfully");
-
+            
+            logger.info("Get ChatRoom List Succeed");
             return ResponseEntity.ok(chatRooms);
         }catch(Exception e){
-            logger.error("Unexpected Error occurred in ChatRoomController!");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Unexpected Error is occured in ChatRoomController! {} ", e.getMessage()));
+            logger.error("Get ChatRoom List Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred {} ", e.getMessage()));
         }
     }
 
-    @GetMapping("/messages/{chatRoomId}")
+    @GetMapping("/{chatRoomId}/messages")
     @Operation(summary = "채팅방의 채팅 메시지 가져오기", description = "채팅방의 채팅 메시지를 가져옵니다.")
     public ResponseEntity<?> getChatMessages(@PathVariable String chatRoomId, @CookieValue(name="jwt", required = false) String token) {
         try{
             List<Message> response = chatService.getChatMessages(chatRoomId);
-            logger.info("Get chat messages successfully");
+            logger.info("Get ChatRoom Messages Succeed");
 
             return ResponseEntity.ok(response);
         }catch(Exception e){
-            logger.error("Unexpected Error occurred in ChatRoomController!");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Unexpected Error is occured in ChatRoomController! {} ", e.getMessage()));
-        }
-    }
-
-    @PostMapping("/{dreamerId}")    
-    @Operation(summary = "채팅방을 생성합니다.", description = "새로운 채팅방을 생성합니다.")
-    public ResponseEntity<?> createChatRoom(@CookieValue(name="jwt", required = false) String token, @PathVariable String dreamerId){
-        try{
-            String supporterId = jwtTokenProvider.getUserIdFromToken(token);
-            ChatRoom chatRoom = chatService.getChatRoom(supporterId,dreamerId);
-            return ResponseEntity.ok(chatRoom);
-        }catch(Exception e){
-            logger.error("Unexpected Error occurred in ChatRoomController!");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("Unexpected Error occurred in ChatRoomController! {} ", e.getMessage()));
+            logger.error("Get ChatRoom Messages Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred {} ", e.getMessage()));
         }
     }
     
@@ -81,12 +73,14 @@ public class ChatRoomController {
     public ResponseEntity<?> setChatRoomStatus(@PathVariable String chatRoomId, @PathVariable String action){
         try{
             boolean response = chatService.setRoomStatus(chatRoomId, action);
-            logger.info("Set chat room status successfully");
 
+            logger.info("Set ChatRoom Status Succeed with {} : {}", chatRoomId, action);
             return ResponseEntity.ok(response);
         }catch(Exception e){
-            logger.error("Unexpected Error occurred in ChatRoomController!");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Internal Server Error {}", e.getMessage()));
+            logger.error("Set ChatRoom Status Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred {}", e.getMessage()));
         }
     }
 }

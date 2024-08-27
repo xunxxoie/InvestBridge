@@ -1,7 +1,5 @@
 package com.investbridge.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,17 +14,16 @@ import com.investbridge.model.dto.Auth.RegisterResponse;
 import com.investbridge.repository.UserRepository;
 import com.investbridge.security.JwtTokenProvider;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthService {
+
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     // Login Service Logic
     public LoginResponse login(LoginRequest request) {

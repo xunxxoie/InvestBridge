@@ -16,23 +16,23 @@ import com.investbridge.model.db.Dashboard;
 import com.investbridge.model.db.SubscribersOverTime;
 import com.investbridge.repository.DashboardRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class DashboardUpdateService {
     private static final int MAX_DAYS = 5;
 
-    private IdeaService ideaService;
-    private UserService userService;
-    private DashboardRepository dashboardRepository;
+    private final IdeaService ideaService;
+    private final UserService userService;
+    private final DashboardRepository dashboardRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(DashboardUpdateService.class);
-
-    @Scheduled(cron = "0 5 * * * ?") // 매 5분마다 실행
+   private static final Logger logger = LoggerFactory.getLogger(DashboardUpdateService.class);
+    
+   @Scheduled(cron = "0 1 * * * ?", zone = "Asia/Seoul")
     public void updateStatistics() {
-        logger.info("updateStatistics called");
 
+        logger.info("UpdateStaticstics start");
         LocalDate today = LocalDate.now();
         long totalSubscribers = userService.getTotalSubscribers();
         long newSubscribers = userService.getNewSubscribersLast1Day();
@@ -71,7 +71,6 @@ public class DashboardUpdateService {
         
         List<SubscribersOverTime> updatedSubscribersOverTime = getUpdatedSubscribersOverTime(dashboard);
         dashboard.setSubscribersOverTime(updatedSubscribersOverTime);
-        logger.info("Dashboard updated: " + dashboard.toString());
         
         saveStatistics(dashboard);
     }
@@ -102,7 +101,6 @@ public class DashboardUpdateService {
 
     public Dashboard saveStatistics(Dashboard dashboard) {
         Dashboard savedDashboard = dashboardRepository.save(dashboard);
-        logger.info("Saved Dashboard: " + savedDashboard.toString());
         return savedDashboard;
     }
 }

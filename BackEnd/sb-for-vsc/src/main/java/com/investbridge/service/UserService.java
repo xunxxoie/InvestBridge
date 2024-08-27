@@ -5,20 +5,18 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.investbridge.model.db.User;
 import com.investbridge.model.dto.User.UserInfoResponse;
 import com.investbridge.model.dto.User.UserProfileInfoResponse;
 import com.investbridge.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
-
+import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
+    
     private final UserRepository userRepository;
 
     public UserProfileInfoResponse getUserProfile(String userId) {
@@ -53,7 +51,6 @@ public class UserService {
         return user.getRefreshToken();      
     }
 
-    // 밑으로 쭉 추가
     public long getTotalSubscribers() {
         return userRepository.count();
     }

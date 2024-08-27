@@ -14,30 +14,32 @@ import com.investbridge.model.dto.User.UserInfoResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.UserService;
 
-import lombok.AllArgsConstructor;
-
-
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     @GetMapping("/id")
     private ResponseEntity<?> getUserId(@CookieValue(name="jwt", required = false) String token) {
+        //TODO 로직 구성 다시
         try {
             String userEmail = jwtTokenProvider.getUserEmailFromToken(token);
             UserInfoResponse userInfo = userService.getUserInfoFromUserEmail(userEmail);
+
+            logger.info("Get UserId Succeed! userId: {}",userInfo.getUserEmail());
             return ResponseEntity.ok(userInfo);
         } catch (Exception e) {
-            logger.error("Get userId Failed with Unexpected Error: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body(new ErrorResponse("Get userId Failed", e.getMessage()));
+            logger.error("Get userId Failed : {}", e.getMessage());
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
         }
     }
 }

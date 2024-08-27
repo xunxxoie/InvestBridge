@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IdeaCreateResponse {
-    private String ideaId;
+    private String title;
     private String userId;
 }

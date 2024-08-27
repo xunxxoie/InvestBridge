@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.investbridge.model.db.Idea;
@@ -26,13 +25,11 @@ import com.investbridge.repository.IdeaRepository;
 import com.investbridge.repository.PatchNoteRepository;
 import com.investbridge.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdminService {
-
 
     private final UserRepository userRepository;
     private final IdeaRepository ideaRepository;
@@ -80,11 +77,6 @@ public class AdminService {
         PatchNote savedPatchNote = patchNoteRepository.save(newPatchNote);
 
         return savedPatchNote.getId();
-    }
-
-    public List<String> findAllPatchNoteVersions(){
-        List<String> versions = patchNoteRepository.findAllVersions();
-        return versions;
     }
 
     public List<AdminUserInfoResponse> findAllUserInfo(){
@@ -157,7 +149,7 @@ public class AdminService {
     public List<AdminUserInfoResponse> findUsersByRole(String role){
 
         UserRole userRole;
-
+ 
         if(role.equals("Dreamer")){
             userRole = UserRole.DREAMER;
         }else if(role.equals("Supporter")){
@@ -180,6 +172,4 @@ public class AdminService {
                             .build())
                 .collect(Collectors.toList());
     }
-
-    
 }

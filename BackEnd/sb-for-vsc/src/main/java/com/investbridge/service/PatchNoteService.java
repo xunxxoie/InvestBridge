@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.investbridge.model.db.PatchNote;
@@ -16,12 +17,13 @@ import com.investbridge.model.dto.Admin.PatchNoteResponse;
 import com.investbridge.model.dto.Object.FileMetaData;
 import com.investbridge.repository.PatchNoteRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PatchNoteService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PatchNoteService.class);
 
     private final PatchNoteRepository patchNoteRepository;
 
@@ -68,11 +70,12 @@ public class PatchNoteService {
 
         return savedPatchNote.getId();
     }
-
+    
     public List<String> findAllPatchNoteVersions(){
         List<String> versions = patchNoteRepository.findAllVersions();
         return versions;
     }
+
 
     public List<PatchNoteResponse> findAllPatchNotes() {
         return patchNoteRepository.findAll().stream()
@@ -126,5 +129,4 @@ public class PatchNoteService {
 
         patchNoteRepository.delete(patchNote);
     }
-
 }

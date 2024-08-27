@@ -8,14 +8,16 @@ import org.springframework.stereotype.Component;
 import com.investbridge.model.db.BlacklistedToken;
 import com.investbridge.repository.BlacklistedTokenRepository;
 
-import lombok.AllArgsConstructor;
-
 @Component
-@AllArgsConstructor
 public class TokenBlacklist {
     
     private final BlacklistedTokenRepository blacklistedTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    public TokenBlacklist(BlacklistedTokenRepository blacklistedTokenRepository, JwtTokenProvider jwtTokenProvider) {
+        this.blacklistedTokenRepository = blacklistedTokenRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     public void addToBlacklist(String token){
         Date expiryDate = jwtTokenProvider.getEpirationDateFromToken(token);

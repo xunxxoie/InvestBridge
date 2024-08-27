@@ -24,9 +24,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
@@ -34,6 +32,12 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlacklist tokenBlacklist;
     private final UserService userService;
+
+    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenBlacklist = tokenBlacklist;
+        this.userService = userService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
@@ -88,7 +92,7 @@ public class JwtTokenFilter extends OncePerRequestFilter implements Filter {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {  // "jwt"는 토큰을 저장한 쿠키의 이름. 필요시 변경
+                if ("jwt".equals(cookie.getName())) { 
                     return cookie.getValue();
                 }
             }

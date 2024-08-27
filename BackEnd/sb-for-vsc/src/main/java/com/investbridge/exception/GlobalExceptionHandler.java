@@ -22,7 +22,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllUncaughtException(Exception ex) {
-        logger.error("Unexpected error occurred", ex);
+        // logger.error("Unexpected error occurred", ex);
+        logger.error("{} {} {} {} {}", ex.getCause(), ex.getClass(), ex.getLocalizedMessage(), ex.getStackTrace(), ex.getMessage());
         ErrorResponse error = new ErrorResponse("SYS-001", "Internal Server Error");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }

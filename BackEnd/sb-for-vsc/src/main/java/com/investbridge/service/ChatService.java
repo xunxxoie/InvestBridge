@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.investbridge.model.db.ChatRoom;
 import com.investbridge.model.db.Message;
@@ -14,13 +13,12 @@ import com.investbridge.model.dto.Chat.ChatRoomListResponse;
 import com.investbridge.repository.ChatRoomRepository;
 import com.investbridge.repository.MessageRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@Transactional
+@RequiredArgsConstructor
 public class ChatService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
     
     private final ChatRoomRepository chatRoomRepository;
     private final MessageRepository messageRepository;
@@ -32,7 +30,6 @@ public class ChatService {
     }
 
     public Message enterChatRoom(String investorId, String dreamerId, Message message){
-        logger.info("enterChatRoom Logic Start at ChatService");
         ChatRoom chatRoom = getChatRoom(investorId, dreamerId);
 
         boolean isInvestor = message.getSenderId().equals(investorId);

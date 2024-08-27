@@ -3,13 +3,10 @@ package com.investbridge.security;
 import java.security.Key;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.investbridge.model.dto.User.UserInfoResponse;
-import com.investbridge.security.filter.LogoutFilter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,7 +20,7 @@ public class JwtTokenProvider {
     private static final long ACCESS_TOKEN_VALIDITY = 60 * 60 * 1000;
     private static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000;
 
-    private static final Logger logger = LoggerFactory.getLogger(LogoutFilter.class);
+    // private static final Logger logger = LoggerFactory.getLogger(LogoutFilter.class);
 
     private final Key key; // JWT - Verify Signature
 
@@ -76,7 +73,7 @@ public class JwtTokenProvider {
         }catch(ExpiredJwtException e){
             throw e;
         }catch(Exception e){
-            logger.error("Unexpected error is occured : {}", e.getMessage());
+            // logger.error("Unexpected error is occured : {}", e.getMessage());
             return false;
         }
     }
@@ -91,7 +88,7 @@ public class JwtTokenProvider {
         }catch(ExpiredJwtException e){
             throw e;
         }catch(Exception e){
-            logger.error("Unexpected error is occured : {}", e.getMessage());
+            // logger.error("Unexpected error is occured : {}", e.getMessage());
             return false;
         }
     }

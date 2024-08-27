@@ -9,7 +9,7 @@ import ChatApp from './pages/chat/ChatApp';
 import IdeaDetailPage from './pages/idea/IdeaDetailPage';
 import IdeaPage from './pages/idea/IdeaPage';
 import IdeaSubmitPage from './pages/idea/IdeaSubmitPage';
-import AboutPage from './pages/main/AboutPage';
+import AboutPage from './pages/main/about/AboutPage';
 import DreamerPage from './pages/main/DreamerPage';
 import LoginPage from './pages/main/LoginPage';
 import MainPage from './pages/main/MainPage';

@@ -1,4 +1,3 @@
-import BarChartIcon from '@mui/icons-material/BarChart';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -16,7 +15,6 @@ export const mainListItems = (setCurrentPage) => (
       { icon: <PeopleIcon />, text: 'User Management', page: 'users' },
       { icon: <LightbulbIcon />, text: 'Idea Management', page: 'ideas' },
       { icon: <CompareArrowsIcon />, text: 'Matching', page: 'matching' },
-      { icon: <BarChartIcon />, text: 'Statistics', page: 'statistics' },
       { icon: <NoteIcon />, text: 'Patch Notes', page: 'patchnotes' },
     ].map((item, index) => (
       <ListItemButton

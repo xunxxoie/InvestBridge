@@ -95,7 +95,7 @@ const useChat = () => {
         console.log("2");
       }
       console.log("3");
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chatroom/messages/${chat.chatRoomId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chatroom/${chat.chatRoomId}/messages`, {
         method: 'GET',
         credentials: 'include'
       });

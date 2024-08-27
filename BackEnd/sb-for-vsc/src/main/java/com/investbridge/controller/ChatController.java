@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.investbridge.model.db.Message;
 import com.investbridge.service.ChatService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Chat", description = "채팅 API")
 public class ChatController {
     
     private final ChatService chatService;

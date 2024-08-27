@@ -22,16 +22,20 @@ import com.investbridge.security.filter.LogoutFilter;
 import com.investbridge.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlacklist tokenBlacklist;
     private final UserService userService;
+
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, TokenBlacklist tokenBlacklist, UserService userService) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenBlacklist = tokenBlacklist;
+        this.userService = userService;
+    }
 
     @Value("${cors.allowed-origins}")
     private List<String> allowedOrigins;

@@ -15,7 +15,6 @@ import Dashboard from './components/Dashboard';
 import IdeaManagement from './components/IdeaManagement';
 import MatchingManagement from './components/MatchingManagement';
 import PatchNotes from './components/PatchNotes';
-import Statistics from './components/Statistics';
 import UserManagement from './components/UserManagement';
 
 const drawerWidth = 240;
@@ -82,7 +81,6 @@ export default function AdminPage() {
       case 'users': return <UserManagement />;
       case 'ideas': return <IdeaManagement />;
       case 'matching': return <MatchingManagement />;
-      case 'statistics': return <Statistics />;
       case 'patchnotes': return <PatchNotes />;
       default: return <Dashboard />;
     }
