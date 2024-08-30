@@ -23,7 +23,6 @@ const useChat = () => {
     const initializeChat = async () => {
       await fetchUserInfo();
       await fetchChatroomList();
-      await connectWebSocket();
     };
     initializeChat();
     return () => {
@@ -31,23 +30,23 @@ const useChat = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const { state } = location;
-    if (state?.chatRoomId) {
-      const chat = [...activeChats, ...pendingChats].find(c => c.chatRoomId === state.chatRoomId);
-      if (chat) {
-        handleChatroomSelect(chat);
-      } else {
-        console.log(`Chat room with ID ${state.chatRoomId} not found.`);
-        toast({
-          title: "채팅방을 찾을 수 없습니다.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      }
-    }
-  }, [location, activeChats, pendingChats]);
+  // useEffect(() => {
+  //   const { state } = location;
+  //   if (state?.chatRoomId) {
+  //     const chat = [...activeChats, ...pendingChats].find(c => c.chatRoomId === state.chatRoomId);
+  //     if (chat) {
+  //       handleChatroomSelect(chat);
+  //     } else {
+  //       console.log(`Chat room with ID ${state.chatRoomId} not found.`);
+  //       toast({
+  //         title: "채팅방을 찾을 수 없습니다.",
+  //         status: "error",
+  //         duration: 3000,
+  //         isClosable: true,
+  //       });
+  //     }
+  //   }
+  // }, [location, activeChats, pendingChats]);
 
   const fetchUserInfo = async () => {
     try {
@@ -83,42 +82,36 @@ const useChat = () => {
   };
 
   const handleChatroomSelect = useCallback(async (chat) => {
-    console.log("start entering chatroom");
     setSelectedChat(chat);
     setCurrentRoom(chat);
 
     setLoading(true);
     try {
       if (!isConnected) {
-        console.log("1");
         await connectWebSocket();
-        console.log("2");
       }
-      console.log("3");
+
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/chatroom/${chat.chatRoomId}/messages`, {
         method: 'GET',
         credentials: 'include'
       });
-      console.log("6");
+
       if (!response.ok) throw new Error('Failed to fetch messages');
+
       const data = await response.json();
+
       setMessages(data);
-      console.log("7");
+
       const recipientId = chat.dreamerId === userInfo.userId ? chat.investorId : chat.dreamerId;
-      console.log("8");
       sendMessage(`/app/chat.enterRoom/${chat.chatRoomId}`, {
         roomId: chat.chatRoomId,
         senderId: userInfo.userId,
         recipientId: recipientId,
         type: 'JOIN'
       });
-      console.log("9");
 
       subscribeToChatRoom(chat.chatRoomId, handleIncomingMessage);
-      
-      console.log("10");
       setCurrentRoom(chat);
-      console.log("11");
     } catch (err) {
       setError(err.message);
       toast({
@@ -196,6 +189,8 @@ const useChat = () => {
         duration: 3000,
         isClosable: true,
       });
+
+        await fetchChatroomList();
     } catch (err) {
       setError(err.message);
       toast({

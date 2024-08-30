@@ -54,17 +54,22 @@ public class ChatService {
         return saveAndSendMessage(roomId, message);
     }
 
-    public ChatRoom getChatRoom(String supporterId, String dreamerId){
-        return chatRoomRepository.findBySupporterIdAndDreamerId(supporterId, dreamerId).orElseGet(() -> {
-            ChatRoom newChatRoom = ChatRoom.builder()
+    public ChatRoom getChatRoom(String supporterId, String dreamerId) {
+        if (supporterId == null || dreamerId == null) {
+            return new ChatRoom();
+        }
+        
+        return chatRoomRepository.findBySupporterIdAndDreamerId(supporterId, dreamerId)
+            .orElseGet(() -> {
+                ChatRoom newChatRoom = ChatRoom.builder()
                     .supporterId(supporterId)
                     .dreamerId(dreamerId)
                     .status(ChatRoom.ChatRoomStatus.PENDING)
                     .createdAt(LocalDateTime.now())
                     .build();
-
-            return chatRoomRepository.save(newChatRoom);         
-        });
+                
+                return chatRoomRepository.save(newChatRoom);
+            });
     }
 
     public List<ChatRoomListResponse> getChatRoomList(String userId){

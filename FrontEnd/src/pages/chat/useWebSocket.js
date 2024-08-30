@@ -38,15 +38,10 @@ const useWebSocket = () => {
   }, []);
 
   const subscribeToChatRoom = useCallback((roomId, callback) => {
-    console.log(stompClient);
-    console.log("11");
-    console.log(stompClient.current?.connected)
     if (stompClient.current?.connected) {
-      console.log("12");
       return stompClient.current.subscribe(`/topic/chatroom.${roomId}`, (message) => {
         const receivedMessage = JSON.parse(message.body);
         callback(receivedMessage);
-        console.log("13");
       });
     }
   }, []);
