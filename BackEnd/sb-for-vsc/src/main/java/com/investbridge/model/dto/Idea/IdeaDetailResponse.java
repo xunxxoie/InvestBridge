@@ -22,6 +22,7 @@ public class IdeaDetailResponse {
 
     private Integer likes;
     private Integer favorites;
+    private Integer views;
 
     private List<String> categories;
 

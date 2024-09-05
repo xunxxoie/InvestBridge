@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.investbridge.model.db.Idea;
@@ -20,5 +21,7 @@ public interface IdeaRepository extends MongoRepository<Idea, String>{
     Optional<Idea> findByCategories(IdeaCategory category);
 
     long countByIsContracted(boolean isContracted); // 추가
+    @Query("{}")
+    List<Idea> findTop5Ideas();
     
 }

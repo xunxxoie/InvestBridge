@@ -59,5 +59,7 @@ public class Idea {
     private LocalDateTime updatedAt;
 
     private boolean isBlocked;
+
+    private LocalDateTime lastViewed;
 }
 

@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.investbridge.model.db.Dashboard;
+import com.investbridge.model.db.Idea;
 import com.investbridge.model.db.SubscribersOverTime;
 import com.investbridge.repository.DashboardRepository;
 
@@ -41,6 +42,7 @@ public class DashboardUpdateService {
         double supporterToDreamerRatio = userService.calculateSupporterToDreamerRatio();
         Map<String, Long> ideasPerField = ideaService.getIdeasPerField();
         double matchingRate = ideaService.calculateMatchingRate();
+        List<Idea> topIdeas = ideaService.getTopIdeasByViews();
 
         Dashboard dashboard = dashboardRepository.findAll().stream()
                 .reduce((first, second) -> second)
@@ -66,6 +68,7 @@ public class DashboardUpdateService {
                 .supporterToDreamerRatio(supporterToDreamerRatio)
                 .ideasPerField(ideasPerField)
                 .matchingRate(matchingRate)
+                .topIdeaThisWeek(topIdeas)
                 .updatedAt(LocalDateTime.now())
                 .build();
         
