@@ -76,6 +76,10 @@ public class IdeaService {
     public IdeaDetailResponse findIdea(String userId, String ideaId){
         Idea ideaDetail = ideaRepository.findById(ideaId).orElse(null);
 
+        if (ideaDetail == null) {
+            return null; // 아이디어를 찾지 못한 경우 null 반환
+        }
+
         boolean isOwner = (ideaDetail.getUserId().equals(userId));
 
         IdeaDetailResponse response = IdeaDetailResponse.builder()

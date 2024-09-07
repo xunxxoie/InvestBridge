@@ -2,7 +2,7 @@ package com.investbridge.model.dto.Auth;
 
 import java.time.LocalDateTime;
 
-import com.investbridge.model.enums.Interest;
+
 import com.investbridge.model.enums.UserJob;
 import com.investbridge.model.enums.UserRole;
 
@@ -23,7 +23,6 @@ public class RegisterRequest {
 
     private LocalDateTime birth;
     private String phoneNumber;
-    private Interest userInterest;
     private UserJob job;
     private UserRole userRole;
 }

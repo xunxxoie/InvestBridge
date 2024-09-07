@@ -4,16 +4,15 @@ import {
   Button,
   Flex,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Stack,
   Text,
   useDisclosure,
+  Tooltip,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ProfileDropdown from './ProfileDropDown';
+import { FiMessageSquare } from 'react-icons/fi';  // 메시지 아이콘 import
 
 const NavItem = ({ children, to = '/', color }) => (
   <Link to={to}>
@@ -30,9 +29,31 @@ const NavItem = ({ children, to = '/', color }) => (
   </Link>
 );
 
-export default function Header({ textColor = 'white' }) {
+export default function Header({ bgColor = 'rgba(0, 0, 0, 0.7)', textColor = 'white' }) {
   const navigate = useNavigate();
   const { isOpen, onToggle } = useDisclosure();
+  const [profileData, setProfileData] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/profile`, {
+          method: 'GET',
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setProfileData(data);
+        } else {
+          console.error('Failed to fetch profile data');
+        }
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -51,18 +72,18 @@ export default function Header({ textColor = 'white' }) {
   }
 
   return (
-    <Box position="fixed" top="0" w="100%" zIndex={1000}>
+    <Box position="sticky" top="0" w="100%" zIndex={1000}>
       <Flex
-        bgGradient="linear(to-r, #000000, #1a1a1a, #000000)"
+        bg={bgColor}
         color={textColor}
-        minH={'80px'}
+        minH={'60px'}
         py={{ base: 4 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle={'solid'}
-        borderColor={'gray.800'}
+        borderColor={'whiteAlpha.300'}
         align={'center'}
-        boxShadow="0 4px 6px rgba(0, 0, 0, 0.1)"
+        backdropFilter="blur(10px)"
       >
         <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }} align="center">
           <Link to="/main">
@@ -74,8 +95,6 @@ export default function Header({ textColor = 'white' }) {
                 letterSpacing={'wider'}
                 mb={0}
                 mt={1}
-                bgGradient="linear(to-r, #f7f7f7, #c3c3c3)"
-                bgClip="text"
               >
                 InvestBridge
               </Text>
@@ -97,43 +116,45 @@ export default function Header({ textColor = 'white' }) {
           justify={'flex-end'}
           direction={'row'}
           spacing={6}
+          align={'center'}
         >
-          <Menu>
-            <MenuButton
-              as={Button}
-              rounded={'full'}
-              variant={'link'}
-              cursor={'pointer'}
-              minW={0}
+          <Tooltip label="Chat" placement="bottom" hasArrow>
+            <IconButton
+              icon={<FiMessageSquare />}
+              aria-label="Chat"
+              variant="ghost"
+              color={textColor}
+              onClick={() => navigate('/chat-App')}
+              _hover={{
+                bg: 'whiteAlpha.200',
+              }}
+            />
+          </Tooltip>
+          {profileData ? (
+            <ProfileDropdown
+              user={{
+                id: profileData.userId, 
+                name: profileData.userName,
+                email: profileData.userEmail,
+                //avatarUrl: profileData.avatarUrl
+              }}
+              onLogout={handleLogout}
+            />
+          ) : (
+            <Box
+              width="40px"
+              height="40px"
+              borderRadius="full"
+              bg="gray.600"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
             >
-              <Box
-                width="40px"
-                height="40px"
-                borderRadius="full"
-                bg="gray.700"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                border="2px solid"
-                borderColor="gray.600"
-              >
-                <Text fontSize="sm" fontWeight="bold" mb={0}>
-                  User
-                </Text>
-              </Box>
-            </MenuButton>
-            <MenuList bg="gray.900" borderColor="gray.700">
-              <MenuItem as={Link} to="/profile" bg="gray.900" _hover={{ bg: 'gray.800' }}>
-                Profile
-              </MenuItem>
-              <MenuItem as={Link} to="/chat-App" bg="gray.900" _hover={{ bg: 'gray.800' }}>
-                Message
-              </MenuItem>
-              <MenuItem onClick={handleLogout} bg="gray.900" _hover={{ bg: 'gray.800' }}>
-                Logout
-              </MenuItem>
-            </MenuList>
-          </Menu>
+              <Text fontSize="sm" fontWeight="bold" mb={0}>
+                User
+              </Text>
+            </Box>
+          )}
         </Stack>
 
         <Flex
@@ -147,17 +168,12 @@ export default function Header({ textColor = 'white' }) {
             icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
             variant={'ghost'}
             aria-label={'Toggle Navigation'}
-            color={textColor}
           />
         </Flex>
       </Flex>
 
       {isOpen && (
-        <Box 
-          pb={4} 
-          display={{ md: 'none' }} 
-          bgGradient="linear(to-r, #1a1a1a, #2a2a2a, #1a1a1a)" 
-        >
+        <Box pb={4} display={{ md: 'none' }} bg={bgColor}>
           <Stack as={'nav'} spacing={4}>
             <NavItem to="/dreamer" color={textColor}>Dreamer</NavItem>
             <NavItem to="/supporter" color={textColor}>Supporter</NavItem>

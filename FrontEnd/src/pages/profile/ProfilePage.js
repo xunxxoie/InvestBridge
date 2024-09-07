@@ -13,6 +13,7 @@ import Header from '../main/components/Header';
 import DetailedProfileInfo from './components/DetailedProfileInfo';
 import ProfileInfo from './components/ProfileInfo';
 import ProjectSection from './components/ProjectSection';
+import EditProfileModal from './components/EditProfileModal';
 
 const theme = extendTheme({
   config: {
@@ -38,36 +39,58 @@ const theme = extendTheme({
   },
 });
 
-const fetchProjects = async (userName) => {
-  try {
-    const projectsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/profile/projects`, {
-      method: 'GET',
-      credentials: 'include'
-    });
 
-    if (!projectsResponse.ok) {
-      throw new Error('Failed to fetch projects');
+
+const fetchProjects = async (userId) => { 
+  const maxRetries = 3;
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
+      const projectsResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/profile/projects`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      console.log('Server response status:', projectsResponse.status);
+
+      if (!projectsResponse.ok) {
+        if (projectsResponse.status === 404) {
+          console.log('No projects found');
+          return [];
+        }
+        throw new Error(`HTTP error! status: ${projectsResponse.status}`);
+      }
+
+      const projectsData = await projectsResponse.json();
+      console.log('Fetched projects:', projectsData);
+
+      if (Array.isArray(projectsData)) {
+        return projectsData.filter(project => project.userId === userId); 
+      } else if (projectsData.message === "아이디어를 찾을 수 없습니다. 새로운 아이디어를 등록해주세요.") {
+        console.log('No ideas found');
+        return [];
+      } else {
+        console.error('Unexpected projects data structure:', projectsData);
+        throw new Error('프로젝트 데이터 구조가 예상과 다릅니다.');
+      }
+    } catch (error) {
+      console.error(`Attempt ${retries + 1} failed:`, error);
+      retries++;
+      if (retries === maxRetries) {
+        console.error('Max retries reached. Failed to fetch projects');
+        throw error;
+      }
+      // Wait for a short time before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
-
-    const projectsData = await projectsResponse.json();
-    console.log('Fetched projects:', projectsData);
-
-    if (Array.isArray(projectsData)) {
-      return projectsData.filter(project => project.userName === userName);
-    } else {
-      console.error('Unexpected projects data structure:', projectsData);
-      throw new Error('프로젝트 데이터 구조가 예상과 다릅니다.');
-    }
-  } catch (error) {
-    console.error('프로젝트를 불러오는 데 실패했습니다:', error);
-    throw error;
   }
 };
 
 const Profile = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
 
-  // (profileData.userName == projects.userName) idea
+  // (profileData.userId == projects.userId) idea
   const [myProjects, setMyProjects] = useState([]);
 
   const supportedProjects = [
@@ -81,6 +104,30 @@ const Profile = () => {
   const [error, setError] = useState(null);
   const [projects, setProjects] = useState([]);
 
+  const updateProfile = async (updatedData) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!response.ok) {
+        throw new Error('프로필 업데이트에 실패했습니다.');
+      }
+
+      const updatedProfile = await response.json();
+      setProfileData(updatedProfile);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError('프로필 업데이트에 실패했습니다.');
+    }
+  };
+
+ 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
@@ -90,7 +137,7 @@ const Profile = () => {
         });
         
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
@@ -102,12 +149,12 @@ const Profile = () => {
             setMyProjects(userProjects);
           } catch (error) {
             console.error('Error fetching projects:', error);
-            setError('프로젝트 정보를 가져오는 데 실패했습니다.');
+            setError('프로젝트 정보를 가져오는 데 실패했습니다. 다시 시도해 주세요.');
           }
         }
       } catch (error) {
         console.error('Error fetching profile data:', error);
-        setError('프로필 정보를 가져오는 데 실패했습니다.');
+        setError('프로필 정보를 가져오는 데 실패했습니다. 페이지를 새로고침 해주세요.');
       } finally {
         setLoading(false);
       }
@@ -160,14 +207,18 @@ const Profile = () => {
             />
             <DetailedProfileInfo 
             userData={profileData}
+            onUpdateProfile={updateProfile} // 추가
             />
           </Box>
           <Box>
-            {/* if userRole == DREAMER -> myProjects */}
             {profileData?.userRole === 'DREAMER' && (
-              <ProjectSection title="My Dream" projects={myProjects} />
+              myProjects.length > 0 ? (
+                <ProjectSection title="My Dream" projects={myProjects} />
+              ) : (
+                <Text>아직 등록된 프로젝트가 없습니다. 새로운 아이디어를 등록해보세요!</Text>
+              )
             )}
-            {/* if userRole == SUPPORTER -> supportedProjects */}
+            
             {profileData?.userRole === 'SUPPORTER' && (
               <ProjectSection title="My Support" projects={supportedProjects} />
             )}
