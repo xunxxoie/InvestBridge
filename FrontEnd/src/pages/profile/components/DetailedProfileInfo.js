@@ -1,16 +1,22 @@
 import {
     Box,
+    Button,
     Divider,
     Flex,
     Icon,
     Text,
     VStack,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { FaBirthdayCake, FaEnvelope, FaLightbulb, FaPhone } from 'react-icons/fa';
+import EditProfileModal from './EditProfileModal';
 
-const DetailedProfileInfo = ({ userData }) => {
+const DetailedProfileInfo = ({ userData, onUpdateProfile }) => {
     console.log(userData)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); //추가
+
+
+
     return (
         <Box bg="white" p={6} borderRadius="xl" boxShadow="lg" transition="all 0.3s" _hover={{ boxShadow: "xl" }}>
             <VStack align="stretch" spacing={4}>
@@ -20,9 +26,16 @@ const DetailedProfileInfo = ({ userData }) => {
                     <InfoItem icon={FaEnvelope} value={userData.userEmail} />
                     <InfoItem icon={FaBirthdayCake}  value={userData.birth} />
                     <InfoItem icon={FaPhone}  value={userData.phoneNumber} />
-                    <InfoItem icon={FaLightbulb}  value={userData.userInterest} />
                 </VStack>
             </VStack>
+
+            <Button onClick={() => setIsEditModalOpen(true)}>프로필 수정</Button>
+            <EditProfileModal 
+                isOpen={isEditModalOpen} 
+                onClose={() => setIsEditModalOpen(false)}
+                userData={userData}
+                onUpdateProfile={onUpdateProfile}
+            />
         </Box>
     );
 };

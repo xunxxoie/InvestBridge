@@ -22,6 +22,7 @@ import com.investbridge.model.dto.Idea.IdeaCreateResponse;
 import com.investbridge.model.dto.Idea.IdeaDetailResponse;
 import com.investbridge.security.JwtTokenProvider;
 import com.investbridge.service.IdeaService;
+import com.investbridge.model.dto.Idea.IdeaNotFoundResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -79,20 +80,42 @@ public class IdeaController {
         }
     }
 
+    // @GetMapping("/detail/{id}")
+    // @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
+    // public ResponseEntity<?> ideaDetails(@PathVariable("id") String id, @CookieValue(name="jwt", required = false)String token) {
+    //     try{
+    //         String userId = jwtTokenProvider.getUserIdFromToken(token);
+    //         IdeaDetailResponse response = ideaService.findIdea(userId, id);
+           
+    //         logger.info("Get Idea Succeed! IdeaId: {}", response.getIdeaId());
+    //         return ResponseEntity.ok(response);
+    //     }catch (Exception e){
+    //         logger.error("GET Idea Failed : {}", e.getMessage());
+    //         return ResponseEntity
+    //             .status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //             .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
+    //     }
+    // }
+
     @GetMapping("/detail/{id}")
     @Operation(summary = "특정 아이디어 불러오기", description = "특정 아이디어를 불러옵니다.")
-    public ResponseEntity<?> ideaDetails(@PathVariable("id") String id, @CookieValue(name="jwt", required = false)String token) {
-        try{
+    public ResponseEntity<?> ideaDetails(@PathVariable("id") String id, @CookieValue(name="jwt", required = false) String token) {
+        try {
             String userId = jwtTokenProvider.getUserIdFromToken(token);
             IdeaDetailResponse response = ideaService.findIdea(userId, id);
-           
-            logger.info("Get Idea Succeed! IdeaId: {}", response.getIdeaId());
-            return ResponseEntity.ok(response);
-        }catch (Exception e){
+            
+            if (response != null) {
+                logger.info("Get Idea Succeed! IdeaId: {}", response.getIdeaId());
+                return ResponseEntity.ok(response);
+            } else {
+                logger.info("Idea not found. IdeaId: {}", id);
+                return ResponseEntity.ok(new IdeaNotFoundResponse("아이디어를 찾을 수 없습니다. 새로운 아이디어를 등록해주세요."));
+            }
+        } catch (Exception e) {
             logger.error("GET Idea Failed : {}", e.getMessage());
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("Unexpected Error Occurred : {}", e.getMessage()));
+                .body(new ErrorResponse("Unexpected Error Occurred", e.getMessage()));
         }
     }
     

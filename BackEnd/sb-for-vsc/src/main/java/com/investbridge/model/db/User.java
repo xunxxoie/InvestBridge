@@ -8,7 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.investbridge.model.enums.Interest;
+
 import com.investbridge.model.enums.UserJob;
 import com.investbridge.model.enums.UserRole;
 
@@ -33,7 +33,6 @@ public class User {
     private String userName;
     private LocalDateTime birth;
     private String phoneNumber;
-    private Interest userInterest;
     private UserJob job;
     private UserRole userRole;
 

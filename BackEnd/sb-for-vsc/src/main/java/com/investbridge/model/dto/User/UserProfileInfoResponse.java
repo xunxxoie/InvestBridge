@@ -16,6 +16,6 @@ public class UserProfileInfoResponse {
     private String phoneNumber;
     private String birth;
     private String userRole;
-    private String userInterest;
+    
 }
 
