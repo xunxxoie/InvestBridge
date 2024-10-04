@@ -1,14 +1,19 @@
 package com.investbridge.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.investbridge.model.db.Idea;
 import com.investbridge.model.dto.Idea.IdeaCreateRequest;
@@ -24,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 public class IdeaService {
 
     private final IdeaRepository ideaRepository;
+    private static final long VIEW_INCREMENT_THRESHOLD_SECONDS = 1;
+
+    private final Object lock = new Object();
 
     public IdeaCreateResponse addIdea(IdeaCreateRequest request){
 
@@ -73,28 +81,38 @@ public class IdeaService {
         return idea;
     }
 
-    public IdeaDetailResponse findIdea(String userId, String ideaId){
-        Idea ideaDetail = ideaRepository.findById(ideaId).orElse(null);
+    @Transactional
+    public IdeaDetailResponse incrementAndReturnViewCount(String userId, String ideaId) {
+        synchronized(lock) {
+            Idea idea = ideaRepository.findById(ideaId)
+                .orElseThrow(() -> new RuntimeException("Idea not found"));
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime lastViewed = idea.getLastViewed();
 
-        boolean isOwner = (ideaDetail.getUserId().equals(userId));
+        // 마지막 조회 시간으로부터 일정 시간이 지났을 때만 조회수를 증가시킴
+        if (lastViewed == null || ChronoUnit.SECONDS.between(lastViewed, now) > VIEW_INCREMENT_THRESHOLD_SECONDS) {
+            idea.setViews(idea.getViews() + 1);
+            idea.setLastViewed(now);  // 마지막 조회 시간 업데이트
+            ideaRepository.save(idea);
+        }
+            boolean isOwner = idea.getUserId().equals(userId);
 
-        IdeaDetailResponse response = IdeaDetailResponse.builder()
-                        .ideaId(ideaDetail.getId())
-                        .dreamerId(ideaDetail.getUserId())
-                        .title(ideaDetail.getTitle())
-                        .projectSummary(ideaDetail.getProjectSummary())
-                        .teamSummary(ideaDetail.getTeamSummary())
-                        .content(ideaDetail.getContent())
-                        .categories(ideaDetail.getCategories())
-                        .likes(ideaDetail.getLikes())
-                        .favorites(ideaDetail.getFavorites())
-                        .isContracted(ideaDetail.isContracted())
-                        .isOwner(isOwner)
-                        .build();
-        
-        return response;
+            return IdeaDetailResponse.builder()
+                .ideaId(idea.getId())
+                .dreamerId(idea.getUserId())
+                .title(idea.getTitle())
+                .projectSummary(idea.getProjectSummary())
+                .teamSummary(idea.getTeamSummary())
+                .content(idea.getContent())
+                .categories(idea.getCategories())
+                .likes(idea.getLikes())
+                .favorites(idea.getFavorites())
+                .views(idea.getViews())
+                .isContracted(idea.isContracted())
+                .isOwner(isOwner)
+                .build();
+        }
     }
-
     public Idea updateLikes(String id, String userId){
         Idea idea = ideaRepository.findById(id).orElse(null);
 
@@ -180,5 +198,9 @@ public class IdeaService {
         long contractedIdeas = allIdeas.stream().filter(Idea::isContracted).count();
 
         return (double) contractedIdeas / totalIdeas * 100;
+    }
+
+    public List<Idea> getTopIdeasByViews() {
+        return ideaRepository.findTop5Ideas();
     }
 }

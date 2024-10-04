@@ -29,6 +29,7 @@ public class Dashboard {
     private double supporterToDreamerRatio;
     private Map<String, Long> ideasPerField;
     private double matchingRate;
+    private List<Idea> topIdeaThisWeek;
     @CreatedDate
     private LocalDateTime updatedAt;
 }

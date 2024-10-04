@@ -15,7 +15,7 @@ const categoryColors = {
 };
 
 const IdeaCard = ({ project }) => {
-  const { id, userId, title, categories, likes, favorites, viewCount, studentCount = 100 } = project;
+  const { id, userId, title, categories, likes, favorites, views, studentCount = 100 } = project;
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -72,7 +72,7 @@ const IdeaCard = ({ project }) => {
         <HStack justify="space-between" align="center" mt={2}>
           <Flex align="center">
             <Icon as={FaEye} color="gray.500" mr={1} />
-            <Text fontSize="sm" color="gray.500">{viewCount || 0}</Text>
+            <Text fontSize="sm" color="gray.500">{views || 0}</Text>
           </Flex>
           <Flex align="center">
             <Icon as={FaHeart} color="red.500" mr={1} />

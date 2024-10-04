@@ -84,8 +84,8 @@ public class IdeaController {
     public ResponseEntity<?> ideaDetails(@PathVariable("id") String id, @CookieValue(name="jwt", required = false)String token) {
         try{
             String userId = jwtTokenProvider.getUserIdFromToken(token);
-            IdeaDetailResponse response = ideaService.findIdea(userId, id);
-           
+            IdeaDetailResponse response = ideaService.incrementAndReturnViewCount(userId, id);
+            
             logger.info("Get Idea Succeed! IdeaId: {}", response.getIdeaId());
             return ResponseEntity.ok(response);
         }catch (Exception e){

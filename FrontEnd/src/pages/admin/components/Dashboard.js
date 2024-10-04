@@ -1,58 +1,103 @@
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Line, Pie } from 'react-chartjs-2';
+import Typography from '@mui/material/Typography';
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale, BarElement, PointElement, LineElement);
 
 const Card = ({ backgroundColor, color, title, value }) => (
-  <div style={{ backgroundColor, color, margin: '10px', padding: '20px', borderRadius: '5px', flex: '1', textAlign: 'center' }}>
-    <h2>{title}</h2>
-    <p>{value}</p>
+  <div style={{
+    backgroundColor,
+    color,
+    margin: '10px',
+    padding: '20px',
+    borderRadius: '8px',
+    flex: '1',
+    textAlign: 'center',
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+    minWidth: '200px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  }}>
+    <h2 style={{
+      marginBottom: '10px',
+      fontSize: '1.2em',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    }}>
+      {title}
+    </h2>
+    <p style={{
+      fontSize: '1.5em',
+      color,
+      margin: '0',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    }}>
+      {value}
+    </p>
   </div>
 );
 
-const List = ({ title, items }) => (
-  <div>
-    <h2>{title}</h2>
-    {items.length === 0 ? (
-      <p>No data available</p>
-    ) : (
-      <ol>
-        {items.map((item, index) => (
-          <li key={index}>{item.name}: {item.value}</li>
-        ))}
-      </ol>
-    )}
+const Table = ({ title, headers, data }) => (
+  <div style={{ margin: '20px 0', textAlign: 'center', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)', borderRadius: '8px', overflow: 'hidden' }}>
+    <h2 style={{ marginBottom: '10px', backgroundColor: '#f1f3f5', padding: '15px', fontSize: '1.5em', fontWeight: 'bold' }}>{title}</h2>
+    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <thead>
+        <tr style={{ backgroundColor: '#e9ecef', textAlign: 'left' }}>
+          {headers.map((header, index) => (
+            <th key={index} style={{ padding: '15px', borderBottom: '2px solid #dee2e6', fontWeight: 'bold' }}>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.length === 0 ? (
+          <tr>
+            <td colSpan={headers.length} style={{ padding: '15px', borderBottom: '1px solid #dee2e6', textAlign: 'center' }}>No data available</td>
+          </tr>
+        ) : (
+          data.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {Object.values(row).map((value, cellIndex) => (
+                <td key={cellIndex} style={{ padding: '15px', borderBottom: '1px solid #dee2e6', textAlign: 'center' }}>{value}</td>
+              ))}
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
   </div>
 );
 
 function gcd(a, b) {
-  return b === 0 ? a : gcd(b, a % b);
+  while (b) {
+    [a, b] = [b, a % b];
+  }
+  return a;
 }
 
 export default function Dashboard() {
   const [data, setData] = useState({
     totalSubscribers: 0,
-    newSubscribersLast30Days: 0,
     supportersCount: 0,
     dreamersCount: 0,
     ideasPerField: {},
     matchingRate: 0,
     topIdeaThisWeek: [],
-    popularSearchTerms: {},
     subscribersOverTime: []
   });
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      try{
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/main`,{
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/dashboard/main`, {
           headers: { 'Accept': 'application/json' },
           method: 'GET',
           credentials: 'include'
         });
-        
+
         if (!response.ok) {
           throw new Error(`Network response was not ok: ${response.statusText}`);
         }
@@ -79,13 +124,11 @@ export default function Dashboard() {
   const dreamerCount = data.dreamersCount || 0;
 
   const ratioGCD = gcd(supporterCount, dreamerCount);
-  const supporterRatio = supporterCount / ratioGCD;
-  const dreamerRatio = dreamerCount / ratioGCD;
+  const supporterRatio = ratioGCD ? supporterCount / ratioGCD : 0;
+  const dreamerRatio = ratioGCD ? dreamerCount / ratioGCD : 0;
 
-  // Extract the latest 5 subscribersOverTime entries
   const recentData = data.subscribersOverTime.slice(-5);
 
-  // Prepare chart data
   const chartData = {
     labels: recentData.map(entry => entry.date),
     datasets: [
@@ -127,7 +170,7 @@ export default function Dashboard() {
           text: 'New Subscribers'
         },
         grid: {
-          drawOnChartArea: false // To prevent grid lines from overlapping
+          drawOnChartArea: false
         }
       },
       x: {
@@ -155,35 +198,55 @@ export default function Dashboard() {
     }]
   };
 
-  const topIdeas = Array.isArray(data.topIdeaThisWeek) ? data.topIdeaThisWeek : [];
-  const popularSearchTerms = data.popularSearchTerms && typeof data.popularSearchTerms === 'object' ? 
-    Object.entries(data.popularSearchTerms).map(([term, count]) => ({ name: term, value: count })) : [];
+  const topIdeas = Array.isArray(data.topIdeaThisWeek)
+    ? data.topIdeaThisWeek.sort((a, b) => b.views - a.views)
+    : [];
+
+  const ideasPerField = data.ideasPerField && typeof data.ideasPerField === 'object' ? 
+    Object.entries(data.ideasPerField).map(([field, count]) => ({ name: field, value: count })) : [];
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Dashboard</h1>
+    <div style={{ padding: '30px', backgroundColor: '#f8f9fa', borderRadius: '10px', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)' }}>
+      <Typography 
+        variant="h4" 
+        component="h1" 
+        gutterBottom 
+        sx={{ mb: 4, color: '#000000', fontWeight: 'bold', fontSize: '2rem' }}
+      >
+        Dashboard
+      </Typography>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-        <div style={{ margin: '10px', padding: '10px', borderRadius: '5px', flex: '1', textAlign: 'center', flexBasis: '30%', height: '300px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div style={{ margin: '10px', padding: '20px', borderRadius: '10px', flex: '1', textAlign: 'center', backgroundColor: 'white', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>
           <h2>Subscribers Over Time</h2>
           <Line data={chartData} options={options} height={200} />
         </div>
-        <div style={{ margin: '10px', padding: '10px', borderRadius: '5px', flex: '1', textAlign: 'center', flexBasis: '20%', height: '300px' }}>
+        <div style={{ margin: '10px', padding: '20px', borderRadius: '10px', flex: '1', textAlign: 'center', backgroundColor: 'white', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>
           <h2>Supporter to Dreamer Ratio</h2>
           <Pie data={supporterToDreamerData} height={200} />
           <p>{supporterRatio} : {dreamerRatio}</p>
         </div>
-        <div style={{ margin: '10px', padding: '10px', borderRadius: '5px', flex: '1', textAlign: 'center', flexBasis: '20%', height: '300px' }}>
+        <div style={{ margin: '10px', padding: '20px', borderRadius: '10px', flex: '1', textAlign: 'center', backgroundColor: 'white', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}>
           <h2>Matching Rate</h2>
           <Pie data={matchingRateData} height={200} />
-          <p>{data.matchingRate.toFixed(2)}%</p>
+          <p>{data.matchingRate}%</p>
         </div>
       </div>
-      <List title="Top Idea This Week" items={topIdeas.map(idea => ({
-        name: idea.title,
-        value: `Views: ${idea.views}`
-      }))} />
-      <List title="Popular Search Terms" items={popularSearchTerms} />
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <Card backgroundColor="#007bff" color="white" title="Total Subscribers" value={data.totalSubscribers} />
+        <Card backgroundColor="#dc3545" color="white" title="Supporters Count" value={data.supportersCount} />
+        <Card backgroundColor="#ffc107" color="black" title="Dreamers Count" value={data.dreamersCount} />
+      </div>
+      <Table
+        title="Top Ideas This Week"
+        headers={['Field', 'Title', 'Views']}
+        data={topIdeas.map(idea => ({ Field: idea.field, Title: idea.title, Views: idea.views }))}
+      />
+      <Table
+        title="Ideas Per Field"
+        headers={['Field', 'Number of Ideas']}
+        data={ideasPerField.map(field => ({ Field: field.name, 'Number of Ideas': field.value }))}
+      />
     </div>
   );
 }
