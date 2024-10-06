@@ -75,7 +75,7 @@ public class PatchNoteController {
 
     @GetMapping("/{version}")
     @Operation(summary = "특정 패치노트 불러오기", description = "특정 패치노트를 불러옵니다.")
-    public ResponseEntity<?> patchnNoteDetails(@PathVariable String version){
+    public ResponseEntity<?> patchNoteDetails(@PathVariable String version){
         try{
             PatchNoteResponse response = patchNoteService.findPatchNote(version);
 
